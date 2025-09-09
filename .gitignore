@@ -5,7 +5,6 @@
 /public/storage
 /storage/*.key
 /vendor
-.env
 .env.backup
 .env.production
 .phpunit.result.cache
@@ -21,6 +20,3 @@ yarn-error.log
 *.rar
 *.tar.gz
 /storage/app/*
-/public/file/*
-ALI_PORTOFOLIO.zip
-ALI_PORTOFOLIO.zip

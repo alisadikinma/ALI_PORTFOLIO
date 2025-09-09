@@ -1,0 +1,4 @@
+/* Custom CSS untuk hover effect social media icons */
+.social-icon:hover svg {
+    color: #000000 !important;
+}

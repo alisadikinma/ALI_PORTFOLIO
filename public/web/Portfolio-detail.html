@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Sadikin - AI Generalist & Technopreneur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --gradient: linear-gradient(to left, #1E2B44, #121212);
+        }
+        .bg-gradient-footer {
+            background: var(--gradient);
+        }
+        .outline-offset--1 {
+            outline-offset: -1px;
+        }
+        .backdrop-blur-lg {
+            backdrop-filter: blur(8px);
+        }
+        .backdrop-blur-xl {
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-footer text-white font-['Inter']">
+    <!-- Navigation Header -->
+    <header class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 pt-8 pb-6 flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8">
+        <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">Ali Sadikin</div>
+        <button class="sm:hidden p-2" onclick="toggleMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <nav id="nav-menu" class="hidden sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-7">
+            <a href="#home" class="text-white text-base font-semibold leading-normal">Home</a>
+            <a href="#about" class="text-gray-400 text-base font-normal leading-normal">About</a>
+            <a href="#awards" class="text-gray-400 text-base font-normal leading-normal">Awards & Recognition</a>
+            <a href="#portfolio" class="text-gray-400 text-base font-normal leading-normal">Portfolio</a>
+            <a href="#services" class="text-gray-400 text-base font-normal leading-normal">Services</a>
+            <a href="#testimonials" class="text-gray-400 text-base font-normal leading-normal">Testimonial</a>
+            <a href="#gallery" class="text-gray-400 text-base font-normal leading-normal">Gallery</a>
+            <a href="#articles" class="text-gray-400 text-base font-normal leading-normal">Article</a>
+            <button class="px-4 sm:px-6 py-2 rounded-lg outline outline-1 outline-yellow-400 flex items-center gap-3">
+                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span class="text-yellow-400 text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send message</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-4 flex justify-center items-center gap-2">
+        <a href="#portfolio" class="text-stone-300 text-base font-normal leading-normal tracking-tight">Portfolio</a>
+        <span class="text-stone-300 text-base font-medium leading-normal tracking-tight">/</span>
+        <span class="text-white text-base font-medium leading-normal tracking-tight">Why does a week have 7 days?</span>
+    </nav>
+
+    <!-- Article Section -->
+    <section id="article" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-12">
+        <img src="https://placehold.co/800x400?text=Article+Header" alt="Article Header" class="w-full max-w-4xl h-auto rounded-3xl"/>
+        <div class="w-full max-w-4xl flex flex-col gap-8">
+            <div class="flex flex-col gap-3">
+                <h1 class="text-white text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]">Why does a week have 7 days?</h1>
+                <div class="flex gap-2">
+                    <span class="text-yellow-400 text-base font-normal leading-none">Artificial Intelligence (AI)</span>
+                    <span class="text-yellow-400 text-xs font-normal leading-none">-</span>
+                    <span class="text-yellow-400 text-base font-normal leading-none">Video</span>
+                </div>
+                <div class="text-neutral-400 text-xs font-normal leading-normal">15 Jan, 2021, 19:00</div>
+            </div>
+            <div class="w-full h-px bg-slate-800"></div>
+            <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">There’s only one thing that every single culture, religion, and country in the world agrees on, and it’s that there are only seven days in the week. Not one more or not one less. The reason why we organize our lives around a 7-day week is, quite literally, above our heads. Like many other calendars, today's Gregorian calendar is ultimately based on the phases of the Moon. It takes the Moon around 29.5 days to cycle through all Moon phases. For everyday purposes, this is a fairly long and impractical time span, so it makes sense to break it down into smaller segments.</p>
+            <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">Enter the Babylonians. This ancient society, which lived in Mesopotamia in what is now Iraq, rounded the Moon cycle down to 28 days and divided this time span into 4 periods of 7 days each, using leap days to stay in sync with the Moon phases in the long run. This 7-day structure is also believed to have ultimately informed a number of popular creation myths, such as the Book of Genesis in the Hebrew and Christian Bibles, which states that God created the world in seven days: six days of work followed by one day of rest.</p>
+            <div class="flex flex-col gap-5">
+                <h2 class="text-white text-xl sm:text-2xl font-bold leading-loose">📌 Named after gods and planets</h2>
+                <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">Thousands of years ago, there were no iPhones or watches to tell the time. So they would look up at the planets and their positions to guess it! They saw seven planets, including the Sun and the Moon, and believed each had superpowers, so they started to worship them. One planet was the God of Justice, another the God of Love. And just like that, every planet became a god. They wanted these gods to watch over them 24/7, so they assigned one god to every hour of the day, and eventually, they gave a whole day to each. And that’s how we ended up with 7 days for 7 gods.</p>
+            </div>
+            <div class="flex flex-col gap-4">
+                <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">⚪ When is the weekend?</h2>
+                <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">As the first day of the week varies in different cultures, so does the weekend. The Christian or Western world marks Sunday as their day of rest and worship, while Muslims refer to Friday as their day of rest and prayer. The Jewish calendar counts Saturday – the Sabbath – as the day of rest and worship. Both Saturdays and Sundays are common days of rest in the calendar. Calendars in some countries use a separate color for the weekends and reserve black or gray fonts for the weekdays, Monday through Friday.</p>
+            </div>
+            <div class="flex flex-col gap-3">
+                <h3 class="text-white text-base sm:text-lg font-medium uppercase leading-7">🙏 52 Weeks & 1 day</h3>
+                <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">A common year roughly adds up to 52 weeks of 7 days each plus 1 day – or 2 days if it's a leap year. However, countries vary on exactly how they present and number the weeks in their calendar.</p>
+            </div>
+            <div class="flex flex-col gap-3">
+                <h3 class="text-white text-base sm:text-lg font-medium uppercase leading-7">👍 Some years have 53 weeks</h3>
+                <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">The weeks of the year in a Gregorian calendar are numbered from week 1 to week 52 or 53. If a year, and week 1, starts on a Thursday, then the weeks are shifted so that there will be 53 weeks in that year. These week numbers are commonly used in some European and Asian countries, but not so much in the United States.</p>
+            </div>
+            <div class="flex flex-col gap-8">
+                <img src="https://placehold.co/800x300?text=Article+Image" alt="Article Image" class="w-full h-auto"/>
+                <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">Avid astronomers and astrologers, the Babylonians developed a kind of horoscope around 500 BCE where each day of the week was assigned to one of the classical planets – the seven non-fixed celestial bodies visible to the naked eye: the Sun, the Moon, Mars, Mercury, Jupiter, Venus, and Saturn. Some historical sources claim that the connection between the days of the week and the classical planets was introduced later by the ancient Greeks.</p>
+                <div class="flex flex-col gap-3">
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">1. Moon-day</span>
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">2. Mars-day - Tiw’s day</span>
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">3. Mercury-day - Wodin’s day</span>
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">4. Jupiter-day - Thor’s Day</span>
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">5. Venus-day - Freya’s Day</span>
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">6. Saturn-day</span>
+                    <span class="text-white text-base sm:text-lg font-semibold leading-relaxed">7. Sun-day</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-16 flex flex-col items-center gap-8 sm:gap-12">
+        <div class="w-full flex flex-col items-center gap-3">
+            <h2 class="text-yellow-400 text-3xl sm:text-5xl font-bold leading-tight sm:leading-[67.20px] tracking-tight">Recent Portfolio</h2>
+        </div>
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
+            <div class="p-6 sm:p-8 bg-slate-800/60 rounded-2xl outline outline-1 outline-neutral-900/40 backdrop-blur-xl flex flex-col gap-6 sm:gap-8">
+                <img src="https://placehold.co/400x300?text=Custom+GPT" alt="Custom GPT Development" class="w-full h-auto rounded-2xl"/>
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex gap-2">
+                            <span class="text-gray-500 text-xs font-normal leading-none">UI Design</span>
+                            <span class="text-gray-500 text-xs font-normal leading-none">/</span>
+                            <span class="text-gray-500 text-xs font-normal leading-none">UX Design</span>
+                        </div>
+                        <h3 class="text-white text-xl sm:text-3xl font-bold leading-loose tracking-tight">Custom GPT Development</h3>
+                        <p class="text-neutral-400 text-base font-normal leading-normal">Tailored AI solutions and custom GPT models for specific business needs and industry requirements.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-yellow-400 text-lg sm:text-xl font-bold leading-normal tracking-tight">Rp 2.1B Cost Savings</span>
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 sm:p-8 bg-slate-800/60 rounded-2xl outline outline-1 outline-neutral-900/40 backdrop-blur-xl flex flex-col gap-6 sm:gap-8">
+                <img src="https://placehold.co/400x300?text=Smart+Parking" alt="Smart Parking System" class="w-full h-auto rounded-2xl"/>
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex gap-2">
+                            <span class="text-gray-500 text-xs font-normal leading-none">UI Design</span>
+                            <span class="text-gray-500 text-xs font-normal leading-none">/</span>
+                            <span class="text-gray-500 text-xs font-normal leading-none">UX Design</span>
+                        </div>
+                        <h3 class="text-white text-xl sm:text-3xl font-bold leading-loose tracking-tight">Smart Parking System</h3>
+                        <p class="text-neutral-400 text-base font-normal leading-normal">Tailored AI solutions and custom GPT models for specific business needs and industry requirements.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-yellow-400 text-lg sm:text-xl font-bold leading-normal tracking-tight">Rp 4B Cost Savings</span>
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 sm:p-8 bg-slate-800/60 rounded-2xl outline outline-1 outline-neutral-900/40 backdrop-blur-xl flex flex-col gap-6 sm:gap-8">
+                <img src="https://placehold.co/400x300?text=MySatnusa" alt="MySatnusa Platform" class="w-full h-auto rounded-2xl"/>
+                <div class="flex flex-col gap-4">
+                    <div class="flex flex-col gap-3">
+                        <div class="flex gap-2">
+                            <span class="text-gray-500 text-xs font-normal leading-none">UI Design</span>
+                            <span class="text-gray-500 text-xs font-normal leading-none">/</span>
+                            <span class="text-gray-500 text-xs font-normal leading-none">UX Design</span>
+                        </div>
+                        <h3 class="text-white text-xl sm:text-3xl font-bold leading-loose tracking-tight">MySatnusa Platform</h3>
+                        <p class="text-white text-base font-normal leading-normal">Tailored AI solutions and custom GPT models for specific business needs and industry requirements.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-yellow-400 text-lg sm:text-xl font-bold leading-normal tracking-tight">40% Efficiency Increase</span>
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="px-6 sm:px-8 py-4 rounded-xl outline outline-1 outline-yellow-400 backdrop-blur-[2px] flex items-center gap-2.5">
+            <span class="text-yellow-400 text-base font-semibold leading-tight tracking-tight">See More</span>
+            <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+            </svg>
+        </button>
+    </section>
+
+    <!-- AI Automation Section -->
+    <section id="ai-automation" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-6 sm:gap-8">
+        <div class="flex flex-col items-center gap-3 text-center">
+            <div class="px-3 py-2 rounded-lg outline outline-[0.4px] outline-white">
+                <span class="text-white text-base font-normal leading-tight tracking-tight">Behind-the-scene</span>
+            </div>
+            <h2 class="text-yellow-400 text-3xl sm:text-5xl font-bold leading-tight sm:leading-[67.20px] tracking-tight">AI Automation</h2>
+            <p class="max-w-full sm:max-w-4xl text-neutral-400 text-xl sm:text-2xl font-normal leading-7 tracking-tight">AI automation, a fusion of artificial intelligence and process automation, streamlines repetitive tasks and decision-making through intelligent algorithms</p>
+        </div>
+        <div class="w-full max-w-full sm:max-w-5xl grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+1" alt="Basic of AI Automation" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">Basic of AI Automation</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+2" alt="Implementation of AI Automation" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">Implementation of AI Automation in Real Life</span>
+                </div>
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-zinc-800/80 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="white" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+3" alt="AI Automation Replacing Humans" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">How Robots or AI Automation can replace Humans</span>
+                </div>
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-zinc-800/80 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="white" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+4" alt="Working with AI Automation" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">Working together with AI Automation</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-8">
+            <button class="px-4 sm:px-6 py-3 rounded-xl outline outline-1 outline-neutral-700 backdrop-blur-[2px] flex items-center gap-2.5">
+                <svg class="w-5 sm:w-6 h-5 sm:h-6 rotate-180" fill="none" stroke="gray" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-neutral-700 text-base font-normal leading-tight tracking-tight">Prev</span>
+            </button>
+            <div class="flex items-center gap-2">
+                <span class="text-slate-400 text-base font-medium leading-relaxed">1</span>
+                <span class="text-slate-400 text-base font-medium leading-relaxed">/</span>
+                <span class="text-slate-400 text-base font-medium leading-relaxed">369</span>
+            </div>
+            <button class="px-4 sm:px-6 py-3 rounded-xl outline outline-1 outline-yellow-400 backdrop-blur-[2px] flex items-center gap-2.5">
+                <span class="text-yellow-400 text-base font-normal leading-tight tracking-tight">Next</span>
+                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-14 py-8 sm:py-14 bg-slate-800 rounded-3xl outline outline-1 outline-slate-700 flex flex-col sm:flex-row gap-8 sm:gap-14">
+        <div class="flex flex-col gap-6 sm:gap-8 max-w-full sm:max-w-96">
+            <div class="flex flex-col gap-4">
+                <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Have a project or question in mind? Just send me a message.</h2>
+                <p class="text-gray-400 text-sm sm:text-base font-light leading-normal">Let's discuss how AI and automation can drive innovation and efficiency in your organization.</p>
+            </div>
+            <div class="flex flex-col gap-4 sm:gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 sm:p-4 bg-slate-900 rounded-lg">
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-gray-400 text-sm font-light leading-tight">Call me now</span>
+                        <span class="text-white text-base font-normal leading-normal">+628 xxxxxxxxx</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="p-3 sm:p-4 bg-slate-900 rounded-lg">
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-gray-400 text-sm font-light leading-tight">Chat with me</span>
+                        <span class="text-white text-base font-normal leading-normal">email@gmail.com</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="p-3 sm:p-4 bg-slate-900 rounded-lg">
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-gray-400 text-sm font-light leading-tight">Location</span>
+                        <span class="text-white text-base font-normal leading-normal">Batam, Riau Islands, Indonesia</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 sm:p-8 bg-slate-900 rounded-2xl flex flex-col gap-4">
+                <span class="text-white text-base font-normal leading-normal">Follow me on social media</span>
+                <div class="flex gap-3">
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-yellow-400 rounded-full">
+                        <svg class="w-4 h-4" fill="black" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6 sm:gap-8">
+            <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
+            <form class="flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" placeholder="Full Name" class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4"/>
+                    <input type="email" placeholder="Email Address" class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4"/>
+                </div>
+                <input type="text" placeholder="Subject" class="w-full h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4"/>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <select class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4">
+                        <option>Services</option>
+                    </select>
+                    <select class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4">
+                        <option>Budgets</option>
+                    </select>
+                </div>
+                <textarea placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4 py-3"></textarea>
+                <button type="submit" class="px-6 sm:px-9 py-3 sm:py-4 bg-yellow-400 rounded-xl flex items-center gap-3">
+                    <span class="text-neutral-900 text-base font-semibold capitalize leading-[72px]">Send Message</span>
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 pt-12 sm:pt-28 pb-6 bg-gradient-footer flex flex-col items-center gap-6 sm:gap-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-6 sm:gap-0">
+            <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">Ali Sadikin</div>
+            <button class="sm:hidden p-2" onclick="toggleMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <nav id="nav-menu-footer" class="hidden sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-7">
+                <a href="#home" class="text-white text-base font-semibold leading-normal">Home</a>
+                <a href="#about" class="text-gray-400 text-base font-normal leading-normal">About</a>
+                <a href="#awards" class="text-gray-400 text-base font-normal leading-normal">Awards & Recognition</a>
+                <a href="#portfolio" class="text-gray-400 text-base font-normal leading-normal">Portfolio</a>
+                <a href="#services" class="text-gray-400 text-base font-normal leading-normal">Services</a>
+                <a href="#testimonials" class="text-gray-400 text-base font-normal leading-normal">Testimonial</a>
+                <a href="#gallery" class="text-gray-400 text-base font-normal leading-normal">Gallery</a>
+                <a href="#articles" class="text-gray-400 text-base font-normal leading-normal">Article</a>
+                <button class="px-4 sm:px-6 py-2 rounded-lg outline outline-1 outline-yellow-400 flex items-center gap-3">
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-yellow-400 text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send message</span>
+                </button>
+            </nav>
+        </div>
+        <div class="w-full max-w-96 h-px bg-slate-800"></div>
+        <div class="text-white text-sm font-normal leading-tight text-center">© Copyright 2025, All Rights Reserved by Ali Sadikin</div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            const footerMenu = document.getElementById('nav-menu-footer');
+            menu.classList.toggle('hidden');
+            footerMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

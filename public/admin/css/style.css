@@ -1,0 +1,1072 @@
+/********** Template CSS **********/
+:root {
+    --primary: #009CFF;
+    --light: #F3F6F9;
+    --dark: #191C24;
+}
+
+.back-to-top {
+    position: fixed;
+    display: none;
+    right: 45px;
+    bottom: 45px;
+    z-index: 99;
+}
+
+
+/*** Spinner ***/
+#spinner {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .5s ease-out, visibility 0s linear .5s;
+    z-index: 99999;
+}
+
+#spinner.show {
+    transition: opacity .5s ease-out, visibility 0s linear 0s;
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/*** Button ***/
+.btn {
+    transition: .5s;
+}
+
+.btn.btn-primary {
+    color: #FFFFFF;
+}
+
+.btn-square {
+    width: 38px;
+    height: 38px;
+}
+
+.btn-sm-square {
+    width: 32px;
+    height: 32px;
+}
+
+.btn-lg-square {
+    width: 48px;
+    height: 48px;
+}
+
+.btn-square,
+.btn-sm-square,
+.btn-lg-square {
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    border-radius: 50px;
+}
+
+
+/*** Layout ***/
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--light);
+    transition: 0.5s;
+    z-index: 999;
+}
+
+.content {
+    margin-left: 250px;
+    min-height: 100vh;
+    background: #FFFFFF;
+    transition: 0.5s;
+}
+
+@media (min-width: 992px) {
+    .sidebar {
+        margin-left: 0;
+    }
+
+    .sidebar.open {
+        margin-left: -250px;
+    }
+
+    .content {
+        width: calc(100% - 250px);
+    }
+
+    .content.open {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        margin-left: -250px;
+    }
+
+    .sidebar.open {
+        margin-left: 0;
+    }
+
+    .content {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+
+/*** Navbar ***/
+.sidebar .navbar .navbar-nav .nav-link {
+    padding: 7px 20px;
+    color: var(--dark);
+    font-weight: 500;
+    border-left: 3px solid var(--light);
+    border-radius: 0 30px 30px 0;
+    outline: none;
+}
+
+.sidebar .navbar .navbar-nav .nav-link:hover,
+.sidebar .navbar .navbar-nav .nav-link.active {
+    color: var(--primary);
+    background: #FFFFFF;
+    border-color: var(--primary);
+}
+
+.sidebar .navbar .navbar-nav .nav-link i {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 40px;
+}
+
+.sidebar .navbar .navbar-nav .nav-link:hover i,
+.sidebar .navbar .navbar-nav .nav-link.active i {
+    background: var(--light);
+}
+
+.sidebar .navbar .dropdown-toggle::after {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    border: none;
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    transition: .5s;
+}
+
+.sidebar .navbar .dropdown-toggle[aria-expanded=true]::after {
+    transform: rotate(-180deg);
+}
+
+.sidebar .navbar .dropdown-item {
+    padding-left: 25px;
+    border-radius: 0 30px 30px 0;
+}
+
+.content .navbar .navbar-nav .nav-link {
+    margin-left: 25px;
+    padding: 12px 0;
+    color: var(--dark);
+    outline: none;
+}
+
+.content .navbar .navbar-nav .nav-link:hover,
+.content .navbar .navbar-nav .nav-link.active {
+    color: var(--primary);
+}
+
+.content .navbar .sidebar-toggler,
+.content .navbar .navbar-nav .nav-link i {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 40px;
+}
+
+.content .navbar .dropdown-toggle::after {
+    margin-left: 6px;
+    vertical-align: middle;
+    border: none;
+    content: "\f107";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    transition: .5s;
+}
+
+.content .navbar .dropdown-toggle[aria-expanded=true]::after {
+    transform: rotate(-180deg);
+}
+
+@media (max-width: 575.98px) {
+    .content .navbar .navbar-nav .nav-link {
+        margin-left: 15px;
+    }
+}
+
+
+/*** Date Picker ***/
+.bootstrap-datetimepicker-widget.bottom {
+    top: auto !important;
+}
+
+.bootstrap-datetimepicker-widget .table * {
+    border-bottom-width: 0px;
+}
+
+.bootstrap-datetimepicker-widget .table th {
+    font-weight: 500;
+}
+
+.bootstrap-datetimepicker-widget.dropdown-menu {
+    padding: 10px;
+    border-radius: 2px;
+}
+
+.bootstrap-datetimepicker-widget table td.active,
+.bootstrap-datetimepicker-widget table td.active:hover {
+    background: var(--primary);
+}
+
+.bootstrap-datetimepicker-widget table td.today::before {
+    border-bottom-color: var(--primary);
+}
+
+
+/*** Testimonial ***/
+.progress .progress-bar {
+    width: 0px;
+    transition: 2s;
+}
+
+
+/*** Testimonial ***/
+.testimonial-carousel .owl-dots {
+    margin-top: 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.testimonial-carousel .owl-dot {
+    position: relative;
+    display: inline-block;
+    margin: 0 5px;
+    width: 15px;
+    height: 15px;
+    border: 5px solid var(--primary);
+    border-radius: 15px;
+    transition: .5s;
+}
+
+.testimonial-carousel .owl-dot.active {
+    background: var(--dark);
+    border-color: var(--primary);
+}
+
+ /* Mode gelap untuk seluruh body */
+    body.dark-mode {
+      background-color: #1e1e2f;
+      color: #f1f1f1;
+    }
+
+    /* Warna latar belakang komponen utama di mode gelap */
+    .dark-mode .navbar,
+    .dark-mode .sidebar,
+    .dark-mode .dropdown-menu,
+    .dark-mode .bg-light {
+      background-color: #2a2a3d !important;
+      color: #f1f1f1 !important;
+    }
+
+    /* Warna teks utama sidebar & dropdown item */
+    .dark-mode .nav-link,
+    .dark-mode .dropdown-item,
+    .dark-mode .sidebar .navbar-nav .nav-item .nav-link,
+    .dark-mode .sidebar .navbar-brand small {
+      color: #f1f1f1 !important;
+    }
+
+    /* Warna nav-link aktif (terpilih) */
+    .dark-mode .nav-link.active {
+      background-color: #383856 !important;
+      color: #ffffff !important;
+    }
+
+    /* Warna dropdown background */
+    .dark-mode .dropdown-menu {
+      background-color: #2e2e44 !important;
+    }
+
+    /* Warna form input */
+    .dark-mode .form-control {
+      background-color: #3a3a50;
+      color: #fff;
+      border-color: #555;
+    }
+
+    /* Warna label checkbox, radio, dll */
+    .dark-mode .form-check-label {
+      color: #f1f1f1;
+    }
+
+    /* Border kanan sidebar */
+    .dark-mode .sidebar .navbar {
+      border-right: 1px solid #444;
+    }
+
+    /* ✅ Warna ikon utama di sidebar */
+    .dark-mode .sidebar .navbar-nav .nav-link i,
+    .dark-mode .sidebar .navbar-nav .nav-item .nav-link i {
+      color: #a0c4ff !important;
+      /* biru terang */
+    }
+
+    /* Warna teks pada dropdown menu dalam sidebar */
+    .dark-mode .sidebar .navbar-nav .nav-item .dropdown-menu .nav-link {
+      padding-left: 1.8rem;
+      color: #dddddd !important;
+    }
+
+    /* Warna link umum */
+    .dark-mode a {
+      color: #a0c4ff;
+    }
+
+    /* Override teks hitam agar terlihat di mode gelap */
+    .dark-mode .text-dark {
+      color: #f1f1f1 !important;
+    }
+
+    /* Tambahan: ubah latar bg-light agar konsisten */
+    .dark-mode .bg-light {
+      background-color: #2a2a3d !important;
+    }
+
+    /* (Opsional) Hover effect nav-link di dark mode */
+    .dark-mode .nav-link:hover {
+      background-color: #3c3c5c;
+      color: #ffffff !important;
+    }
+
+    @keyframes vibrate {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-3px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(3px);
+      }
+    }
+
+    .vibrate {
+      animation: vibrate 1s infinite;
+    }
+
+    .saldo-card {
+      background: linear-gradient(135deg, #00c9ff, #92fe9d);
+      color: #fff;
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    .saldo-amount {
+      font-size: 3rem;
+      font-weight: bold;
+      margin: 1rem 0;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .saldo-label {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+
+    .saldo-sub {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .badge-hutang {
+      font-size: 1rem;
+      background-color: #ffc107;
+      color: #212529;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      display: inline-block;
+    }
+
+    @media (max-width: 576px) {
+      .saldo-amount {
+        font-size: 2rem;
+      }
+    }
+
+    /* ===== DARK MODE FIXES ===== */
+    
+    /* Container dan content area */
+    .dark-mode .container-xxl {
+      background-color: #1e1e2f !important;
+    }
+    
+    .dark-mode .content {
+      background-color: #1e1e2f !important;
+    }
+    
+    /* Card styling untuk dark mode */
+    .dark-mode .card {
+      background-color: #2a2a3d !important;
+      border-color: #444 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .card-header {
+      background-color: #383856 !important;
+      border-color: #555 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .card-body {
+      background-color: #2a2a3d !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .card-title {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Form elements */
+    .dark-mode .form-control {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .form-control:focus {
+      background-color: #424260 !important;
+      color: #f1f1f1 !important;
+      border-color: #009CFF !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 156, 255, 0.25) !important;
+    }
+    
+    .dark-mode .form-control::placeholder {
+      color: #aaaaaa !important;
+    }
+    
+    .dark-mode .form-select {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f1f1f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e") !important;
+    }
+    
+    .dark-mode .form-select:focus {
+      background-color: #424260 !important;
+      border-color: #009CFF !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 156, 255, 0.25) !important;
+    }
+    
+    /* Form labels */
+    .dark-mode .form-label {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .form-text {
+      color: #aaaaaa !important;
+    }
+    
+    /* Form check (checkbox, radio) */
+    .dark-mode .form-check-input {
+      background-color: #3a3a50 !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .form-check-input:checked {
+      background-color: #009CFF !important;
+      border-color: #009CFF !important;
+    }
+    
+    .dark-mode .form-check-label {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Alert styling */
+    .dark-mode .alert-danger {
+      background-color: #5d2e2e !important;
+      border-color: #8b4545 !important;
+      color: #f8d7da !important;
+    }
+    
+    .dark-mode .alert-success {
+      background-color: #2e5d3e !important;
+      border-color: #45854f !important;
+      color: #d4edda !important;
+    }
+    
+    /* Button close */
+    .dark-mode .btn-close {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    
+    /* Footer */
+    .dark-mode .bg-light.rounded-top {
+      background-color: #2a2a3d !important;
+      color: #f1f1f1 !important;
+    }
+    
+    /* Small text dan muted text */
+    .dark-mode .text-muted {
+      color: #aaaaaa !important;
+    }
+    
+    .dark-mode small {
+      color: #aaaaaa !important;
+    }
+    
+    /* CKEditor dark mode styling */
+    .dark-mode .ck.ck-editor {
+      --ck-color-base-background: #2a2a3d;
+      --ck-color-base-foreground: #3a3a50;
+      --ck-color-focus-border: #009CFF;
+      --ck-color-text: #f1f1f1;
+      --ck-color-shadow-drop: rgba(0, 0, 0, 0.3);
+    }
+    
+    .dark-mode .ck.ck-editor__main > .ck-editor__editable {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .ck.ck-toolbar {
+      background-color: #2a2a3d !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .ck.ck-button {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .ck.ck-button:hover {
+      background-color: #3a3a50 !important;
+    }
+    
+    /* Row dan container */
+    .dark-mode .row {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Navbar dan sticky top */
+    .dark-mode .navbar.sticky-top {
+      background-color: #2a2a3d !important;
+    }
+    
+    .dark-mode .navbar-light .navbar-toggler {
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .navbar-light .navbar-toggler-icon {
+      filter: invert(1);
+    }
+    
+    /* Breadcrumb jika ada */
+    .dark-mode .breadcrumb {
+      background-color: #2a2a3d !important;
+    }
+    
+    .dark-mode .breadcrumb-item {
+      color: #aaaaaa !important;
+    }
+    
+    .dark-mode .breadcrumb-item.active {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Table jika ada */
+    .dark-mode .table {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .table-striped > tbody > tr:nth-of-type(odd) > td {
+      background-color: rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    .dark-mode .table-hover > tbody > tr:hover > td {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* Badge */
+    .dark-mode .badge {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Modal jika ada */
+    .dark-mode .modal-content {
+      background-color: #2a2a3d !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .modal-header {
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .modal-footer {
+      border-color: #555 !important;
+    }
+    
+    /* List group jika ada */
+    .dark-mode .list-group-item {
+      background-color: #2a2a3d !important;
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+    }
+    
+    /* Progress bar jika ada */
+    .dark-mode .progress {
+      background-color: #3a3a50 !important;
+    }
+    
+    /* Pagination jika ada */
+    .dark-mode .page-link {
+      background-color: #2a2a3d !important;
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .page-link:hover {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+      border-color: #009CFF !important;
+    }
+    
+    /* Scrollbar styling untuk dark mode */
+    .dark-mode ::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .dark-mode ::-webkit-scrollbar-track {
+      background: #2a2a3d;
+    }
+    
+    .dark-mode ::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 4px;
+    }
+    
+    .dark-mode ::-webkit-scrollbar-thumb:hover {
+      background: #666;
+    }
+    
+    /* Additional fixes for specific elements */
+    .dark-mode .upload-area {
+      background-color: #3a3a50 !important;
+      border-color: #555 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .upload-area:hover {
+      background-color: #424260 !important;
+    }
+    
+    .dark-mode .btn-outline-secondary {
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .btn-outline-secondary:hover {
+      background-color: #3a3a50 !important;
+      border-color: #009CFF !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .btn-outline-primary {
+      color: #009CFF !important;
+      border-color: #009CFF !important;
+    }
+    
+    .dark-mode .btn-outline-primary:hover {
+      background-color: #009CFF !important;
+      color: #ffffff !important;
+    }
+    
+    .dark-mode .btn-outline-danger {
+      color: #dc3545 !important;
+      border-color: #dc3545 !important;
+    }
+    
+    .dark-mode .btn-outline-danger:hover {
+      background-color: #dc3545 !important;
+      color: #ffffff !important;
+    }
+    
+    .dark-mode .border-dashed {
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .editor-container {
+      background-color: #2a2a3d !important;
+    }
+    
+    /* Template element untuk FAQ */
+    .dark-mode template {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .faq-item {
+      background-color: #2a2a3d !important;
+      border-color: #555 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .list-group {
+      background-color: #2a2a3d !important;
+    }
+    
+    .dark-mode .list-group-item {
+      background-color: #3a3a50 !important;
+      border-color: #555 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .list-group-item:hover {
+      background-color: #424260 !important;
+    }
+    
+    /* Dropdown menu spesifik untuk kategori */
+    .dark-mode select.form-select option {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    /* Text info dan warning */
+    .dark-mode .text-info {
+      color: #3dd5f3 !important;
+    }
+    
+    .dark-mode .text-warning {
+      color: #ffc107 !important;
+    }
+    
+    .dark-mode .text-success {
+      color: #198754 !important;
+    }
+    
+    /* Input datetime-local styling */
+    .dark-mode input[type="datetime-local"] {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+    
+    /* File input styling */
+    .dark-mode input[type="file"]::-webkit-file-upload-button {
+      background-color: #3a3a50;
+      color: #f1f1f1;
+      border-color: #555;
+    }
+    
+    /* Image preview styling */
+    .dark-mode #imagePreview {
+      background-color: #2a2a3d !important;
+    }
+    
+    /* Small improvements for better contrast */
+    .dark-mode .card .card-header .card-title {
+      color: #ffffff !important;
+    }
+    
+    .dark-mode .fw-semibold {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Fix untuk icon di card header */
+    .dark-mode .card-header i {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Additional UI elements fixes */
+    .dark-mode .sticky-top {
+      background-color: #2a2a3d !important;
+    }
+    
+    .dark-mode .navbar-brand {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .navbar-brand small {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Form validation states */
+    .dark-mode .is-valid {
+      border-color: #198754 !important;
+    }
+    
+    .dark-mode .is-invalid {
+      border-color: #dc3545 !important;
+    }
+    
+    .dark-mode .valid-feedback {
+      color: #198754 !important;
+    }
+    
+    .dark-mode .invalid-feedback {
+      color: #dc3545 !important;
+    }
+    
+    /* Spinner jika ada */
+    .dark-mode .spinner-border {
+      color: #009CFF !important;
+    }
+    
+    /* Image thumbnail dalam form */
+    .dark-mode .img-thumbnail {
+      background-color: #2a2a3d !important;
+      border-color: #555 !important;
+    }
+    
+    /* Fix untuk text dengan class tertentu */
+    .dark-mode h1, .dark-mode h2, .dark-mode h3, 
+    .dark-mode h4, .dark-mode h5, .dark-mode h6 {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode p {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode strong {
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode em {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Fix untuk content area dan main background */
+    .dark-mode {
+      background-color: #1e1e2f !important;
+    }
+    
+    .dark-mode .content {
+      background: #1e1e2f !important;
+    }
+    
+    /* Fix untuk table styling */
+    .dark-mode table {
+      background-color: transparent !important;
+    }
+    
+    .dark-mode .table {
+      background-color: transparent !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .table td,
+    .dark-mode .table th {
+      background-color: transparent !important;
+      color: #f1f1f1 !important;
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .table thead th {
+      background-color: #383856 !important;
+      border-color: #555 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .table tbody tr {
+      background-color: transparent !important;
+    }
+    
+    .dark-mode .table-responsive {
+      background-color: transparent !important;
+    }
+    
+    /* Fix untuk white background elements */
+    .dark-mode * {
+      /* Reset white backgrounds globally */
+    }
+    
+    .dark-mode [style*="background: #FFFFFF"],
+    .dark-mode [style*="background-color: #FFFFFF"],
+    .dark-mode [style*="background: #ffffff"],
+    .dark-mode [style*="background-color: #ffffff"],
+    .dark-mode [style*="background: white"],
+    .dark-mode [style*="background-color: white"] {
+      background-color: #2a2a3d !important;
+    }
+    
+    /* Specific fixes for elements with white backgrounds */
+    .dark-mode div[style*="background"],
+    .dark-mode div[style*="background-color"] {
+      background-color: #2a2a3d !important;
+    }
+    
+    /* Row dan container specific */
+    .dark-mode .row {
+      background-color: transparent !important;
+    }
+    
+    .dark-mode .col,
+    .dark-mode [class*="col-"] {
+      background-color: transparent !important;
+    }
+    
+    /* Container fluid */
+    .dark-mode .container-fluid {
+      background-color: #1e1e2f !important;
+    }
+    
+    /* Fix untuk CKEditor content area yang masih putih */
+    .dark-mode .ck-content {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    .dark-mode .ck-editor__editable_inline {
+      background-color: #3a3a50 !important;
+      color: #f1f1f1 !important;
+      min-height: 500px;
+    }
+    
+    /* Force override untuk semua element dengan background putih */
+    .dark-mode .bg-white {
+      background-color: #2a2a3d !important;
+    }
+    
+    /* Dashboard specific cards */
+    .dark-mode .card.bg-primary,
+    .dark-mode .card.bg-success,
+    .dark-mode .card.bg-warning,
+    .dark-mode .card.bg-danger {
+      /* Keep original colors for these specific colored cards */
+    }
+    
+    /* Stats cards - maintain their colors but ensure text is readable */
+    .dark-mode .card.bg-primary .card-body,
+    .dark-mode .card.bg-success .card-body,
+    .dark-mode .card.bg-warning .card-body,
+    .dark-mode .card.bg-danger .card-body {
+      color: #ffffff !important;
+    }
+    
+    /* FORCE OVERRIDE untuk template CSS yang menggunakan #FFFFFF */
+    
+    /* Content area - override template default */
+    .dark-mode .content {
+      background: #1e1e2f !important;
+      min-height: 100vh;
+    }
+    
+    /* Sidebar nav active state - override template */
+    .dark-mode .sidebar .navbar .navbar-nav .nav-link:hover,
+    .dark-mode .sidebar .navbar .navbar-nav .nav-link.active {
+      background: #383856 !important;
+      border-color: var(--primary);
+    }
+    
+    /* Sidebar nav icon - override template */
+    .dark-mode .sidebar .navbar .navbar-nav .nav-link i {
+      background: #3a3a50 !important;
+      color: #009CFF !important;
+    }
+    
+    .dark-mode .sidebar .navbar .navbar-nav .nav-link:hover i,
+    .dark-mode .sidebar .navbar .navbar-nav .nav-link.active i {
+      background: #009CFF !important;
+      color: #ffffff !important;
+    }
+    
+    /* Content navbar sidebar toggler - override template */
+    .dark-mode .content .navbar .sidebar-toggler,
+    .dark-mode .content .navbar .navbar-nav .nav-link i {
+      background: #3a3a50 !important;
+      color: #f1f1f1 !important;
+    }
+    
+    /* Global force override - last resort */
+    .dark-mode *[style*="background:#FFFFFF"],
+    .dark-mode *[style*="background: #FFFFFF"],
+    .dark-mode *[style*="background-color:#FFFFFF"],
+    .dark-mode *[style*="background-color: #FFFFFF"] {
+      background: #2a2a3d !important;
+      background-color: #2a2a3d !important;
+    }
+    
+    /* Ensure main page wrapper is dark */
+    .dark-mode body {
+      background: #1e1e2f !important;
+    }
+    
+    /* Container overrides */
+    .dark-mode .container,
+    .dark-mode .container-fluid,
+    .dark-mode .container-sm,
+    .dark-mode .container-md,
+    .dark-mode .container-lg,
+    .dark-mode .container-xl,
+    .dark-mode .container-xxl {
+      background: #1e1e2f !important;
+    }
+    
+    /* Main content wrapper */
+    .dark-mode main {
+      background: #1e1e2f !important;
+    }
+    
+    /* Additional Bootstrap overrides */
+    .dark-mode .bg-transparent {
+      background-color: transparent !important;
+    }
+    
+    .dark-mode .border-light {
+      border-color: #555 !important;
+    }
+    
+    .dark-mode .text-light {
+      color: #f1f1f1 !important;
+    }
+    
+    /* Fix untuk any remaining white backgrounds */
+    .dark-mode div,
+    .dark-mode section,
+    .dark-mode article {
+      background-color: inherit;
+    }
+    
+    /* Specific fix untuk table container */
+    .dark-mode .table-responsive,
+    .dark-mode .table-responsive .table {
+      background-color: transparent !important;
+    }
+    
+    /* Dashboard metrics cards should keep their colors */
+    .dark-mode .card[style*="background"] {
+      /* Preserve inline background styles for metric cards */
+    }

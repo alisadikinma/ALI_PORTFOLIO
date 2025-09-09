@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ali Sadikin - AI Generalist & Technopreneur</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --gradient: linear-gradient(to left, #1E2B44, #121212);
+        }
+        .bg-gradient-footer {
+            background: var(--gradient);
+        }
+        .outline-offset--1 {
+            outline-offset: -1px;
+        }
+        .backdrop-blur-lg {
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-footer text-white font-['Inter']">
+    <!-- Navigation Header -->
+    <header class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 pt-8 pb-6 flex flex-col sm:flex-row justify-between items-center gap-6 sm:gap-8">
+        <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">Ali Sadikin</div>
+        <button class="sm:hidden p-2" onclick="toggleMenu()">
+            <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <nav id="nav-menu" class="hidden sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-7">
+            <a href="#home" class="text-white text-base font-semibold leading-normal">Home</a>
+            <a href="#about" class="text-gray-400 text-base font-normal leading-normal">About</a>
+            <a href="#awards" class="text-gray-400 text-base font-normal leading-normal">Awards & Recognition</a>
+            <a href="#portfolio" class="text-gray-400 text-base font-normal leading-normal">Portfolio</a>
+            <a href="#services" class="text-gray-400 text-base font-normal leading-normal">Services</a>
+            <a href="#testimonials" class="text-gray-400 text-base font-normal leading-normal">Testimonial</a>
+            <a href="#gallery" class="text-gray-400 text-base font-normal leading-normal">Gallery</a>
+            <a href="#articles" class="text-gray-400 text-base font-normal leading-normal">Article</a>
+            <button class="px-4 sm:px-6 py-2 rounded-lg outline outline-1 outline-yellow-400 flex items-center gap-3">
+                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                </svg>
+                <span class="text-yellow-400 text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send message</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- AI Automation Section -->
+    <section id="ai-automation" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-6 sm:gap-8">
+        <div class="flex flex-col items-center gap-3 text-center">
+            <div class="px-3 py-2 rounded-lg outline outline-[0.4px] outline-white">
+                <span class="text-white text-base font-normal leading-tight tracking-tight">Behind-the-scene</span>
+            </div>
+            <h2 class="text-yellow-400 text-3xl sm:text-5xl font-bold leading-tight sm:leading-[67.20px] tracking-tight">AI Automation</h2>
+            <p class="max-w-full sm:max-w-4xl text-neutral-400 text-xl sm:text-2xl font-normal leading-7 tracking-tight">AI automation, a fusion of artificial intelligence and process automation, streamlines repetitive tasks and decision-making through intelligent algorithms</p>
+        </div>
+        <div class="w-full max-w-full sm:max-w-5xl grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+1" alt="Basic of AI Automation" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">Basic of AI Automation</span>
+                </div>
+            </div>
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+2" alt="Implementation of AI Automation" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">Implementation of AI Automation in Real Life</span>
+                </div>
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-zinc-800/80 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="white" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+3" alt="AI Automation Replacing Human" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">How Robots or AI Automation can replace Human</span>
+                </div>
+                <button class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-zinc-800/80 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="white" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="relative rounded-xl overflow-hidden">
+                <img src="https://placehold.co/400x300?text=AI+Automation+4" alt="Working with AI Automation" class="w-full h-auto aspect-[4/3] object-cover"/>
+                <div class="absolute bottom-0 w-full p-4 bg-zinc-800/80 backdrop-blur-lg">
+                    <span class="text-white text-base font-semibold">Working together with AI Automation</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-8">
+            <button class="px-4 sm:px-6 py-3 rounded-xl outline outline-1 outline-neutral-700 backdrop-blur-[2px] flex items-center gap-2.5">
+                <svg class="w-5 sm:w-6 h-5 sm:h-6 rotate-180" fill="none" stroke="gray" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-neutral-700 text-base font-normal leading-tight tracking-tight">Prev</span>
+            </button>
+            <div class="flex items-center gap-2">
+                <span class="text-slate-400 text-base font-medium leading-relaxed">1</span>
+                <span class="text-slate-400 text-base font-medium leading-relaxed">/</span>
+                <span class="text-slate-400 text-base font-medium leading-relaxed">369</span>
+            </div>
+            <button class="px-4 sm:px-6 py-3 rounded-xl outline outline-1 outline-yellow-400 backdrop-blur-[2px] flex items-center gap-2.5">
+                <span class="text-yellow-400 text-base font-normal leading-tight tracking-tight">Next</span>
+                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-14 py-8 sm:py-14 bg-slate-800 rounded-3xl outline outline-1 outline-slate-700 flex flex-col sm:flex-row gap-8 sm:gap-14">
+        <div class="flex flex-col gap-6 sm:gap-8 max-w-full sm:max-w-96">
+            <div class="flex flex-col gap-4">
+                <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Have a project or question in mind? Just send me a message.</h2>
+                <p class="text-gray-400 text-sm sm:text-base font-light leading-normal">Let's discuss how AI and automation can drive innovation and efficiency in your organization.</p>
+            </div>
+            <div class="flex flex-col gap-4 sm:gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 sm:p-4 bg-slate-900 rounded-lg">
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-gray-400 text-sm font-light leading-tight">Call me now</span>
+                        <span class="text-white text-base font-normal leading-normal">+628 xxxxxxxxx</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="p-3 sm:p-4 bg-slate-900 rounded-lg">
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-gray-400 text-sm font-light leading-tight">Chat with me</span>
+                        <span class="text-white text-base font-normal leading-normal">email@gmail.com</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="p-3 sm:p-4 bg-slate-900 rounded-lg">
+                        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-gray-400 text-sm font-light leading-tight">Location</span>
+                        <span class="text-white text-base font-normal leading-normal">Batam, Riau Islands, Indonesia</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 sm:p-8 bg-slate-900 rounded-2xl flex flex-col gap-4">
+                <span class="text-white text-base font-normal leading-normal">Follow me on social media</span>
+                <div class="flex gap-3">
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-yellow-400 rounded-full">
+                        <svg class="w-4 h-4" fill="black" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="p-3 sm:p-4 bg-slate-900 rounded-full">
+                        <svg class="w-4 h-4" fill="yellow" viewBox="0 0 24 24">
+                            <path d="M12 4v16m8-8H4"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6 sm:gap-8">
+            <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
+            <form class="flex flex-col gap-4">
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input type="text" placeholder="Full Name" class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4"/>
+                    <input type="email" placeholder="Email Address" class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4"/>
+                </div>
+                <input type="text" placeholder="Subject" class="w-full h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4"/>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <select class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4">
+                        <option>Services</option>
+                    </select>
+                    <select class="w-full sm:w-80 h-12 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4">
+                        <option>Budgets</option>
+                    </select>
+                </div>
+                <textarea placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md outline outline-1 outline-slate-700 text-gray-400 text-base font-normal leading-normal px-4 py-3"></textarea>
+                <button type="submit" class="px-6 sm:px-9 py-3 sm:py-4 bg-yellow-400 rounded-xl flex items-center gap-3">
+                    <span class="text-neutral-900 text-base font-semibold capitalize leading-[72px]">Send Message</span>
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 pt-12 sm:pt-28 pb-6 bg-gradient-footer flex flex-col items-center gap-6 sm:gap-8">
+        <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-6 sm:gap-0">
+            <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">Ali Sadikin</div>
+            <button class="sm:hidden p-2" onclick="toggleMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <nav id="nav-menu-footer" class="hidden sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-7">
+                <a href="#home" class="text-white text-base font-semibold leading-normal">Home</a>
+                <a href="#about" class="text-gray-400 text-base font-normal leading-normal">About</a>
+                <a href="#awards" class="text-gray-400 text-base font-normal leading-normal">Awards & Recognition</a>
+                <a href="#portfolio" class="text-gray-400 text-base font-normal leading-normal">Portfolio</a>
+                <a href="#services" class="text-gray-400 text-base font-normal leading-normal">Services</a>
+                <a href="#testimonials" class="text-gray-400 text-base font-normal leading-normal">Testimonial</a>
+                <a href="#gallery" class="text-gray-400 text-base font-normal leading-normal">Gallery</a>
+                <a href="#articles" class="text-gray-400 text-base font-normal leading-normal">Article</a>
+                <button class="px-4 sm:px-6 py-2 rounded-lg outline outline-1 outline-yellow-400 flex items-center gap-3">
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="text-yellow-400 text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send message</span>
+                </button>
+            </nav>
+        </div>
+        <div class="w-full max-w-96 h-px bg-slate-800"></div>
+        <div class="text-white text-sm font-normal leading-tight text-center">© Copyright 2025, All Rights Reserved by Ali Sadikin</div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            const footerMenu = document.getElementById('nav-menu-footer');
+            menu.classList.toggle('hidden');
+            footerMenu.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

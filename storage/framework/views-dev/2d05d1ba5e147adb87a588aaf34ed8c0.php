@@ -547,7 +547,7 @@ document.addEventListener('keydown', function(e) {
     </div>
 
     <!-- Services Layout -->
-    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+    <div class="flex flex-col lg:flex-row gap-4 lg:gap-4 items-start">
         <!-- Left Side - Service Cards (30%) -->
         <div class="lg:w-3/10 xl:w-3/10 service-left-panel flex flex-col pl-4">
             <?php $__currentLoopData = $layanan->where('status', 'Active')->sortBy('sequence'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -1792,7 +1792,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Contact Section -->
 <?php if($konf->contact_section_active ?? true): ?>
-<section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
+<section id="contact" class="w-full max-w-screen-2xl mx-auto px-12 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
     <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
         <div class="flex flex-col gap-4">
             <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">

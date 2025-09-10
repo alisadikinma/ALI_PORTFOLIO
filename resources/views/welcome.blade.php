@@ -536,7 +536,7 @@ document.addEventListener('keydown', function(e) {
     </div>
 
     <!-- Services Layout -->
-    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+    <div class="flex flex-col lg:flex-row gap-4 lg:gap-4 items-start">
         <!-- Left Side - Service Cards (30%) -->
         <div class="lg:w-3/10 xl:w-3/10 service-left-panel flex flex-col pl-4">
             @foreach ($layanan->where('status', 'Active')->sortBy('sequence') as $index => $row)

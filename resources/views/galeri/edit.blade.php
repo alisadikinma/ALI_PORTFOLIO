@@ -140,9 +140,6 @@
                             <div id="galleryItemsContainer">
                                 <!-- Existing gallery items will be loaded here -->
                             </div>
-
-                            {{-- Hidden field to ensure gallery_items array exists --}}
-                            <input type="hidden" name="gallery_items_exist" value="1">
                         </div>
 
                         <div class="card-footer">
@@ -169,6 +166,8 @@
                 </button>
             </div>
             <div class="card-body">
+                <!-- Hidden field for existing item ID -->
+                <input type="hidden" name="gallery_items[0][id]" class="item-id-input">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -255,6 +254,7 @@
         const existingItems = [
             @foreach($galeri->galleryItems as $item)
             {
+                id: {{ $item->id_gallery_item }},
                 type: '{{ $item->type }}',
                 sequence: {{ $item->sequence ?? 0 }},
                 file_name: '{{ $item->file_name }}',
@@ -287,6 +287,12 @@
 
             // If existing data, populate the form
             if (existingData) {
+                // Set ID for existing item
+                if (existingData.id) {
+                    const idInput = clone.querySelector('.item-id-input');
+                    idInput.value = existingData.id;
+                }
+                
                 const typeSelect = clone.querySelector('.item-type');
                 typeSelect.value = existingData.type;
                 

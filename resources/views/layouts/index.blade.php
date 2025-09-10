@@ -42,20 +42,240 @@ $konf = DB::table('setting')->first();
     
     <!-- Aggressive Dark Mode Fixes -->
     <link href="{{ asset('admin/css/dark-mode-aggressive.css') }}" rel="stylesheet">
+    
+    <!-- Custom CSS Force Layout Fix -->
+    <style>
+        /* Override default template styles */
+        body {
+            overflow-x: hidden !important;
+        }
+        
+        /* Reset container styles */
+        .container-xxl {
+            max-width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            display: block !important;
+        }
+        
+        /* Override Bootstrap container-fluid as well */
+        .container-fluid {
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+        
+        /* Hamburger button positioning */
+        .sidebar-toggler {
+            position: fixed !important;
+            left: 15px !important;
+            top: 15px !important;
+            z-index: 1050 !important;
+            background: #fff !important;
+            border: 1px solid #dee2e6 !important;
+            border-radius: 0.25rem !important;
+            padding: 0.5rem 0.75rem !important;
+            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075) !important;
+            transition: all 0.3s ease !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        
+        .sidebar-toggler:hover {
+            background: #f8f9fa !important;
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.1) !important;
+        }
+        
+        /* Dark mode support for hamburger */
+        body.dark .sidebar-toggler {
+            background: #2c3034 !important;
+            border-color: #3a3f44 !important;
+            color: #fff !important;
+        }
+        
+        body.dark .sidebar-toggler:hover {
+            background: #3a3f44 !important;
+        }
+        
+        /* Override template default content styles */
+        .content {
+            position: relative !important;
+            left: 0 !important;
+            right: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin-left: 0 !important;
+            min-height: 100vh !important;
+            transition: all 0.3s ease !important;
+        }
+        
+        /* Override template's open class */
+        .content.open {
+            width: 100% !important;
+            margin-left: 0 !important;
+        }
+        
+        /* When sidebar is visible */
+        .sidebar-visible .content {
+            margin-left: 280px !important;
+            width: calc(100% - 280px) !important;
+        }
+        
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            left: -280px !important;
+            width: 280px !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            transition: all 0.3s ease !important;
+            z-index: 1040 !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            background: #fff !important;
+            padding-bottom: 0 !important;
+        }
+        
+        .sidebar-visible .sidebar {
+            left: 0 !important;
+        }
+        
+        /* Dark mode sidebar background */
+        body.dark .sidebar,
+        body.dark-mode .sidebar {
+            background: #2a2a3d !important;
+        }
+        
+        /* Fix sidebar navbar alignment */
+        .sidebar .navbar {
+            padding: 0 !important;
+            margin: 0 !important;
+            display: block !important;
+            height: 100vh !important;
+        }
+        
+        /* Add padding to brand area to avoid hamburger overlap */
+        .sidebar .navbar-brand {
+            margin-left: 55px !important;
+            padding-top: 10px !important;
+            padding-bottom: 10px !important;
+            margin-bottom: 20px !important;
+            display: block !important;
+            width: auto !important;
+            text-align: left !important;
+        }
+        
+        /* User profile section */
+        .sidebar .d-flex.align-items-center {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+        }
+        
+        .sidebar .navbar-nav {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+        }
+        
+        .sidebar .nav-item {
+            display: block !important;
+            width: 100% !important;
+        }
+        
+        .sidebar .nav-link {
+            display: flex !important;
+            align-items: center !important;
+            padding: 0.75rem 1rem !important;
+            width: 100% !important;
+        }
+        
+        /* Top Navbar adjustments */
+        .content > .navbar {
+            padding: 0 !important;
+            margin: 0 !important;
+            padding-left: 70px !important; /* Space for hamburger button */
+        }
+        
+        /* Main content area */
+        .main-content {
+            padding: 1.5rem !important;
+            min-height: calc(100vh - 120px) !important;
+            width: 100% !important;
+        }
+        
+        /* Mobile overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1039;
+        }
+        
+        /* Override template's responsive styles */
+        @media (min-width: 992px) {
+            .sidebar {
+                margin-left: 0 !important;
+            }
+            
+            .sidebar.open {
+                margin-left: 0 !important;
+            }
+            
+            .content {
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
+            
+            .sidebar-visible .content {
+                width: calc(100% - 280px) !important;
+                margin-left: 280px !important;
+            }
+        }
+        
+        @media (max-width: 991.98px) {
+            .sidebar {
+                margin-left: 0 !important;
+            }
+            
+            .content {
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
+            
+            .sidebar-visible .content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            
+            .sidebar-visible .sidebar-overlay {
+                display: block !important;
+            }
+        }
+    </style>
 </head>
 
 
 
 
-<body>
+<body class="sidebar-visible">
     <div class="container-xxl position-relative bg-white d-flex p-0">
-
-
+        <!-- Mobile Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
         <!-- Sidebar Start -->
-        <div class="sidebar pe-4 pb-3" id="sidebar">
-            <nav class="navbar bg-light navbar-light">
-                <a href="#" class="navbar-brand mx-4 mb-3">
-                    <small class="text-dark">{{ $konf->instansi_setting }}</small>
+        <div class="sidebar" id="sidebar">
+            <nav class="navbar bg-light navbar-light h-100 pe-4 pb-3">
+                <a href="#" class="navbar-brand mb-3">
+                    <small class="text-dark">&nbsp;&nbsp;{{ $konf->instansi_setting }}</small>
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
@@ -66,7 +286,7 @@ $konf = DB::table('setting')->first();
                         </div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-0">{{ Auth::user()->name }}</h6>
+                        <h6 class="mb-0">{{ Auth::check() ? Auth::user()->name : 'Guest User' }}</h6>
                     </div>
                 </div>
 
@@ -126,47 +346,49 @@ $konf = DB::table('setting')->first();
 
         <!-- Content Start -->
         <div class="content">
+            <!-- Hamburger Toggle Button (Outside Navbar) -->
+            <a href="#" class="sidebar-toggler" id="sidebarToggler">
+                <i class="fa fa-bars"></i>
+            </a>
+            
             <!-- Navbar Start -->
-            <nav class="navbar navbar-expand bg-light navbar-light sticky-top px-4 py-0">
-                <a href="#" class="navbar-brand d-flex d-lg-none me-4">
-                    <h2 class="text-primary mb-0"><i class="fa fa-hashtag"></i></h2>
-                </a>
-                <a href="#" class="sidebar-toggler flex-shrink-0">
-                    <i class="fa fa-bars"></i>
-                </a>
-                <div class="ms-4 d-none d-md-block">
-                    <div class="text-dark" id="serverTime">
-                        {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y - H:i:s') }}
+            <nav class="navbar navbar-expand bg-light navbar-light sticky-top py-0">
+                <div class="d-flex align-items-center w-100">
+                    <div style="flex: 1;">
+                        <div class="text-dark d-none d-md-block" id="serverTime">
+                            {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y - H:i:s') }}
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-check form-switch ms-4">
-                    <input class="form-check-input" type="checkbox" id="darkModeToggle">
-                    <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
-                </div>
+                    <div class="form-check form-switch ms-4">
+                        <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                        <label class="form-check-label" for="darkModeToggle">Dark Mode</label>
+                    </div>
 
-                <!-- <div id="google_translate_element" class="ms-3"></div> -->
-
-                <div class="navbar-nav align-items-center ms-auto">
-
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img class="rounded-circle me-lg-2" src="{{ asset('logo/' . $konf->logo_setting) }}"
-                                alt="" style="width: 40px; height: 40px;">
-                            <span class="d-none d-lg-inline-flex">{{ Auth::user()->name }}</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
-                            <a href="{{ route('profile.show') }}" class="dropdown-item">My Profile</a>
-                            @if (Auth::user()->id == 1)
-                            <a href="{{ route('setting.index') }}" class="dropdown-item">Setting Web</a>
-                            @endif
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <a href="{{ route('logout') }}"
-                                    onclick="event.preventDefault();
-              this.closest('form').submit();"
-                                    class="dropdown-item">Logout</a>
-                            </form>
+                    <div class="navbar-nav align-items-center ms-auto">
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <img class="rounded-circle me-lg-2" src="{{ asset('logo/' . $konf->logo_setting) }}"
+                                    alt="" style="width: 40px; height: 40px;">
+                                <span class="d-none d-lg-inline-flex">{{ Auth::check() ? Auth::user()->name : 'Guest User' }}</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                                @if (Auth::check())
+                                    <a href="{{ route('profile.show') }}" class="dropdown-item">My Profile</a>
+                                    @if (Auth::user()->id == 1)
+                                    <a href="{{ route('setting.index') }}" class="dropdown-item">Setting Web</a>
+                                    @endif
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <a href="{{ route('logout') }}"
+                                            onclick="event.preventDefault();
+                      this.closest('form').submit();"
+                                            class="dropdown-item">Logout</a>
+                                    </form>
+                                @else
+                                    <a href="#" class="dropdown-item">Guest Mode</a>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -174,9 +396,10 @@ $konf = DB::table('setting')->first();
             </nav>
             <!-- Navbar End -->
 
-
-            @yield('content')
-
+            <!-- Main Content Area -->
+            <div class="main-content">
+                @yield('content')
+            </div>
 
             <!-- Footer Start -->
             <div class="container-fluid pt-4 px-4">
@@ -218,6 +441,55 @@ $konf = DB::table('setting')->first();
     
     <!-- Dark Mode Handler -->
     <script src="{{ asset('admin/js/dark-mode.js') }}"></script>
+    
+    <!-- Sidebar Toggle Handler -->
+    <script>
+        // Disable default sidebar toggler from main.js
+        $(document).ready(function() {
+            $('.sidebar-toggler').off('click');
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggler = document.getElementById('sidebarToggler');
+            const body = document.body;
+            const sidebar = document.querySelector('.sidebar');
+            const content = document.querySelector('.content');
+            
+            // Remove any 'open' classes from template
+            sidebar.classList.remove('open');
+            content.classList.remove('open');
+            
+            // Load saved state from localStorage
+            const sidebarState = localStorage.getItem('sidebarState');
+            if (sidebarState === 'hidden') {
+                body.classList.remove('sidebar-visible');
+            }
+            
+            // Toggle sidebar on click
+            sidebarToggler.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                body.classList.toggle('sidebar-visible');
+                
+                // Save state to localStorage
+                if (body.classList.contains('sidebar-visible')) {
+                    localStorage.setItem('sidebarState', 'visible');
+                } else {
+                    localStorage.setItem('sidebarState', 'hidden');
+                }
+            });
+            
+            // Handle overlay click on mobile
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) {
+                overlay.addEventListener('click', function() {
+                    body.classList.remove('sidebar-visible');
+                    localStorage.setItem('sidebarState', 'hidden');
+                });
+            }
+        });
+    </script>
+    
     <script>
         function updateTime() {
             const serverTimeElement = document.getElementById('serverTime');

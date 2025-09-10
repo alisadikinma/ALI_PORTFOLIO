@@ -1,107 +1,234 @@
-<?php
-
-use Illuminate\Support\Facades\DB;
-
-$konf = DB::table('setting')->first();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<title>{{$konf->instansi_setting}} | Login</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="{{$konf->tentang_setting}}">
-	<meta name="keywords" content="{{ $konf->keyword_setting }}">
-	<meta name="author" content="{{$konf->instansi_setting}}">
-	<meta name="robots" content="index, follow">
-	<meta property="og:title" content="Login | {{$konf->instansi_setting}}">
-	<meta property="og:description" content="{{$konf->tentang_setting}}">
-	<meta property="og:image" content="{{asset ('logo/'.$konf->logo_setting)}}">
-	<meta property="og:url" content="{{url()->current()}}">
-	<meta name="twitter:card" content="summary_large_image">
-	<link rel="icon" type="image/png" href="{{asset ('logo/'.$konf->logo_setting)}}" />
-	<link rel="stylesheet" type="text/css" href="web/login/vendor/bootstrap/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="web/login/vendor/animate/animate.css">
-	<link rel="stylesheet" type="text/css" href="web/login/vendor/css-hamburgers/hamburgers.min.css">
-	<link rel="stylesheet" type="text/css" href="web/login/vendor/select2/select2.min.css">
-	<link rel="stylesheet" type="text/css" href="web/login/css/util.css">
-	<link rel="stylesheet" type="text/css" href="web/login/css/main.css">
-	<script type="application/ld+json">
-		{
-			"@context": "https://schema.org",
-			"@type": "WebPage",
-			"name": "Login | {{$konf->instansi_setting}}",
-			"description": "AI Generalist & Technopreneur",
-			"url": "{{url()->current()}}"
-		}
-	</script>
+    <meta charset="utf-8">
+    <title>Login - ALI Portfolio</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link href="{{ asset('favicon/favicon.ico') }}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ asset('admin/css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ asset('admin/css/style.css') }}" rel="stylesheet">
+
+    <style>
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        
+        .login-header h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .login-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .login-body {
+            padding: 40px 30px;
+        }
+        
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        
+        .form-floating > .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            height: calc(3.5rem + 2px);
+        }
+        
+        .form-floating > .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            color: white;
+            transition: transform 0.2s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
-	<div class="container-login100" style="background: url('{{ asset('web/login/images/11.jpg')}}') no-repeat center center; background-size: cover; background-attachment: fixed;">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-user-shield fa-2x mb-3"></i>
+                <h3>Admin Panel</h3>
+                <p>ALI Portfolio Dashboard</p>
+            </div>
+            
+            <div class="login-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @foreach ($errors->all() as $error)
+                            {{ $error }}
+                        @endforeach
+                    </div>
+                @endif
 
+                @if (session('status'))
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        {{ session('status') }}
+                    </div>
+                @endif
 
-		<div class="limiter">
-			<div class="container-login100">
-				<div class="wrap-login100">
-					<div class="login100-pic js-tilt" data-tilt>
-						<img src="{{asset ('logo/'.$konf->logo_setting)}}" alt="IMG">
-					</div>
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
 
-					<form action="{{ route('login') }}" method="POST">
-						{{-- csrf done --}}
-						@csrf
-						<span class="login100-form-title">
-							Login Page
-						</span>
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" 
+                               placeholder="name@example.com" value="{{ old('email') }}" required autofocus>
+                        <label for="email">Email Address</label>
+                    </div>
 
-						<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-							<input class="input100" type="text" name="email" placeholder="Email" required>
-							<span class="focus-input100"></span>
-							<span class="symbol-input100">
-								<i class="fa fa-envelope" aria-hidden="true"></i>
-							</span>
-						</div>
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Password" required>
+                        <label for="password">Password</label>
+                    </div>
 
-						<div class="wrap-input100 validate-input" data-validate="Password is required">
-							<input class="input100" type="password" name="password" placeholder="Password" required>
-							<span class="focus-input100"></span>
-							<span class="symbol-input100">
-								<i class="fa fa-lock" aria-hidden="true"></i>
-							</span>
-						</div>
+                    <div class="remember-me">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
+                        </div>
+                        
+                        <a href="#" class="text-muted small">Forgot Password?</a>
+                    </div>
 
-						<div class="container-login100-form-btn">
-							<button class="login100-form-btn" type="submit">
-								Login
-							</button>
-						</div>
+                    <button type="submit" class="btn btn-login">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Sign In
+                    </button>
+                </form>
+                
+                <div class="back-link">
+                    <a href="{{ route('home') }}">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Back to Website
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
-
-
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	{{-- <footer class="footer-login">
-		<p><img src="{{asset ('logo/'.$konf->logo_setting)}}" style="width: 150px;" height="45px;" alt="Logo Footer"></p>
-	</footer> --}}
-	<script src="web/login/vendor/jquery/jquery-3.2.1.min.js"></script>
-	<script src="web/login/vendor/bootstrap/js/popper.js"></script>
-	<script src="web/login/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="web/login/vendor/select2/select2.min.js"></script>
-	<script src="web/login/vendor/tilt/tilt.jquery.min.js"></script>
-	<script>
-		$('.js-tilt').tilt({
-			scale: 1.1
-		})
-	</script>
-	<script src="js/main.js"></script>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto focus on email input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('email').focus();
+        });
+        
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                e.preventDefault();
+                alert('Please fill in all fields');
+                return false;
+            }
+            
+            // Simple email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Please enter a valid email address');
+                return false;
+            }
+        });
+    </script>
 </body>
 
 </html>

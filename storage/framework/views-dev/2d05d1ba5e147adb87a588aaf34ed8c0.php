@@ -68,15 +68,123 @@
     .animate-fade-out {
         animation: fade-out 0.3s ease-in-out;
     }
-<style>
-/* Custom CSS untuk hover effect social media icons */
-.social-icon:hover svg {
-    color: #000000 !important;
-}
+
+    /* Custom CSS untuk hover effect social media icons */
+    .social-icon:hover svg {
+        color: #000000 !important;
+    }
+
+    /* Fix untuk section overlap dan spacing */
+    body {
+        background: #0f172a;
+        margin: 0;
+        padding: 0;
+    }
+
+    section {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 2rem;
+    }
+
+    #home {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        margin-bottom: 0;
+        padding-bottom: 4rem;
+    }
+
+    #about {
+        background: #1e293b;
+        margin-top: -2rem;
+        padding-top: 4rem;
+        margin-bottom: 0;
+    }
+
+    #awards {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #services {
+        margin-top: 0;
+        margin-bottom: 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    #portfolio {
+        background: #0f172a;
+        margin-top: 0;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .testimonials-section {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #gallery {
+        background: #1e293b;
+        margin-top: 0;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    #articles {
+        background: #0f172a;
+        margin-top: 0;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    #contact {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Hero section fixes */
+    .w-full.flex.flex-col.sm\:flex-row.items-center {
+        min-height: 500px;
+        align-items: center;
+    }
+
+    /* Stats section background fix */
+    .w-full.bg-neutral-900\/40 {
+        background: rgba(15, 23, 42, 0.8) !important;
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        margin-top: 2rem;
+        padding: 2rem 0;
+    }
+
+    /* Container fixes */
+    .max-w-screen-2xl {
+        max-width: 1536px !important;
+        width: 100%;
+    }
+
+    /* Prevent overflow issues */
+    html, body {
+        overflow-x: hidden;
+    }
+
+    /* Section spacing consistency */
+    section:not(#home):not(.testimonials-section) {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    /* Clear floats and fix layout issues */
+    .clearfix::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
 </style>
 
 <section id="home"
-    class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16">
+    class="relative w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16 z-10">
     <div class="w-full flex flex-col sm:flex-row items-center gap-8 sm:gap-32">
         <img src="<?php echo e(asset('favicon/' . $konf->favicon_setting)); ?>" alt="Profile image"
             class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl" />
@@ -89,8 +197,9 @@
 
                     </div>
                 </div>
-                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]">
+                <h1 class="text-white text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]">
                     Hello bro, I'm<br />
+                    <span class="text-yellow-400"><?php echo e($konf->nama_setting ?? 'Ali Sadikin'); ?></span>
                 </h1>
             </div>
             <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]">
@@ -265,9 +374,9 @@
 </section>
 <?php endif; ?>
 
-<!-- Awards Section - FIXED ALIGNMENT -->
+<!-- Awards & Recognition Section - PROFESSIONAL DESIGN -->
 <?php if($konf->awards_section_active ?? true): ?>
-<section id="awards" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-12">
+<section id="awards" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-12 bg-slate-900">
     <!-- Header -->
     <div class="flex flex-col gap-4 text-center mb-12">
         <h2 class="text-yellow-400 text-4xl sm:text-6xl font-bold leading-tight tracking-tight">
@@ -281,88 +390,90 @@
     </div>
 
     <?php if(isset($award) && $award->count() > 0): ?>
-    <!-- Awards Grid - FIXED LAYOUT -->
-    <div class="max-w-6xl mx-auto">
-        <!-- First Row - 3 Awards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <?php $__currentLoopData = $award->take(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+    <!-- Awards Grid - PROFESSIONAL CARD DESIGN -->
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <?php $__currentLoopData = $award; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
             <?php
-            // Determine card styling based on award name
-            $logoClass = 'w-12 h-12 object-contain';
-            $cardBg = 'bg-slate-800/80';
+            // Determine logo styling based on award name/company
+            $logoColors = [
+                'nextdev' => ['bg-blue-600', 'border-blue-400'],
+                'alibaba' => ['bg-orange-500', 'border-orange-400'],
+                'google' => ['bg-blue-500', 'border-blue-300'],
+                'wild' => ['bg-purple-600', 'border-purple-400'],
+                'fenox' => ['bg-red-600', 'border-red-400'],
+                'bubu' => ['bg-green-600', 'border-green-400'],
+                'default' => ['bg-yellow-500', 'border-yellow-400']
+            ];
             
-            if (stripos($row->nama_award, 'google') !== false) {
-            $iconBg = 'bg-blue-600/20 border-blue-400';
-            } elseif (stripos($row->nama_award, 'alibaba') !== false) {
-            $iconBg = 'bg-orange-600/20 border-orange-400'; 
-            } elseif (stripos($row->nama_award, 'nextdev') !== false) {
-            $iconBg = 'bg-slate-600/20 border-slate-400';
-            } else {
-            $iconBg = 'bg-yellow-400/20 border-yellow-400';
+            $companyKey = 'default';
+            foreach(array_keys($logoColors) as $key) {
+                if(stripos($row->nama_award, $key) !== false) {
+                    $companyKey = $key;
+                    break;
+                }
             }
+            
+            $bgColor = $logoColors[$companyKey][0];
+            $borderColor = $logoColors[$companyKey][1];
             ?>
             
-            <div class="p-6 <?php echo e($cardBg); ?> rounded-2xl border border-slate-600 hover:border-yellow-400/50 transition-all duration-300 hover:transform hover:scale-105 cursor-pointer" onclick="openAwardGallery(<?php echo e($row->id_award); ?>, '<?php echo e($row->nama_award); ?>')">
-            <!-- Award Icon & Title -->
-            <div class="flex items-start gap-4 mb-4">
-            <div class="w-16 h-16 <?php echo e($iconBg); ?> border rounded-xl flex items-center justify-center flex-shrink-0">
-            <img src="<?php echo e(asset('file/award/' . $row->gambar_award)); ?>" 
-            alt="<?php echo e($row->nama_award); ?>" 
-            class="<?php echo e($logoClass); ?>" />
-            </div>
-            <div class="flex-1 min-w-0">
-            <h3 class="text-white text-lg font-bold mb-2 leading-tight">
-            <?php echo e($row->nama_award); ?>
-
-            </h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
-            <?php echo Str::limit(strip_tags($row->keterangan_award), 120, '...'); ?>
-
-            </p>
-            </div>
-            </div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-        
-        <!-- Second Row - Remaining Awards (Centered) -->
-        <?php if($award->count() > 3): ?>
-        <div class="flex justify-center">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-                <?php $__currentLoopData = $award->skip(3); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <?php
-                    if (stripos($row->nama_award, 'fenox') !== false) {
-                        $iconBg = 'bg-red-600/20 border-red-400';
-                    } elseif (stripos($row->nama_award, 'nextdev') !== false) {
-                        $iconBg = 'bg-slate-600/20 border-slate-400';
-                    } else {
-                        $iconBg = 'bg-yellow-400/20 border-yellow-400';
-                    }
-                ?>
-                
-                <div class="p-6 bg-slate-800/80 rounded-2xl border border-slate-600 hover:border-yellow-400/50 transition-all duration-300 hover:transform hover:scale-105 cursor-pointer" onclick="openAwardGallery(<?php echo e($row->id_award); ?>, '<?php echo e($row->nama_award); ?>')">
-                    <div class="flex items-start gap-4">
-                        <div class="w-16 h-16 <?php echo e($iconBg); ?> border rounded-xl flex items-center justify-center flex-shrink-0">
-                            <img src="<?php echo e(asset('file/award/' . $row->gambar_award)); ?>" 
-                                 alt="<?php echo e($row->nama_award); ?>" 
-                                 class="w-12 h-12 object-contain" />
+            <div class="award-card group bg-slate-800/90 backdrop-blur-sm rounded-2xl border border-slate-600 hover:border-yellow-400/70 transition-all duration-300 hover:transform hover:scale-[1.02] cursor-pointer shadow-lg hover:shadow-2xl" onclick="openAwardGallery(<?php echo e($row->id_award); ?>, '<?php echo e(addslashes($row->nama_award)); ?>')">
+                <div class="p-6 flex flex-col h-full">
+                    <!-- Top Section: Logo + Title -->
+                    <div class="flex items-start gap-4 mb-4">
+                        <!-- Logo Section -->
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 <?php echo e($bgColor); ?> rounded-xl border-2 <?php echo e($borderColor); ?> flex items-center justify-center shadow-lg">
+                                <?php if($row->gambar_award): ?>
+                                <img src="<?php echo e(asset('file/award/' . $row->gambar_award)); ?>" 
+                                     alt="<?php echo e($row->nama_award); ?>" 
+                                     class="w-10 h-10 object-contain filter brightness-0 invert" />
+                                <?php else: ?>
+                                <!-- Default trophy icon -->
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2L13.09 8.26L22 9L17 14L18.18 22.5L12 19.77L5.82 22.5L7 14L2 9L10.91 8.26L12 2Z"/>
+                                </svg>
+                                <?php endif; ?>
+                            </div>
                         </div>
+                        
+                        <!-- Title Section -->
                         <div class="flex-1 min-w-0">
-                            <h3 class="text-white text-lg font-bold mb-2 leading-tight">
+                            <h3 class="text-white text-lg font-bold leading-tight mb-2 group-hover:text-yellow-400 transition-colors">
                                 <?php echo e($row->nama_award); ?>
 
                             </h3>
-                            <p class="text-gray-400 text-sm leading-relaxed">
-                                <?php echo Str::limit(strip_tags($row->keterangan_award), 120, '...'); ?>
+                            <?php if(isset($row->company_award) || isset($row->period_award)): ?>
+                            <p class="text-yellow-400 text-sm font-medium">
+                                <?php echo e($row->company_award ?? 'Award Program'); ?><?php echo e(isset($row->period_award) ? ' - ' . $row->period_award : ''); ?>
 
                             </p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Description Section -->
+                    <div class="flex-1">
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            <?php echo Str::limit(strip_tags($row->keterangan_award), 180, '...'); ?>
+
+                        </p>
+                    </div>
+                    
+                    <!-- Bottom indicator -->
+                    <div class="mt-4 pt-3 border-t border-slate-700 group-hover:border-yellow-400/30 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500 uppercase tracking-wide">Recognition</span>
+                            <svg class="w-4 h-4 text-gray-500 group-hover:text-yellow-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
                         </div>
                     </div>
                 </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         </div>
-        <?php endif; ?>
     </div>
     
     <?php else: ?>
@@ -396,6 +507,8 @@
 
 <script>
 function openAwardGallery(awardId, awardName) {
+    console.log('Opening gallery for award:', awardId, awardName);
+    
     document.getElementById('awardGalleryTitle').textContent = `${awardName} - Gallery`;
     document.getElementById('awardGalleryModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -410,11 +523,24 @@ function openAwardGallery(awardId, awardName) {
         </div>
     `;
     
+    // Determine base URL based on current location
+    let baseUrl = '';
+    if (window.location.pathname.includes('/ALI_PORTFOLIO')) {
+        baseUrl = '/ALI_PORTFOLIO/public';
+    } else if (window.location.pathname.includes('/public')) {
+        baseUrl = '/public';
+    }
+    
     // Fetch gallery items
-    fetch(`/gallery/${awardId}/items`)
-        .then(response => response.json())
+    fetch(`${baseUrl}/gallery/${awardId}/items`)
+        .then(response => {
+            console.log('Response status:', response.status);
+            return response.json();
+        })
         .then(data => {
-            if (data.success && data.items.length > 0) {
+            console.log('Gallery data:', data);
+            
+            if (data.success && data.items && data.items.length > 0) {
                 let content = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
                 
                 data.items.forEach(item => {
@@ -423,7 +549,9 @@ function openAwardGallery(awardId, awardName) {
                             <div class="aspect-square relative">
                                 ${item.type === 'image' ? 
                                     `<img src="${item.file_url}" alt="Gallery item" class="w-full h-full object-cover cursor-pointer" onclick="openImageModal('${item.file_url}', 'Gallery item')">` :
-                                    `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${extractYouTubeId(item.youtube_url)}" frameborder="0" allowfullscreen></iframe>`
+                                    item.youtube_url ? 
+                                    `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${extractYouTubeId(item.youtube_url)}" frameborder="0" allowfullscreen></iframe>` :
+                                    `<div class="w-full h-full flex items-center justify-center bg-gray-800"><span class="text-gray-400">No media</span></div>`
                                 }
                                 <div class="absolute top-2 right-2">
                                     <span class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">${item.type}</span>
@@ -441,6 +569,15 @@ function openAwardGallery(awardId, awardName) {
                         <div class="text-yellow-400 text-6xl mb-4">🖼️</div>
                         <h3 class="text-white text-xl font-semibold mb-2">No Gallery Items</h3>
                         <p class="text-gray-400">This award doesn't have any gallery items yet.</p>
+                        <p class="text-gray-500 text-sm mt-4">Award ID: ${awardId}</p>
+                        <div class="mt-4 p-4 bg-slate-700 rounded-lg">
+                            <p class="text-yellow-400 text-sm mb-2">To fix this:</p>
+                            <ol class="text-gray-300 text-sm text-left list-decimal list-inside">
+                                <li>Go to phpMyAdmin</li>
+                                <li>Update gallery_items table</li>
+                                <li>Set id_award = ${awardId} for some items</li>
+                            </ol>
+                        </div>
                     </div>
                 `;
             }
@@ -451,7 +588,8 @@ function openAwardGallery(awardId, awardName) {
                 <div class="text-center py-12">
                     <div class="text-red-400 text-6xl mb-4">⚠️</div>
                     <h3 class="text-white text-xl font-semibold mb-2">Error Loading Gallery</h3>
-                    <p class="text-gray-400">Failed to load gallery items. Please try again.</p>
+                    <p class="text-gray-400">Failed to load gallery items. Please check console for details.</p>
+                    <p class="text-gray-500 text-sm mt-2">Error: ${error.message}</p>
                 </div>
             `;
         });
@@ -502,6 +640,7 @@ document.addEventListener('keydown', function(e) {
 });
 </script>
 <?php endif; ?>
+
 <!-- Services Section -->
 <?php if(($konf->services_section_active ?? true) && isset($layanan) && $layanan->count() > 0): ?>
 <section id="services" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
@@ -602,6 +741,11 @@ document.addEventListener('keydown', function(e) {
 #services {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     min-height: 800px;
+    padding: 4rem 0 !important;
+    margin: 0 !important;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
 }
 
 /* Responsive Services Layout */

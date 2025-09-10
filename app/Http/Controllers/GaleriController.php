@@ -221,8 +221,123 @@ class GaleriController extends Controller
 
             $galeri->update($galeriData);
 
-            // Delete existing gallery items and their files
-            foreach ($galeri->galleryItems as $item) {
+            // Track existing items to handle updates/deletes
+            $existingItemIds = [];
+            $processedItemIds = [];
+
+            // Log for debugging
+            Log::info('Gallery items in request:', [
+                'has_gallery_items' => $request->has('gallery_items'),
+                'gallery_items' => $request->gallery_items ?? 'null'
+            ]);
+
+            // Process gallery items
+            if ($request->has('gallery_items') && is_array($request->gallery_items)) {
+                foreach ($request->gallery_items as $index => $item) {
+                    if (empty($item['type'])) continue;
+
+                    // Check if this is an existing item (has id)
+                    if (isset($item['id']) && !empty($item['id'])) {
+                        $existingItem = GalleryItem::find($item['id']);
+                        if ($existingItem && $existingItem->id_galeri == $galeri->id_galeri) {
+                            // Update existing item
+                            $itemData = [
+                                'type' => $item['type'],
+                                'id_award' => $request->id_award,
+                                'sequence' => $item['sequence'] ?? $index,
+                                'status' => 'Active',
+                            ];
+
+                            // Handle file upload for image (if new file provided)
+                            if ($item['type'] === 'image' && isset($item['file']) && $item['file']) {
+                                // Delete old file
+                                if ($existingItem->file_name && file_exists(public_path('file/galeri/' . $existingItem->file_name))) {
+                                    unlink(public_path('file/galeri/' . $existingItem->file_name));
+                                }
+
+                                $file = $item['file'];
+                                $filename = 'gallery_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                                
+                                $uploadPath = public_path('file/galeri');
+                                if (!file_exists($uploadPath)) {
+                                    mkdir($uploadPath, 0755, true);
+                                }
+                                
+                                $file->move($uploadPath, $filename);
+                                $itemData['file_name'] = $filename;
+                            }
+
+                            // Handle YouTube URL
+                            if ($item['type'] === 'youtube') {
+                                $itemData['youtube_url'] = $item['youtube_url'] ?? $existingItem->youtube_url;
+                            }
+
+                            $existingItem->update($itemData);
+                            $processedItemIds[] = $existingItem->id_gallery_item;
+                        }
+                    } else {
+                        // Create new item
+                        $itemData = [
+                            'id_galeri' => $galeri->id_galeri,
+                            'type' => $item['type'],
+                            'id_award' => $request->id_award,
+                            'sequence' => $item['sequence'] ?? $index,
+                            'status' => 'Active',
+                        ];
+
+                        // Handle file upload for image
+                        if ($item['type'] === 'image' && isset($item['file']) && $item['file']) {
+                            $file = $item['file'];
+                            $filename = 'gallery_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+                            
+                            $uploadPath = public_path('file/galeri');
+                            if (!file_exists($uploadPath)) {
+                                mkdir($uploadPath, 0755, true);
+                            }
+                            
+                            $file->move($uploadPath, $filename);
+                            $itemData['file_name'] = $filename;
+                        }
+
+                        // Handle YouTube URL
+                        if ($item['type'] === 'youtube' && isset($item['youtube_url']) && !empty($item['youtube_url'])) {
+                            $itemData['youtube_url'] = $item['youtube_url'];
+                        }
+
+                        // Validate that required data exists based on type
+                        if ($item['type'] === 'image' && !isset($itemData['file_name'])) {
+                            continue;
+                        }
+
+                        if ($item['type'] === 'youtube' && !isset($itemData['youtube_url'])) {
+                            continue;
+                        }
+
+                        $newItem = GalleryItem::create($itemData);
+                        $processedItemIds[] = $newItem->id_gallery_item;
+                    }
+                }
+            } else {
+                // If no gallery_items in request, keep all existing items
+                $processedItemIds = $galeri->galleryItems->pluck('id_gallery_item')->toArray();
+                Log::info('No gallery items in request, keeping all existing items:', $processedItemIds);
+            }
+
+            // Delete items that were not processed (removed from form)
+            // Only delete if we have processed items (means form was submitted with gallery_items)
+            Log::info('Processed item IDs:', $processedItemIds);
+            
+            if ($request->has('gallery_items') && is_array($request->gallery_items)) {
+                // Form submitted with gallery_items, delete items not in the list
+                $itemsToDelete = $galeri->galleryItems()->whereNotIn('id_gallery_item', $processedItemIds)->get();
+                Log::info('Items to delete:', $itemsToDelete->pluck('id_gallery_item')->toArray());
+            } else {
+                // No gallery_items in form, keep all existing items
+                $itemsToDelete = collect();
+                Log::info('No gallery_items in form, keeping all existing items');
+            }
+            
+            foreach ($itemsToDelete as $item) {
                 if ($item->file_name && $item->type === 'image') {
                     $filePath = public_path('file/galeri/' . $item->file_name);
                     if (file_exists($filePath)) {
@@ -230,51 +345,6 @@ class GaleriController extends Controller
                     }
                 }
                 $item->delete();
-            }
-
-            // Process new gallery items
-            if ($request->has('gallery_items') && is_array($request->gallery_items)) {
-                foreach ($request->gallery_items as $index => $item) {
-                    if (empty($item['type'])) continue;
-
-                    $itemData = [
-                        'id_galeri' => $galeri->id_galeri,
-                        'type' => $item['type'],
-                        'id_award' => $request->id_award, // Award dari galeri, bukan per item
-                        'sequence' => $item['sequence'] ?? $index,
-                        'status' => 'Active', // Default status
-                    ];
-
-                    // Handle file upload for image
-                    if ($item['type'] === 'image' && isset($item['file']) && $item['file']) {
-                        $file = $item['file'];
-                        $filename = 'gallery_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
-                        
-                        $uploadPath = public_path('file/galeri');
-                        if (!file_exists($uploadPath)) {
-                            mkdir($uploadPath, 0755, true);
-                        }
-                        
-                        $file->move($uploadPath, $filename);
-                        $itemData['file_name'] = $filename;
-                    }
-
-                    // Handle YouTube URL
-                    if ($item['type'] === 'youtube' && isset($item['youtube_url']) && !empty($item['youtube_url'])) {
-                        $itemData['youtube_url'] = $item['youtube_url'];
-                    }
-
-                    // Validate that required data exists based on type
-                    if ($item['type'] === 'image' && !isset($itemData['file_name'])) {
-                        continue;
-                    }
-
-                    if ($item['type'] === 'youtube' && !isset($itemData['youtube_url'])) {
-                        continue;
-                    }
-
-                    GalleryItem::create($itemData);
-                }
             }
 
             DB::commit();
@@ -350,23 +420,56 @@ class GaleriController extends Controller
     // API endpoint for getting gallery items by award
     public function getGalleryByAward($awardId)
     {
-        $galleryItems = GalleryItem::with(['galeri'])
-            ->where('id_award', $awardId)
-            ->orderBy('id_gallery_item', 'asc')
-            ->get();
+        try {
+            // Get all gallery items that belong to this award
+            $galleryItems = GalleryItem::with(['galeri'])
+                ->where('id_award', $awardId)
+                ->where('status', 'Active')
+                ->orderBy('sequence', 'asc')
+                ->orderBy('id_gallery_item', 'asc')
+                ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => $galleryItems->map(function($item) {
-                return [
+            // Format items for frontend
+            $items = $galleryItems->map(function($item) {
+                $data = [
                     'id' => $item->id_gallery_item,
                     'type' => $item->type,
-                    'file_url' => $item->file_url,
-                    'thumbnail_url' => $item->thumbnail_url,
-                    'gallery_name' => $item->galeri->nama_galeri,
+                    'sequence' => $item->sequence,
+                    'title' => $item->galeri ? $item->galeri->nama_galeri : null,
+                    'gallery_name' => $item->galeri ? $item->galeri->nama_galeri : null,
+                    'status' => $item->status
                 ];
-            })
-        ]);
+                
+                if ($item->type === 'image' && $item->file_name) {
+                    $data['file_url'] = asset('file/galeri/' . $item->file_name);
+                    $data['thumbnail_url'] = asset('file/galeri/' . $item->file_name);
+                } elseif ($item->type === 'youtube' && $item->youtube_url) {
+                    $data['file_url'] = $item->youtube_url;
+                    $data['youtube_url'] = $item->youtube_url;
+                    // Extract YouTube ID for thumbnail
+                    preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/', $item->youtube_url, $matches);
+                    $videoId = $matches[1] ?? null;
+                    $data['thumbnail_url'] = $videoId ? "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg" : null;
+                }
+                
+                return $data;
+            });
+
+            return response()->json([
+                'success' => true,
+                'items' => $items,
+                'total' => $items->count()
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to get gallery items by award: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load gallery items',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

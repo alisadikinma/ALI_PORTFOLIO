@@ -45,7 +45,7 @@
                                 <i class="fas fa-signature me-1"></i>Full Name
                             </label>
                             <input type="text" class="form-control" id="name" name="name" 
-                                   value="{{ Auth::user()->name }}" required>
+                                   value="{{ Auth::user()->name ?? '' }}" required>
                         </div>
                         
                         <div class="mb-3">
@@ -53,7 +53,7 @@
                                 <i class="fas fa-envelope me-1"></i>Email Address
                             </label>
                             <input type="email" class="form-control" id="email" name="email" 
-                                   value="{{ Auth::user()->email }}" required>
+                                   value="{{ Auth::user()->email ?? '' }}" required>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">
@@ -123,17 +123,29 @@
                         <div class="col-md-6">
                             <div class="info-item mb-3">
                                 <strong><i class="fas fa-id-badge me-2"></i>User ID:</strong> 
-                                <span class="badge bg-secondary ms-2">{{ Auth::user()->id }}</span>
+                                <span class="badge bg-secondary ms-2">{{ Auth::user()->id ?? 'N/A' }}</span>
                             </div>
                             <div class="info-item mb-3">
                                 <strong><i class="fas fa-calendar-plus me-2"></i>Account Created:</strong> 
-                                <span class="ms-2">{{ Auth::user()->created_at->format('d M Y, H:i') }}</span>
+                                <span class="ms-2">
+                                    @if(Auth::user()->created_at)
+                                        {{ Auth::user()->created_at->format('d M Y, H:i') }}
+                                    @else
+                                        <span class="text-muted">Not available</span>
+                                    @endif
+                                </span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item mb-3">
                                 <strong><i class="fas fa-calendar-check me-2"></i>Last Updated:</strong> 
-                                <span class="ms-2">{{ Auth::user()->updated_at->format('d M Y, H:i') }}</span>
+                                <span class="ms-2">
+                                    @if(Auth::user()->updated_at)
+                                        {{ Auth::user()->updated_at->format('d M Y, H:i') }}
+                                    @else
+                                        <span class="text-muted">Not available</span>
+                                    @endif
+                                </span>
                             </div>
                             <div class="info-item mb-3">
                                 <strong><i class="fas fa-envelope-check me-2"></i>Email Status:</strong> 

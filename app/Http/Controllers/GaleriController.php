@@ -417,7 +417,100 @@ class GaleriController extends Controller
         }
     }
 
-    // API endpoint for getting gallery items by award
+    /**
+     * Get gallery items by gallery ID (API endpoint)
+     *
+     * @param int $galleryId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getGalleryItems($galleryId)
+    {
+        try {
+            $galeri = Galeri::with(['galleryItems' => function($query) {
+                $query->where('status', 'Active')
+                      ->orderBy('sequence', 'asc')
+                      ->orderBy('id_gallery_item', 'asc');
+            }])
+            ->where('id_galeri', $galleryId)
+            ->where('status', 'Active')
+            ->first();
+
+            if (!$galeri) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gallery not found or inactive',
+                    'gallery_id' => $galleryId
+                ], 404);
+            }
+
+            // Format items for frontend
+            $items = $galeri->galleryItems->map(function($item) {
+                // Convert numeric type to string for frontend
+                $typeString = '';
+                switch ((int)$item->type) {
+                    case 1:
+                        $typeString = 'image';
+                        break;
+                    case 2:
+                        $typeString = 'youtube';
+                        break;
+                    case 3:
+                        $typeString = 'video';
+                        break;
+                    default:
+                        $typeString = 'unknown';
+                }
+                
+                $data = [
+                    'id' => $item->id_gallery_item,
+                    'type' => $typeString,
+                    'type_numeric' => (int)$item->type,
+                    'sequence' => $item->sequence,
+                    'title' => $item->galeri ? $item->galeri->nama_galeri : null,
+                    'gallery_name' => $item->galeri ? $item->galeri->nama_galeri : null,
+                    'status' => $item->status,
+                    'file_name' => $item->file_name,
+                    'youtube_url' => $item->youtube_url
+                ];
+                
+                // Handle different media types based on numeric value
+                if ($item->type == 1 && $item->file_name) { // Image
+                    $data['file_url'] = asset('file/galeri/' . $item->file_name);
+                    $data['thumbnail_url'] = asset('file/galeri/' . $item->file_name);
+                } elseif ($item->type == 2 && $item->youtube_url) { // YouTube
+                    $data['file_url'] = $item->youtube_url;
+                    $data['youtube_url'] = $item->youtube_url;
+                    // Extract YouTube ID for thumbnail
+                    preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/', $item->youtube_url, $matches);
+                    $videoId = $matches[1] ?? null;
+                    $data['thumbnail_url'] = $videoId ? "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg" : null;
+                } elseif ($item->type == 3 && $item->file_name) { // Video file
+                    $data['file_url'] = asset('file/galeri/' . $item->file_name);
+                    $data['thumbnail_url'] = asset('file/galeri/' . $item->file_name);
+                }
+                
+                return $data;
+            });
+
+            return response()->json([
+                'success' => true,
+                'gallery_id' => $galleryId,
+                'gallery_name' => $galeri->nama_galeri,
+                'items' => $items,
+                'total' => $items->count()
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('Failed to get gallery items: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load gallery items',
+                'error' => $e->getMessage(),
+                'gallery_id' => $galleryId
+            ], 500);
+        }
+    }
     public function getGalleryByAward($awardId)
     {
         try {
@@ -431,25 +524,48 @@ class GaleriController extends Controller
 
             // Format items for frontend
             $items = $galleryItems->map(function($item) {
+                // Convert numeric type to string for frontend
+                $typeString = '';
+                switch ((int)$item->type) {
+                    case 1:
+                        $typeString = 'image';
+                        break;
+                    case 2:
+                        $typeString = 'youtube';
+                        break;
+                    case 3:
+                        $typeString = 'video';
+                        break;
+                    default:
+                        $typeString = 'unknown';
+                }
+                
                 $data = [
                     'id' => $item->id_gallery_item,
-                    'type' => $item->type,
+                    'type' => $typeString,
+                    'type_numeric' => (int)$item->type,
                     'sequence' => $item->sequence,
                     'title' => $item->galeri ? $item->galeri->nama_galeri : null,
                     'gallery_name' => $item->galeri ? $item->galeri->nama_galeri : null,
-                    'status' => $item->status
+                    'status' => $item->status,
+                    'file_name' => $item->file_name,
+                    'youtube_url' => $item->youtube_url
                 ];
                 
-                if ($item->type === 'image' && $item->file_name) {
+                // Handle different media types based on numeric value
+                if ($item->type == 1 && $item->file_name) { // Image
                     $data['file_url'] = asset('file/galeri/' . $item->file_name);
                     $data['thumbnail_url'] = asset('file/galeri/' . $item->file_name);
-                } elseif ($item->type === 'youtube' && $item->youtube_url) {
+                } elseif ($item->type == 2 && $item->youtube_url) { // YouTube
                     $data['file_url'] = $item->youtube_url;
                     $data['youtube_url'] = $item->youtube_url;
                     // Extract YouTube ID for thumbnail
                     preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/', $item->youtube_url, $matches);
                     $videoId = $matches[1] ?? null;
                     $data['thumbnail_url'] = $videoId ? "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg" : null;
+                } elseif ($item->type == 3 && $item->file_name) { // Video file
+                    $data['file_url'] = asset('file/galeri/' . $item->file_name);
+                    $data['thumbnail_url'] = asset('file/galeri/' . $item->file_name);
                 }
                 
                 return $data;

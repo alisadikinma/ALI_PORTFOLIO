@@ -145,6 +145,7 @@ class SettingController extends Controller
         'project_delivered'      => $request->project_delivered,
         'cost_savings'           => $request->cost_savings,
         'success_rate'           => $request->success_rate,
+        'view_cv_url'            => $request->view_cv_url,
     ];
 
     // Add optional columns only if they exist in the table

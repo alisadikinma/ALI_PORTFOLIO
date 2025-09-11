@@ -35,6 +35,11 @@
                             <label for="" class="form-label">Alamat</label>
                             <input type="text" name="alamat_setting" class="form-control" value="{{ $setting->alamat_setting ?? '' }}">
                         </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="" class="form-label">View CV URL <small class="text-muted">(Link untuk download CV)</small></label>
+                            <input type="url" name="view_cv_url" class="form-control" value="{{ $setting->view_cv_url ?? '' }}" placeholder="https://example.com/my-cv.pdf">
+                            <small class="text-muted">Masukkan URL lengkap untuk file CV yang bisa didownload</small>
+                        </div>
                         <div class="col-12 mb-3">
                             <label for="">Tentang Saya</label>
                             <textarea name="tentang_setting" class="form-control" id="editor" cols="30" rows="5">{{ $setting->tentang_setting ?? '' }}</textarea>

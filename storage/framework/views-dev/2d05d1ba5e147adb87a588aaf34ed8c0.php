@@ -75,12 +75,340 @@
 }
 </style>
 
+<!-- Gallery Modal Styles -->
+<style>
+.gallery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.gallery-modal.show {
+    display: flex;
+}
+
+.gallery-modal-content {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 24px;
+    max-width: 95vw;
+    max-height: 95vh;
+    width: 1200px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.gallery-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 40px 40px 20px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-header-content {
+    flex: 1;
+    max-width: calc(100% - 60px);
+}
+
+.gallery-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fbbf24;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.gallery-subtitle {
+    font-size: 1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.gallery-close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #94a3b8;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 12px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.gallery-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.gallery-modal-body {
+    padding: 20px 40px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(95vh - 200px);
+}
+
+/* Gallery Grid - 2x2 Layout */
+.gallery-grid-2x2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 100%;
+}
+
+.gallery-item-2x2 {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 16/10;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-item-2x2:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #fbbf24;
+}
+
+.gallery-item-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item-2x2:hover .gallery-item-image {
+    transform: scale(1.02);
+}
+
+.gallery-item-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    padding: 20px;
+    color: white;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.gallery-item-2x2:hover .gallery-item-overlay {
+    transform: translateY(0);
+}
+
+.gallery-item-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.gallery-item-type {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fbbf24;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+/* YouTube Play Button */
+.gallery-youtube-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.gallery-item-2x2:hover .gallery-youtube-overlay {
+    background: rgba(251, 191, 36, 0.9);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.gallery-youtube-icon {
+    width: 32px;
+    height: 32px;
+    color: white;
+}
+
+/* Navigation */
+.gallery-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px 30px 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.gallery-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #94a3b8;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 100px;
+    justify-content: center;
+}
+
+.gallery-nav-btn:hover:not(:disabled) {
+    background: rgba(251, 191, 36, 0.2);
+    border-color: #fbbf24;
+    color: #fbbf24;
+}
+
+.gallery-nav-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.gallery-counter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.gallery-divider {
+    color: #475569;
+}
+
+/* No Media State */
+.gallery-no-media {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #64748b;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.gallery-no-media-icon {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.gallery-no-media-text {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.gallery-no-media-desc {
+    font-size: 0.875rem;
+    opacity: 0.7;
+    text-align: center;
+    max-width: 300px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .gallery-modal-content {
+        width: 95vw;
+        margin: 10px;
+    }
+    
+    .gallery-modal-header,
+    .gallery-modal-body,
+    .gallery-navigation {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .gallery-title {
+        font-size: 1.875rem;
+    }
+    
+    .gallery-grid-2x2 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .gallery-nav-btn {
+        min-width: 80px;
+        padding: 10px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-modal {
+        padding: 10px;
+    }
+    
+    .gallery-modal-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .gallery-header-content {
+        max-width: 100%;
+    }
+    
+    .gallery-close {
+        align-self: flex-end;
+    }
+    
+    .gallery-title {
+        font-size: 1.5rem;
+    }
+    
+    .gallery-subtitle {
+        font-size: 0.875rem;
+    }
+}
+</style>
+
 <section id="home"
     class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16">
     <div class="w-full flex flex-col sm:flex-row items-center gap-8 sm:gap-32">
         <img src="<?php echo e(asset('favicon/' . $konf->favicon_setting)); ?>" alt="Profile image"
             class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl" />
-        <div class="flex flex-col gap-6 sm:gap-8">
+        <div class="flex flex-col gap-4 sm:gap-6">
             <div class="flex flex-col gap-4 sm:gap-6">
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div class="w-12 sm:w-20 h-0.5 bg-yellow-400"></div>
@@ -89,30 +417,40 @@
 
                     </div>
                 </div>
-                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]">
+                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.25rem;">
                     Hello bro, I'm<br />
+                    <span class="text-yellow-400 relative">
+                    <?php echo e($konf->pimpinan_setting); ?>
+
+                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full"></div>
+                    </span>
                 </h1>
             </div>
-            <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]">
+            <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: 0.25rem;">
                 <?php echo $konf->tentang_setting; ?>
 
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="#contact" class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center gap-3">
+                <a href="<?php echo e(!empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact'); ?>" 
+                   target="<?php echo e(!empty($konf->view_cv_url) ? '_blank' : '_self'); ?>" 
+                   class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3" 
+                   style="min-width: 180px; text-align: center;">
                     <span class="text-neutral-900 text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        Say Hello
+                        View CV
                     </span>
+                    <?php if(!empty($konf->view_cv_url)): ?>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <?php endif; ?>
                 </a>
 
                 <a href="<?php echo e(url('portfolio')); ?>" target="_blank"
-                    class="px-6 sm:px-8 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center gap-3">
+                    class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3" style="min-width: 200px; text-align: center;">
                     <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        View Portfolio
+                        VIEW Portfolio
                     </span>
-                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="white" viewBox="0 0 24 24">
-                        <path d="M12 4v16m8-8H4" />
-                    </svg>
                 </a>
             </div>
         </div>
@@ -265,750 +603,8 @@
 </section>
 <?php endif; ?>
 
-<!-- Awards & Recognition Section - REDESIGNED -->
-<?php if($konf->awards_section_active ?? true): ?>
-<section id="awards" class="w-full py-16 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <h2 class="text-yellow-400 text-5xl sm:text-6xl font-bold mb-4">
-                Awards & Recognition
-            </h2>
-            <p class="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto">
-                Innovative solutions that drive real business impact and transformation
-            </p>
-        </div>
-
-        <?php if(isset($award) && $award->count() > 0): ?>
-        <!-- Awards Grid - NEW DESIGN -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php $__currentLoopData = $award; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <?php
-            // Logo colors based on company
-            $logoConfigs = [
-                'nextdev' => ['bg' => '#4A90E2', 'text' => 'NextDev', 'subtitle' => 'Telkomsel • 2018', 'color' => 'blue'],
-                'alibaba' => ['bg' => '#FF6A00', 'text' => 'Alibaba', 'subtitle' => 'ALIBABA UNCTAD • 2019', 'color' => 'orange'],
-                'google' => ['bg' => '#4285F4', 'text' => 'Google', 'subtitle' => 'GOOGLE • 2018', 'color' => 'blue'],
-                'wild' => ['bg' => '#00C853', 'text' => 'Wild Card', 'subtitle' => 'FENOX • 2017', 'color' => 'green'],
-                'fenox' => ['bg' => '#FF4444', 'text' => 'Fenox', 'subtitle' => 'FENOX • 2017', 'color' => 'red'],
-                'bubu' => ['bg' => '#00D25B', 'text' => 'BUBU', 'subtitle' => 'BUBU.com • 2017', 'color' => 'green'],
-                'grind' => ['bg' => '#4285F4', 'text' => 'Startup Grind', 'subtitle' => 'GOOGLE • 2024', 'color' => 'blue'],
-                'default' => ['bg' => '#FFC107', 'text' => 'Award', 'subtitle' => date('Y'), 'color' => 'yellow']
-            ];
-            
-            $logoKey = 'default';
-            foreach(array_keys($logoConfigs) as $key) {
-                if(stripos($row->nama_award, $key) !== false) {
-                    $logoKey = $key;
-                    break;
-                }
-            }
-            
-            $logoConfig = $logoConfigs[$logoKey];
-            ?>
-            
-            <div class="award-card-modern group relative bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 hover:border-slate-600 transition-all duration-300 p-8 cursor-pointer hover:transform hover:-translate-y-1" 
-                 onclick="openAwardGallery(<?php echo e($row->id_award); ?>, '<?php echo e(addslashes($row->nama_award)); ?>')">
-                
-                <!-- Logo Icon -->
-                <div class="mb-6">
-                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl" 
-                         style="background: <?php echo e($logoConfig['bg']); ?>;">
-                        <?php if($row->gambar_award && file_exists(public_path('file/award/' . $row->gambar_award))): ?>
-                            <img src="<?php echo e(asset('file/award/' . $row->gambar_award)); ?>" 
-                                 alt="<?php echo e($row->nama_award); ?>" 
-                                 class="w-12 h-12 object-contain filter brightness-0 invert" />
-                        <?php else: ?>
-                            <!-- Default icons based on company -->
-                            <?php if(stripos($row->nama_award, 'nextdev') !== false): ?>
-                                <span class="text-white text-2xl font-bold">N</span>
-                            <?php elseif(stripos($row->nama_award, 'google') !== false || stripos($row->nama_award, 'grind') !== false): ?>
-                                <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                                </svg>
-                            <?php elseif(stripos($row->nama_award, 'alibaba') !== false): ?>
-                                <span class="text-white text-3xl font-bold">Ali</span>
-                            <?php elseif(stripos($row->nama_award, 'wild') !== false || stripos($row->nama_award, 'fenox') !== false): ?>
-                                <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M21 6h-7.59l1.29-1.29a1 1 0 0 0-1.42-1.42l-3 3a1 1 0 0 0 0 1.42l3 3a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42L13.41 8H21a1 1 0 0 0 0-2zM3 12a1 1 0 0 0 0 2h7.59l-1.29 1.29a1 1 0 0 0 0 1.42 1 1 0 0 0 1.42 0l3-3a1 1 0 0 0 0-1.42l-3-3a1 1 0 0 0-1.42 1.42L10.59 12z"/>
-                                </svg>
-                            <?php elseif(stripos($row->nama_award, 'bubu') !== false): ?>
-                                <span class="text-white text-2xl font-bold">BUBU</span>
-                            <?php else: ?>
-                                <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                                </svg>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                </div>
-                
-                <!-- Award Title -->
-                <h3 class="text-white text-xl font-bold mb-2 leading-tight">
-                    <?php echo e($row->nama_award); ?>
-
-                </h3>
-                
-                <!-- Company & Year -->
-                <p class="text-<?php echo e($logoConfig['color']); ?>-400 text-sm font-semibold mb-4 uppercase tracking-wide">
-                    <?php echo e($logoConfig['subtitle']); ?>
-
-                </p>
-                
-                <!-- Description -->
-                <p class="text-gray-400 text-sm leading-relaxed mb-6">
-                    <?php echo Str::limit(strip_tags($row->keterangan_award), 150, '...'); ?>
-
-                </p>
-                
-                <!-- View Gallery Button -->
-                <button class="flex items-center gap-2 text-gray-400 text-sm font-medium group-hover:text-white transition-colors">
-                    <span>VIEW GALLERY</span>
-                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                </button>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-        
-        <?php else: ?>
-        <!-- No Data State -->
-        <div class="flex flex-col items-center justify-center py-16">
-            <div class="text-yellow-400 text-6xl mb-4">🏆</div>
-            <h3 class="text-white text-xl font-semibold mb-2">No Awards Yet</h3>
-            <p class="text-gray-400 text-center max-w-md">
-                We're building our track record of achievements and recognition. Stay tuned to see our upcoming awards and accomplishments!
-            </p>
-        </div>
-        <?php endif; ?>
-    </div>
-</section>
-
-<style>
-/* Awards Section Custom Styles */
-.award-card-modern {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.award-card-modern:hover {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* Custom color classes for companies */
-.text-orange-400 { color: #fb923c; }
-.text-blue-400 { color: #60a5fa; }
-.text-green-400 { color: #4ade80; }
-.text-red-400 { color: #f87171; }
-.text-yellow-400 { color: #fbbf24; }
-</style>
-
-<!-- Award Gallery Modal -->
-<div id="awardGalleryModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-        <div class="flex justify-between items-center p-6 border-b border-slate-600">
-            <h3 id="awardGalleryTitle" class="text-xl font-bold text-white">Award Gallery</h3>
-            <button onclick="closeAwardGallery()" class="text-gray-400 hover:text-white transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        <div id="awardGalleryContent" class="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
-            <!-- Gallery content will be loaded here -->
-        </div>
-    </div>
-</div>
-
-<script>
-function openAwardGallery(awardId, awardName) {
-    document.getElementById('awardGalleryTitle').textContent = `${awardName} - Gallery`;
-    document.getElementById('awardGalleryModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    
-    // Show loading
-    document.getElementById('awardGalleryContent').innerHTML = `
-        <div class="flex items-center justify-center py-12">
-            <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-                <p class="text-gray-400">Loading gallery...</p>
-            </div>
-        </div>
-    `;
-    
-    // Fetch gallery items
-    fetch(`/gallery/${awardId}/items`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.items.length > 0) {
-                let content = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
-                
-                data.items.forEach(item => {
-                    content += `
-                        <div class="bg-slate-700 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
-                            <div class="aspect-square relative">
-                                ${item.type === 'image' ? 
-                                    `<img src="${item.file_url}" alt="Gallery item" class="w-full h-full object-cover cursor-pointer" onclick="openImageModal('${item.file_url}', 'Gallery item')">` :
-                                    `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${extractYouTubeId(item.youtube_url)}" frameborder="0" allowfullscreen></iframe>`
-                                }
-                                <div class="absolute top-2 right-2">
-                                    <span class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">${item.type}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                content += '</div>';
-                document.getElementById('awardGalleryContent').innerHTML = content;
-            } else {
-                document.getElementById('awardGalleryContent').innerHTML = `
-                    <div class="text-center py-12">
-                        <div class="text-yellow-400 text-6xl mb-4">🖼️</div>
-                        <h3 class="text-white text-xl font-semibold mb-2">No Gallery Items</h3>
-                        <p class="text-gray-400">This award doesn't have any gallery items yet.</p>
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('awardGalleryContent').innerHTML = `
-                <div class="text-center py-12">
-                    <div class="text-red-400 text-6xl mb-4">⚠️</div>
-                    <h3 class="text-white text-xl font-semibold mb-2">Error Loading Gallery</h3>
-                    <p class="text-gray-400">Failed to load gallery items. Please try again.</p>
-                </div>
-            `;
-        });
-}
-
-function closeAwardGallery() {
-    document.getElementById('awardGalleryModal').classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-function extractYouTubeId(url) {
-    if (!url) return null;
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-}
-
-function openImageModal(imageUrl, title) {
-    // Create image modal for full view
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-90 z-60 flex items-center justify-center p-4';
-    modal.innerHTML = `
-        <div class="relative max-w-full max-h-full">
-            <img src="${imageUrl}" alt="${title}" class="max-w-full max-h-full object-contain">
-            <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-}
-
-// Close modal when clicking outside
-document.getElementById('awardGalleryModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeAwardGallery();
-    }
-});
-
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeAwardGallery();
-    }
-});
-</script>
-<?php endif; ?>
-<!-- Services Section -->
-<?php if(($konf->services_section_active ?? true) && isset($layanan) && $layanan->count() > 0): ?>
-<section id="services" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
-    <!-- Header -->
-    <div class="text-center mb-12">
-        <h2 class="text-yellow-400 text-4xl sm:text-6xl font-bold mb-4">
-            Services
-        </h2>
-        <p class="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto">
-            Comprehensive AI and automation solutions for your business transformation
-        </p>
-    </div>
-
-    <!-- Services Layout -->
-    <div class="flex flex-col lg:flex-row gap-4 lg:gap-4 items-start">
-        <!-- Left Side - Service Cards (30%) -->
-        <div class="lg:w-3/10 xl:w-3/10 service-left-panel flex flex-col pl-4">
-            <?php $__currentLoopData = $layanan->where('status', 'Active')->sortBy('sequence'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <div class="service-card <?php echo e($index == 0 ? 'active' : ''); ?>" 
-                 data-service-id="<?php echo e($row->id_layanan ?? $index); ?>"
-                 data-service-type="<?php echo e(Str::slug($row->nama_layanan)); ?>"
-                 data-image="<?php echo e(asset('file/layanan/' . $row->gambar_layanan)); ?>"
-                 data-description="<?php echo htmlspecialchars($row->keterangan_layanan ?? '', ENT_QUOTES); ?>">
-                <div class="service-icon">
-                    <?php if($row->icon_layanan): ?>
-                        <img src="<?php echo e(asset('file/layanan/icons/' . $row->icon_layanan)); ?>" alt="<?php echo e($row->nama_layanan); ?> icon" style="width: 28px; height: 28px; object-fit: contain;">
-                    <?php else: ?>
-                        <?php if(str_contains(strtolower($row->nama_layanan), 'gpt') || str_contains(strtolower($row->nama_layanan), 'custom')): ?>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                                <path d="M2 17l10 5 10-5"/>
-                                <path d="M2 12l10 5 10-5"/>
-                            </svg>
-                        <?php elseif(str_contains(strtolower($row->nama_layanan), 'video')): ?>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="23 7 16 12 23 17 23 7"/>
-                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                            </svg>
-                        <?php elseif(str_contains(strtolower($row->nama_layanan), 'visual') || str_contains(strtolower($row->nama_layanan), 'inspection')): ?>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                <circle cx="12" cy="12" r="3"/>
-                            </svg>
-                        <?php elseif(str_contains(strtolower($row->nama_layanan), 'consultation') || str_contains(strtolower($row->nama_layanan), 'speaking')): ?>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
-                        <?php else: ?>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                                <line x1="12" y1="22.08" x2="12" y2="12"/>
-                            </svg>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                </div>
-                <div class="service-content">
-                    <h3 class="service-title"><?php echo e($row->nama_layanan); ?></h3>
-                    <?php if($row->sub_nama_layanan): ?>
-                    <p class="service-subtitle-main"><?php echo e($row->sub_nama_layanan); ?></p>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-
-        <!-- Right Side - Content Display (70%) -->
-        <div class="lg:w-7/10 xl:w-7/10 service-right-panel flex flex-col">
-            <div class="service-display">
-                <!-- Service Image -->
-                <div class="service-image-container">
-                    <img id="currentServiceImage" 
-                         src="<?php echo e(asset('file/layanan/' . ($layanan->where('status', 'Active')->sortBy('sequence')->first()->gambar_layanan ?? 'default.jpg'))); ?>" 
-                         alt="Service Image" 
-                         class="service-main-image">
-                </div>
-                
-                <!-- Service Description -->
-                <!--div class="service-description">
-                    <div id="currentServiceDescription" class="description-text">
-                        Loading service description...
-                    </div>
-                </div-->
-                
-                <div class="service-action">
-                    <a href="<?php echo e(url('/#contact')); ?>" class="request-quote-btn-services">
-                       REQUEST QUOTE →
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</section>
-
-<style>
-/* Services Section Styles */
-#services {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    min-height: 800px;
-}
-
-/* Responsive Services Layout */
-@media (min-width: 1024px) {
-    .service-left-panel {
-        width: 30% !important;
-        flex: 0 0 30%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        min-height: 500px;
-        gap: 0.75rem;
-        margin-top: 0;
-        padding-top: 0;
-        transform: translateY(32px);
-    }
-    
-    .service-left-panel > .service-card {
-        margin-bottom: 0.75rem;
-    }
-    
-    .service-left-panel > .service-card:last-child {
-        margin-bottom: 0;
-    }
-    
-    .service-right-panel {
-        width: 70% !important;
-        flex: 0 0 70%;
-        display: flex;
-        flex-direction: column;
-        justify-content: stretch;
-        align-items: stretch;
-        min-height: 500px;
-    }
-    
-    .service-display {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-}
-
-.service-card {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.6));
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 16px;
-    padding: 2rem 1.8rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-    min-height: 150px;
-    max-height: 180px;
-    margin-right: 0.1rem;
-}
-
-.service-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(145deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.service-card:hover,
-.service-card.active {
-    border-color: #fbbf24;
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(251, 191, 36, 0.3);
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.8));
-}
-
-.service-card:hover::before,
-.service-card.active::before {
-    opacity: 1;
-}
-
-.service-icon {
-    width: 44px;
-    height: 44px;
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.4);
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-}
-
-.service-icon svg {
-    width: 28px;
-    height: 28px;
-    color: #1f2937;
-}
-
-.service-content {
-    flex: 1;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 60px;
-}
-
-.service-title {
-    color: #fbbf24;
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 0.375rem;
-    line-height: 1.25;
-}
-
-.service-subtitle-main {
-    color: #e2e8f0;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    line-height: 1.3;
-    opacity: 0.9;
-}
-
-.service-subtitle {
-    color: #94a3b8;
-    font-size: 1rem;
-    line-height: 1.4;
-    margin: 0;
-    opacity: 0.9;
-}
-
-.service-display {
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.6));
-    border-radius: 20px;
-    padding: 1.75rem;
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    backdrop-filter: blur(10px);
-    min-height: 450px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-}
-
-.service-image-container {
-    margin-bottom: 1.2rem;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #0f172a;
-    position: relative;
-    margin-top: 0;
-}
-
-.service-main-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Back to cover for full frame fit */
-    transition: all 0.5s ease;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%);
-}
-
-.service-description {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.6rem;
-    font-size: 1.2rem;
-}
-
-.description-text {
-    color: #94a3b8;
-    font-size: 1rem;
-    line-height: 1.6;
-    margin-bottom: 0.7rem;
-    text-align: left;
-}
-
-.service-action {
-    display: flex;
-    justify-content: flex-start;
-    margin-top: 1.5rem;
-}
-
-.request-quote-btn-services {
-    background: linear-gradient(135deg, #fbbf24, #f59e0b);
-    color: #1f2937;
-    padding: 14px 28px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1rem;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
-}
-
-.request-quote-btn-services:hover {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(251, 191, 36, 0.4);
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-    /* Tablet and mobile: full width stacked */
-    .service-left-panel,
-    .service-right-panel {
-        width: 100% !important;
-        flex: 0 0 100%;
-        transform: none;
-        margin-top: 0;
-        padding-top: 0;
-    }
-    
-    .service-card {
-        padding: 1.25rem;
-    }
-    
-    .service-icon {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .service-icon svg {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .service-title {
-        font-size: 1.125rem;
-    }
-    
-    .service-main-image {
-        height: 250px; /* Mobile optimization for 1080x608 */
-    }
-}
-
-@media (max-width: 480px) {
-    .service-main-image {
-        height: 200px; /* Small mobile screens */
-    }
-}
-
-@media (max-width: 768px) {
-    #services {
-        padding: 2rem 1rem;
-    }
-    
-    .service-display {
-        padding: 1.5rem;
-    }
-    
-    .service-main-image {
-        height: 200px;
-    }
-    
-    .service-card {
-        padding: 1rem;
-    }
-    
-    .flex.flex-col.lg\:flex-row {
-        flex-direction: column;
-        gap: 2rem;
-    }
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const serviceCards = document.querySelectorAll('.service-card');
-    const serviceImage = document.getElementById('currentServiceImage');
-    const serviceDescription = document.getElementById('currentServiceDescription');
-    
-    // Add null checks to prevent errors
-    if (!serviceCards.length) {
-        return;
-    }
-    
-    serviceCards.forEach((card, index) => {
-        card.addEventListener('click', function() {
-            // Remove active class from all cards
-            serviceCards.forEach(c => c.classList.remove('active'));
-            
-            // Add active class to clicked card
-            this.classList.add('active');
-            
-            // Get data attributes with fallback
-            const newImage = this.dataset.image;
-            let newDescription = this.dataset.description;
-            const serviceId = this.dataset.serviceId;
-            
-            // Update image with fade effect - ADD NULL CHECKS
-            if (newImage && serviceImage && newImage !== serviceImage.src) {
-                serviceImage.style.opacity = '0';
-                setTimeout(() => {
-                    serviceImage.src = newImage;
-                    serviceImage.onload = () => {
-                        if (serviceImage) serviceImage.style.opacity = '1';
-                    };
-                    // Fallback in case onload doesn't fire
-                    setTimeout(() => {
-                        if (serviceImage) serviceImage.style.opacity = '1';
-                    }, 200);
-                }, 150);
-            }
-            
-            // Update description - ADD NULL CHECKS
-            if (serviceDescription) {
-                if (newDescription && newDescription.trim() !== '') {
-                    serviceDescription.style.opacity = '0';
-                    setTimeout(() => {
-                        // Decode HTML entities and render as HTML
-                        const decodedDescription = newDescription
-                            .replace(/&quot;/g, '"')
-                            .replace(/&#039;/g, "'")
-                            .replace(/&lt;/g, '<')
-                            .replace(/&gt;/g, '>')
-                            .replace(/&amp;/g, '&');
-                        if (serviceDescription) {
-                            serviceDescription.innerHTML = decodedDescription;
-                            serviceDescription.style.opacity = '1';
-                        }
-                    }, 150);
-                } else {
-                    // Fallback descriptions only if database has no content
-                    const fallbackDescriptions = [
-                        'I provide tailored AI solutions and custom GPT models designed to meet your business needs and industry requirements. From understanding your challenges to delivering a solution, I make sure the AI tools we create truly support your goals and make your processes smarter.',
-                        'Work smarter, not harder with intelligent automation solutions that streamline your business processes and eliminate repetitive tasks.',
-                        'Turn AI into your creative weapon with custom GPT models and intelligent content generation systems tailored for your specific needs.',
-                        'Where Strategy Meets Creativity - comprehensive content creation services that blend strategic thinking with creative execution.'
-                    ];
-                    
-                    serviceDescription.style.opacity = '0';
-                    setTimeout(() => {
-                        if (serviceDescription) {
-                            serviceDescription.innerHTML = fallbackDescriptions[index] || fallbackDescriptions[0];
-                            serviceDescription.style.opacity = '1';
-                        }
-                    }, 150);
-                }
-            }
-        });
-    });
-    
-    // Initialize first service
-    if (serviceCards.length > 0) {
-        // Add a small delay to ensure DOM is ready
-        setTimeout(() => {
-            if (serviceCards[0]) {
-                serviceCards[0].click();
-            }
-        }, 100);
-    } else {
-        // Service cards found, continue initialization
-    }
-});
-</script>
-<?php endif; ?>
+<?php echo $__env->make('partials.awards', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php echo $__env->make('partials.services', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 
 <!-- Image Error Handling Script -->
@@ -1061,100 +657,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Portfolio Section -->
-<?php if(($konf->portfolio_section_active ?? true) && isset($projects) && $projects->count() > 0): ?>
-<section id="portfolio"
-    class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-10">
-
-    <div class="flex flex-col gap-3 text-center">
-        <h2 class="text-yellow-400 text-4xl sm:text-6xl font-bold leading-tight sm:leading-[67.2px] tracking-tight">
-            Portfolio
-        </h2>
-        <p class="text-neutral-400 text-lg sm:text-2xl font-normal leading-6 sm:leading-7 tracking-tight">
-            AI Technopreneur with 16+ years of expertise in driving innovation and digital transformation across
-        </p>
-    </div>
-
-    <?php if(isset($jenis_projects) && count($jenis_projects) > 0): ?>
-    <div class="w-full max-w-full sm:max-w-5xl flex flex-wrap justify-center gap-4 sm:gap-6" id="portfolio-filters">
-        <button class="filter-btn px-6 sm:px-8 py-3 bg-yellow-400 rounded-lg outline outline-[1.5px] outline-yellow-400 flex items-center gap-3 transition-all duration-300 ease-in-out" data-filter="all">
-            <span class="text-neutral-900 text-base sm:text-lg font-semibold leading-[64px]">All</span>
-        </button>
-        <?php $__currentLoopData = $jenis_projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $jenis): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <button class="filter-btn px-6 sm:px-8 py-3 bg-slate-800/60 rounded-lg outline outline-[0.5px] outline-slate-500 flex items-center gap-3 transition-all duration-300 ease-in-out" data-filter="<?php echo e($jenis); ?>">
-            <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[64px]"><?php echo e($jenis); ?></span>
-        </button>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </div>
-    <?php endif; ?>
-
-    <div class="w-full max-w-full sm:max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8" id="portfolio-grid">
-        <?php $__currentLoopData = $projects; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $project): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <div class="portfolio-item p-6 sm:p-8 bg-slate-800/60 rounded-2xl outline outline-1 <?php echo e($loop->iteration == 3 ? 'outline-yellow-400' : 'outline-neutral-900/40'); ?> backdrop-blur-xl flex flex-col gap-6 transition-opacity duration-300 ease-in-out" data-jenis="<?php echo e($project->jenis_project); ?>">
-            <a href="<?php echo e(route('portfolio.detail', $project->slug_project)); ?>">
-                <img class="w-full max-w-[300px] sm:max-w-[400px] h-auto rounded-2xl aspect-[5/4] object-cover project-image" 
-                     src="<?php echo e(asset('file/project/' . $project->gambar_project)); ?>" 
-                     alt="<?php echo e($project->nama_project); ?>"
-                     data-project-name="<?php echo e($project->nama_project); ?>"
-                     data-image-file="<?php echo e($project->gambar_project); ?>"
-                     onerror="this.style.opacity='0.7';" />
-            </a>
-            <div class="flex flex-col gap-4">
-                <div class="flex flex-col gap-3">
-                    <div class="flex gap-2">
-                        <span class="text-gray-500 text-xs font-normal leading-none"><?php echo e($project->jenis_project); ?></span>
-                    </div>
-                    <h3 class="<?php echo e($loop->iteration == 3 ? 'text-yellow-400' : 'text-white'); ?> text-xl sm:text-3xl font-bold leading-loose tracking-tight">
-                        <?php echo e($project->nama_project); ?>
-
-                    </h3>
-                    <p class="text-neutral-400 text-base font-normal leading-normal max-w-full sm:max-w-[400px]">
-                        <?php echo Str::limit(strip_tags($project->keterangan_project), 120); ?>
-
-                    </p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <a href="<?php echo e(route('portfolio.detail', $project->slug_project)); ?>" class="px-4 py-2 bg-yellow-400 rounded-lg text-neutral-900 text-base font-semibold leading-normal tracking-tight transition-all duration-300 ease-in-out hover:bg-yellow-500">Read More</a>
-                </div>
-            </div>
-        </div>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-    </div>
-</section>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const filterBtns = document.querySelectorAll(".filter-btn");
-    const items = document.querySelectorAll(".portfolio-item");
-
-    filterBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-            filterBtns.forEach(b => b.classList.remove("bg-yellow-400", "outline-yellow-400"));
-            filterBtns.forEach(b => b.querySelector("span").classList.remove("text-neutral-900"));
-            filterBtns.forEach(b => b.classList.add("bg-slate-800/60", "outline-slate-500"));
-            filterBtns.forEach(b => b.querySelector("span").classList.add("text-white"));
-
-            btn.classList.remove("bg-slate-800/60", "outline-slate-500");
-            btn.classList.add("bg-yellow-400", "outline-yellow-400");
-            btn.querySelector("span").classList.remove("text-white");
-            btn.querySelector("span").classList.add("text-neutral-900");
-
-            const filter = btn.getAttribute("data-filter");
-
-            items.forEach(item => {
-                if (filter === "all" || item.getAttribute("data-jenis") === filter) {
-                    item.classList.remove("hidden");
-                    item.classList.add("flex");
-                } else {
-                    item.classList.add("hidden");
-                    item.classList.remove("flex");
-                }
-            });
-        });
-    });
-});
-</script>
-<?php endif; ?>
+<?php echo $__env->make('partials.portfolio', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <!-- Testimonials Section -->
 <?php if($konf->testimonials_section_active ?? true): ?>
@@ -1346,338 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <?php endif; ?>
 
-<!-- Gallery Section -->
-<?php if($konf->gallery_section_active ?? true): ?>
-<section id="gallery" class="w-full max-w-screen-xl mx-auto px-3 sm:px-4 py-6 flex flex-col items-center gap-6 sm:gap-10">
-    <div class="flex flex-col gap-2 text-center">
-        <h2 class="text-yellow-400 text-3xl sm:text-5xl font-bold leading-tight tracking-tight">
-            Gallery
-        </h2>
-        <p class="text-neutral-400 text-base sm:text-lg font-normal leading-6 tracking-tight">
-            Explore the visual journey of my work, from concept to impactful solutions
-        </p>
-    </div>
-
-    <?php if(isset($galeri) && $galeri->count() > 0): ?>
-    <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
-    <?php $__currentLoopData = $galeri->where('status', 'Active')->sortBy('sequence'); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-    <div>
-    <div class="relative group rounded-lg bg-slate-900 outline outline-1 outline-slate-500 overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-md cursor-pointer" onclick="openGalleryModal(<?php echo e($row->id_galeri); ?>, '<?php echo e($row->nama_galeri); ?>', 'gallery')">
-    <?php if($row->thumbnail): ?>
-    <img src="<?php echo e(asset('file/galeri/' . $row->thumbnail)); ?>" alt="<?php echo e($row->nama_galeri ?? 'Gallery image'); ?>" class="w-full h-auto rounded-lg aspect-square object-cover" />
-    <?php elseif($row->activeGalleryItems->first()): ?>
-    <?php
-    $firstItem = $row->activeGalleryItems->first();
-    ?>
-    <?php if($firstItem->type === 'image'): ?>
-    <img src="<?php echo e(asset('file/galeri/' . $firstItem->file_name)); ?>" alt="<?php echo e($row->nama_galeri ?? 'Gallery image'); ?>" class="w-full h-auto rounded-lg aspect-square object-cover" />
-    <?php elseif($firstItem->type === 'youtube'): ?>
-    <?php
-    preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/', $firstItem->youtube_url, $matches);
-    $videoId = $matches[1] ?? null;
-    ?>
-    <?php if($videoId): ?>
-    <img src="https://img.youtube.com/vi/<?php echo e($videoId); ?>/maxresdefault.jpg" alt="<?php echo e($row->nama_galeri ?? 'Gallery image'); ?>" class="w-full h-auto rounded-lg aspect-square object-cover" />
-    <?php endif; ?>
-    <?php endif; ?>
-    <?php else: ?>
-    <div class="w-full aspect-square bg-gray-700 rounded-lg flex items-center justify-center">
-    <i class="fas fa-image text-gray-500 text-3xl"></i>
-    </div>
-    <?php endif; ?>
-                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-opacity duration-300 flex items-center justify-center">
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center">
-                            <p class="text-white text-sm font-semibold mb-2"><?php echo e($row->nama_galeri ?? 'Gallery'); ?></p>
-                            <div class="inline-flex items-center px-3 py-2 bg-yellow-400 text-black rounded-lg text-sm font-medium">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                                View Gallery
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        </div>
-        
-        <!-- Gallery Modal -->
-        <div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden flex items-center justify-center p-4">
-            <div class="bg-slate-800 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-                <div class="flex justify-between items-center p-6 border-b border-slate-600">
-                    <h3 id="galleryModalTitle" class="text-xl font-bold text-white">Gallery</h3>
-                    <button onclick="closeGalleryModal()" class="text-gray-400 hover:text-white transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div id="galleryModalContent" class="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
-                    <!-- Gallery content will be loaded here -->
-                </div>
-            </div>
-        </div>
-    <?php else: ?>
-    <!-- No Data State -->
-    <div class="flex flex-col items-center justify-center py-16">
-        <div class="text-yellow-400 text-6xl mb-4">🖼️</div>
-        <h3 class="text-white text-xl font-semibold mb-2">No Gallery Images Yet</h3>
-        <p class="text-gray-400 text-center max-w-md">
-            We're building our gallery showcase. Stay tuned to see visual examples of our AI projects and solutions in action!
-        </p>
-    </div>
-    <?php endif; ?>
-</section>
-
-<script>
-function openGalleryModal(galleryId, galleryName) {
-    document.getElementById('galleryModalTitle').textContent = galleryName || 'Gallery';
-    document.getElementById('galleryModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    
-    // Show loading
-    document.getElementById('galleryModalContent').innerHTML = `
-        <div class="flex items-center justify-center py-12">
-            <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-                <p class="text-gray-400">Loading gallery...</p>
-                <p class="text-gray-500 text-sm mt-2">Gallery ID: ${galleryId}</p>
-            </div>
-        </div>
-    `;
-    
-    // Auto-detect correct base URL
-    const baseUrl = window.location.pathname.includes('/ALI-PORTO') ? '/ALI-PORTO/public' : '';
-    
-    // Try multiple API endpoints
-    const endpoints = [
-        `${baseUrl}/api/gallery/${galleryId}/items`,
-        `${baseUrl}/gallery/${galleryId}/items`,
-        `/api/gallery/${galleryId}/items`,
-        `/gallery/${galleryId}/items`
-    ];
-    
-    async function tryFetchGallery() {
-        for (const endpoint of endpoints) {
-            try {
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    continue;
-                }
-                
-                const data = await response.json();
-                
-                // Handle different response formats
-                let items = [];
-                if (data.success && data.items && Array.isArray(data.items)) {
-                    items = data.items;
-                } else if (data.success && data.data && Array.isArray(data.data)) {
-                    items = data.data;
-                } else if (Array.isArray(data)) {
-                    items = data;
-                }
-                
-                if (items.length > 0) {
-                    let content = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
-                    
-                    items.forEach(item => {
-                        content += `
-                            <div class="bg-slate-700 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
-                                <div class="aspect-square relative">
-                                    ${item.type === 'image' ? 
-                                        `<img src="${item.file_url}" alt="${item.title || 'Gallery item'}" class="w-full h-full object-cover cursor-pointer" onclick="openImageModal('${item.file_url}', '${item.title || 'Gallery item'}')">` :
-                                        `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${extractYouTubeId(item.file_url)}" frameborder="0" allowfullscreen></iframe>`
-                                    }
-                                    <div class="absolute top-2 right-2">
-                                        <span class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">${item.type}</span>
-                                    </div>
-                                </div>
-                                ${item.title || item.description ? `
-                                    <div class="p-4">
-                                        ${item.title ? `<h4 class="text-white font-semibold mb-2">${item.title}</h4>` : ''}
-                                        ${item.description ? `<p class="text-gray-400 text-sm">${item.description}</p>` : ''}
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
-                    });
-                    
-                    content += '</div>';
-                    document.getElementById('galleryModalContent').innerHTML = content;
-                    return; // Success, exit function
-                }
-                
-            } catch (error) {
-                // Silent fail and try next endpoint
-            }
-        }
-        
-        // If all endpoints fail, show error
-        document.getElementById('galleryModalContent').innerHTML = `
-            <div class="text-center py-12">
-                <div class="text-red-400 text-6xl mb-4">⚠️</div>
-                <h3 class="text-white text-xl font-semibold mb-2">Gallery API Error</h3>
-                <p class="text-gray-400 mb-4">Could not load gallery items for Gallery ID: ${galleryId}</p>
-                
-                <div class="bg-gray-800 p-4 rounded-lg text-left max-w-2xl mx-auto">
-                    <h4 class="text-yellow-400 font-semibold mb-2">Tried Endpoints:</h4>
-                    <ul class="text-sm text-gray-300 space-y-1">
-                        ${endpoints.map(url => `<li>• <code class="bg-gray-700 px-1 rounded">${url}</code></li>`).join('')}
-                    </ul>
-                    
-                    <div class="mt-4">
-                        <h5 class="text-green-400 font-semibold mb-2">Solutions:</h5>
-                        <ol class="text-sm text-gray-300 space-y-1 list-decimal list-inside">
-                            <li>Check if Laravel routes are working</li>
-                            <li>Verify gallery API endpoints</li>
-                            <li>Check database connection</li>
-                        </ol>
-                    </div>
-                </div>
-                
-                <div class="mt-6 space-x-4">
-                    <button onclick="location.reload()" class="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500 transition-colors">
-                        Refresh Page
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
-    tryFetchGallery();
-}
-
-function closeGalleryModal() {
-    document.getElementById('galleryModal').classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-function displayGalleryItems(items) {
-    let content = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">';
-    
-    items.forEach(item => {
-        const imageUrl = item.file_url || `<?php echo e(asset('file/galeri/')); ?>/${item.file_name}`;
-        
-        content += `
-            <div class="bg-slate-700 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300">
-                <div class="aspect-square relative">
-                    ${item.type === 'image' ? 
-                        `<img src="${imageUrl}" alt="Gallery item" class="w-full h-full object-cover cursor-pointer" onclick="openImageModal('${imageUrl}', 'Gallery item')">` :
-                        `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${extractYouTubeId(item.youtube_url)}" frameborder="0" allowfullscreen></iframe>`
-                    }
-                    <div class="absolute top-2 right-2">
-                        <span class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">${item.type}</span>
-                    </div>
-                </div>
-                <div class="p-3">
-                    <p class="text-sm text-gray-300">Sequence: ${item.sequence}</p>
-                    <p class="text-sm text-gray-300">Status: ${item.status}</p>
-                </div>
-            </div>
-        `;
-    });
-    
-    content += '</div>';
-    document.getElementById('galleryModalContent').innerHTML = content;
-}
-
-function showDetailedError(galleryId, baseUrl, endpoints) {
-    document.getElementById('galleryModalContent').innerHTML = `
-        <div class="text-center py-12">
-            <div class="text-red-400 text-6xl mb-4">⚠️</div>
-            <h3 class="text-white text-xl font-semibold mb-2">Error Loading Gallery</h3>
-            <p class="text-gray-400 mb-4">Could not load gallery items for Gallery ID: ${galleryId}</p>
-            
-            <div class="bg-gray-800 p-4 rounded-lg text-left max-w-2xl mx-auto">
-                <h4 class="text-yellow-400 font-semibold mb-2">Debug Information:</h4>
-                <ul class="text-sm text-gray-300 space-y-1">
-                    <li>✅ Database has gallery items for this ID</li>
-                    <li>✅ Modal opens correctly</li>
-                    <li>❌ API endpoints not responding</li>
-                    <li>🔗 Base URL: <code class="bg-gray-700 px-1 rounded">${baseUrl || 'none'}</code></li>
-                </ul>
-                
-                <div class="mt-4">
-                    <h5 class="text-blue-400 font-semibold mb-2">Tried Endpoints:</h5>
-                    <ol class="text-sm text-gray-300 space-y-1">
-                        ${endpoints.map(url => `<li>• <code class="bg-gray-700 px-1 rounded">${url}</code></li>`).join('')}
-                    </ol>
-                </div>
-                
-                <div class="mt-4">
-                    <h5 class="text-green-400 font-semibold mb-2">Quick Solutions:</h5>
-                    <ol class="text-sm text-gray-300 space-y-1 list-decimal list-inside">
-                        <li>Use Laravel serve: <code class="bg-gray-700 px-1 rounded">php artisan serve</code></li>
-                        <li>Access via: <code class="bg-gray-700 px-1 rounded">http://localhost:8000</code></li>
-                        <li>Or clear routes: <code class="bg-gray-700 px-1 rounded">php artisan route:clear</code></li>
-                    </ol>
-                </div>
-            </div>
-            
-            <div class="mt-6 space-x-4">
-                <button onclick="location.reload()" class="px-4 py-2 bg-yellow-400 text-black rounded hover:bg-yellow-500 transition-colors">
-                    Refresh Page
-                </button>
-                <button onclick="window.open('http://localhost:8000', '_blank')" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
-                    Open Laravel Server
-                </button>
-            </div>
-        </div>
-    `;
-}
-
-function extractYouTubeId(url) {
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-}
-
-function openImageModal(imageUrl, title) {
-    // Create image modal for full view
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-90 z-60 flex items-center justify-center p-4';
-    modal.innerHTML = `
-        <div class="relative max-w-full max-h-full">
-            <img src="${imageUrl}" alt="${title}" class="max-w-full max-h-full object-contain">
-            <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-}
-
-// Close modal when clicking outside
-document.addEventListener('DOMContentLoaded', function() {
-    const galleryModal = document.getElementById('galleryModal');
-    if (galleryModal) {
-        galleryModal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeGalleryModal();
-            }
-        });
-    }
-    
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !galleryModal.classList.contains('hidden')) {
-            closeGalleryModal();
-        }
-    });
-});
-</script>
-
-<?php endif; ?>
+<?php echo $__env->make('partials.gallery', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <!-- Articles Section -->
 <?php if($konf->articles_section_active ?? true): ?>
@@ -1792,7 +964,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Contact Section -->
 <?php if($konf->contact_section_active ?? true): ?>
-<section id="contact" class="w-full max-w-screen-2xl mx-auto px-12 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
+<section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
     <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
         <div class="flex flex-col gap-4">
             <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">
@@ -1907,120 +1079,4 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php endif; ?>
 
 <?php $__env->stopSection(); ?>
-
-<!-- DEBUG: Gallery Data Check -->
-<script>
-// Force cache bust - current timestamp
-console.log('🚀 Gallery Modal Script Loaded at:', new Date().toISOString());
-
-// Auto-detect if we're using XAMPP or Laravel serve and set correct base URL
-function getBaseUrl() {
-    const currentUrl = window.location.href;
-    console.log('Current URL:', currentUrl);
-    
-    // If accessing via Laravel development server (port 8000)
-    if (currentUrl.includes(':8000')) {
-        console.log('✅ Detected Laravel serve (port 8000)');
-        return ''; // No prefix needed
-    }
-    
-    // If accessing via XAMPP (contains ALI-PORTO)
-    if (currentUrl.includes('/ALI-PORTO')) {
-        console.log('✅ Detected XAMPP with ALI-PORTO path');
-        return '/ALI-PORTO/public'; // Add XAMPP path prefix
-    }
-    
-    // Check if we're in a subdirectory
-    const path = window.location.pathname;
-    if (path.includes('/public/')) {
-        const basePath = path.substring(0, path.indexOf('/public/') + '/public'.length);
-        console.log('✅ Detected public directory, base path:', basePath);
-        return basePath;
-    }
-    
-    console.log('⚠️ Using default (no prefix)');
-    return '';
-}
-
-function openGalleryModal(galleryId, galleryName, type = 'gallery') {
-    console.log('Opening gallery modal:', { galleryId, galleryName, type });
-    
-    document.getElementById('galleryModalTitle').textContent = galleryName || 'Gallery';
-    document.getElementById('galleryModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    
-    // Show loading
-    document.getElementById('galleryModalContent').innerHTML = `
-        <div class="flex items-center justify-center py-12">
-            <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-                <p class="text-gray-400">Loading gallery...</p>
-                <p class="text-gray-500 text-sm mt-2">Gallery ID: ${galleryId}</p>
-            </div>
-        </div>
-    `;
-    
-    // Get the correct base URL
-    const baseUrl = getBaseUrl();
-    console.log('🔗 Using base URL:', baseUrl);
-    console.log('🌍 Current location:', window.location.href);
-    
-    // Try multiple endpoints with correct base URL
-    const endpoints = [
-        `${baseUrl}/api/gallery/${galleryId}/items`,
-        `${baseUrl}/gallery/${galleryId}/items`
-    ];
-    
-    console.log('🎯 Will try these endpoints:', endpoints);
-    
-    async function tryEndpoints() {
-        for (const endpoint of endpoints) {
-            try {
-                console.log('Trying endpoint:', endpoint);
-                const response = await fetch(endpoint, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                console.log('Response status:', response.status, response.statusText);
-                
-                if (!response.ok) {
-                    console.log('Failed:', endpoint, response.status);
-                    continue; // Try next endpoint
-                }
-                
-                const data = await response.json();
-                console.log('✅ API Success for', endpoint, ':', data);
-                
-                // Handle response data
-                let items = [];
-                if (data.success && data.items && Array.isArray(data.items)) {
-                    items = data.items;
-                } else if (data.success && data.data && Array.isArray(data.data)) {
-                    items = data.data;
-                } else if (Array.isArray(data)) {
-                    items = data;
-                }
-                
-                console.log('Processed items:', items.length, 'items found');
-                
-                if (items.length > 0) {
-                    displayGalleryItems(items);
-                    return; // Success, stop trying other endpoints
-                }
-                
-            } catch (error) {
-                console.error('❌ Failed endpoint:', endpoint, error.message);
-            }
-        }
-        
-        // If all endpoints fail, show detailed error
-        showDetailedError(galleryId, baseUrl, endpoints);
-    }
-    
-    tryEndpoints();
-}
-</script>
 <?php echo $__env->make('layouts.web', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/welcome.blade.php ENDPATH**/ ?>

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GaleriController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// Gallery API Routes
+Route::prefix('gallery')->group(function () {
+    Route::get('{galleryId}/items', [GaleriController::class, 'getGalleryItems']);
+    Route::get('item/{itemId}', [GaleriController::class, 'showItem']);
 });

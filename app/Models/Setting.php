@@ -55,5 +55,6 @@ class Setting extends Model
         'contact_section_active',
         'background_setting',
         'bg_tentang_setting',
+        'view_cv_url',
     ];
 }

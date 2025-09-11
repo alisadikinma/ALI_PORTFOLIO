@@ -59,9 +59,52 @@ class GalleryItem extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'id_galeri' => 'integer',
         'id_award' => 'integer',
         'sequence' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
     ];
+
+    /**
+     * Scope for specific gallery
+     */
+    public function scopeForGallery($query, $galleryId)
+    {
+        return $query->where('id_galeri', $galleryId);
+    }
+
+    /**
+     * Scope for ordered by sequence
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('sequence', 'asc');
+    }
+
+    /**
+     * Helper method to check if item is image
+     */
+    public function isImage()
+    {
+        return $this->type === 'image';
+    }
+
+    /**
+     * Helper method to check if item is video
+     */
+    public function isVideo()
+    {
+        return $this->type === 'youtube';
+    }
+
+    /**
+     * Helper method to get media type string
+     */
+    public function getMediaTypeAttribute()
+    {
+        return $this->type;
+    }
 
     /**
      * Get the galeri that owns the gallery item.
@@ -90,7 +133,7 @@ class GalleryItem extends Model
     public function getFileUrlAttribute()
     {
         if ($this->file_name) {
-            return Storage::url('gallery_items/' . $this->file_name);
+            return asset('file/galeri/' . $this->file_name);
         }
         return null;
     }

@@ -15,9 +15,8 @@ class HomeWebController extends Controller
 {
     public function index()
     {
-        // Clear cache first to ensure we get fresh data
-        Cache::forget('homepage_data');
-        Cache::forget('site_config');
+        // Clear ALL cache to ensure fresh data
+        Cache::flush();
         
         // Cache site configuration for 5 minutes (300 seconds)
         $konf = Cache::remember('site_config', 300, function() {
@@ -33,8 +32,9 @@ class HomeWebController extends Controller
                     ->orderBy('sequence', 'asc')
                     ->get(),
                 'testimonial' => DB::table('testimonial')->select('judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan')->get(),
-                'galeri' => Galeri::with(['activeGalleryItems' => function($query) {
-                        $query->orderBy('sequence', 'asc');
+                'galeri' => Galeri::with(['galleryItems' => function($query) {
+                        $query->where('status', 'Active')
+                              ->orderBy('sequence', 'asc');
                     }])
                     ->where('status', 'Active')
                     ->orderBy('sequence', 'asc')

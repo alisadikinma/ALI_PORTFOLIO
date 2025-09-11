@@ -1,6 +1,9 @@
 @extends('layouts.web')
 
 @section('isi')
+{{-- Include Global Gallery Components --}}
+@include('partials.global-image-modal')
+@include('partials.global-gallery-loader')
 <!-- Hero Section -->
 
 @if (session('success'))
@@ -594,8 +597,9 @@
 </section>
 @endif
 
-@include('partials.awards')
+@include('partials.awards-updated')
 @include('partials.services')
+@include('partials.portfolio')
 
 
 <!-- Image Error Handling Script -->
@@ -647,8 +651,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-@include('partials.portfolio')
 
 <!-- Testimonials Section -->
 @if($konf->testimonials_section_active ?? true)
@@ -839,7 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 @endif
 
-@include('partials.gallery')
+@include('partials.gallery-updated')
 
 <!-- Articles Section -->
 @if($konf->articles_section_active ?? true)

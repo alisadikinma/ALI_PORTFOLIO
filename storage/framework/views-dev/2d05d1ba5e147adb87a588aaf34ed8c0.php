@@ -1,4 +1,7 @@
 <?php $__env->startSection('isi'); ?>
+
+<?php echo $__env->make('partials.global-image-modal', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php echo $__env->make('partials.global-gallery-loader', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <!-- Hero Section -->
 
 <?php if(session('success')): ?>
@@ -603,8 +606,9 @@
 </section>
 <?php endif; ?>
 
-<?php echo $__env->make('partials.awards', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php echo $__env->make('partials.awards-updated', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 <?php echo $__env->make('partials.services', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php echo $__env->make('partials.portfolio', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 
 <!-- Image Error Handling Script -->
@@ -656,8 +660,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-<?php echo $__env->make('partials.portfolio', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <!-- Testimonials Section -->
 <?php if($konf->testimonials_section_active ?? true): ?>
@@ -849,7 +851,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <?php endif; ?>
 
-<?php echo $__env->make('partials.gallery', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+<?php echo $__env->make('partials.gallery-updated', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 <!-- Articles Section -->
 <?php if($konf->articles_section_active ?? true): ?>

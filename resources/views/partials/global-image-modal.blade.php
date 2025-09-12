@@ -2,7 +2,7 @@
 <!-- Include this file in your main layout -->
 
 <!-- Global Image Modal HTML -->
-<div id="globalImageModal" class="fixed inset-0 bg-black bg-opacity-95 z-[80] hidden flex items-center justify-center p-4">
+<div id="globalImageModal" class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden flex items-center justify-center p-4">
     <div class="relative max-w-full max-h-full">
         <!-- Loading Spinner -->
         <div id="globalImageLoading" class="absolute inset-0 flex items-center justify-center">
@@ -63,10 +63,12 @@
 #globalImageModal {
     backdrop-filter: blur(5px);
     animation: fadeIn 0.3s ease-out;
+    z-index: 9999 !important; /* Force highest z-index */
 }
 
 #globalImageModal .relative {
     animation: scaleIn 0.3s ease-out;
+    z-index: 10000 !important; /* Ensure content is above backdrop */
 }
 
 @keyframes fadeIn {
@@ -210,6 +212,10 @@ window.GlobalImageModal = {
         const title = document.getElementById('globalImageTitle');
         const galleryInfo = document.getElementById('globalImageGalleryInfo');
         
+        // Force highest z-index to ensure it's above gallery popup
+        modal.style.zIndex = '9999';
+        modal.style.position = 'fixed';
+        
         // Show modal
         modal.classList.remove('hidden');
         document.body.classList.add('modal-open');
@@ -233,6 +239,8 @@ window.GlobalImageModal = {
         }
         
         this.isOpen = true;
+        
+        console.log('Image modal opened with z-index:', modal.style.zIndex);
     },
     
     // Handle successful image load

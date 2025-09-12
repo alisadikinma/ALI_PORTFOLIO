@@ -51,15 +51,21 @@ window.GlobalGalleryLoader = {
             try {
                 console.log(`Trying URL: ${url}`);
                 
+                // Add timeout to prevent hanging requests
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                
                 const response = await fetch(url, {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
                         'X-Requested-With': 'XMLHttpRequest'
-                    }
+                    },
+                    signal: controller.signal
                 });
                 
+                clearTimeout(timeoutId);
                 console.log(`Response from ${url}:`, response.status);
                 
                 if (response.ok) {
@@ -78,12 +84,19 @@ window.GlobalGalleryLoader = {
             } catch (error) {
                 console.log(`Error with ${url}:`, error.message);
                 lastError = error.message;
+                
+                // If it's a timeout or abort error, treat as no data available
+                if (error.name === 'AbortError') {
+                    lastError = 'Request timeout - no data available';
+                }
             }
         }
         
-        // If all URLs failed
+        // If all URLs failed, assume no data rather than error
+        console.log('All API attempts failed, treating as no data available');
         return {
-            success: false,
+            success: true, // Change to true to trigger no-data state instead of error
+            data: { success: false, items: [] },
             error: lastError,
             attemptedUrls: apiUrls
         };
@@ -435,53 +448,112 @@ window.loadAwardGallery = async function(awardId, awardName, containerId) {
     const container = document.getElementById(containerId);
     GlobalGalleryLoader.showLoading(container, awardName, 'award', awardId);
     
-    const result = await GlobalGalleryLoader.loadGalleryItems('award', awardId, awardName);
+    console.log(`🔍 Starting loadAwardGallery for ID: ${awardId}, Name: ${awardName}`);
     
-    console.log('Award Gallery API Result:', result);
+    // Set a maximum loading time of 8 seconds
+    const loadingTimeout = setTimeout(() => {
+        console.log('⏰ Loading timeout reached - showing no data state');
+        GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+    }, 8000);
     
-    if (result.success) {
-        // Check multiple possible data structures
+    try {
+        const result = await GlobalGalleryLoader.loadGalleryItems('award', awardId, awardName);
+        
+        clearTimeout(loadingTimeout); // Clear timeout if we get a response
+        
+        console.log('🎯 Award Gallery API Full Result:', result);
+        console.log('📊 Result.success:', result.success);
+        console.log('📊 Result.data:', result.data);
+        
+        // Immediate check for obvious no-data scenarios
+        if (!result || !result.success) {
+            console.log('❌ API failed or no success flag - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
+        }
+        
+        // Check multiple possible data structures with detailed logging
         let items = null;
         let hasValidData = false;
         
-        // Try different possible API response structures
-        if (result.data) {
-            if (result.data.success === true && result.data.items) {
-                items = result.data.items;
-            } else if (result.data.success === false) {
-                // API returned success=false, treat as no data
-                items = [];
-            } else if (Array.isArray(result.data)) {
-                items = result.data;
-            } else if (result.data.data) {
-                items = result.data.data;
-            } else {
-                // Unknown structure, assume no data
-                items = [];
-            }
-        } else {
-            items = [];
+        console.log('🔍 Analyzing data structure...');
+        
+        if (!result.data) {
+            console.log('❌ No result.data found - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
         }
         
-        console.log('Processed items for award gallery:', items);
+        // Log the exact structure we received
+        console.log('📋 Data structure type:', typeof result.data);
+        console.log('📋 Data is array:', Array.isArray(result.data));
+        console.log('📋 Data keys:', Object.keys(result.data));
+        
+        // Try different possible API response structures
+        if (result.data.success === true && result.data.items) {
+            console.log('✅ Found data.success=true with items');
+            items = result.data.items;
+        } else if (result.data.success === false) {
+            console.log('❌ API returned success=false - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
+        } else if (Array.isArray(result.data)) {
+            console.log('✅ Data is direct array');
+            items = result.data;
+        } else if (result.data.data) {
+            console.log('✅ Found nested data.data');
+            items = result.data.data;
+        } else if (result.data.items) {
+            console.log('✅ Found data.items (without success flag)');
+            items = result.data.items;
+        } else {
+            console.log('❌ Unknown data structure - showing empty state');
+            console.log('🔍 Full data object:', result.data);
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
+        }
+        
+        console.log('📦 Extracted items:', items);
+        console.log('📦 Items type:', typeof items);
+        console.log('📦 Items is array:', Array.isArray(items));
+        console.log('📦 Items length:', items ? items.length : 'null');
         
         // Check if we have valid items
-        if (items && Array.isArray(items) && items.length > 0) {
-            // Filter out null/undefined items
-            const validItems = items.filter(item => item !== null && item !== undefined);
-            hasValidData = validItems.length > 0;
+        if (!items) {
+            console.log('❌ Items is null/undefined - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
         }
         
-        if (!hasValidData) {
-            console.log('No award gallery data found - showing empty state');
+        if (!Array.isArray(items)) {
+            console.log('❌ Items is not an array - showing empty state');
             GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
-        } else {
-            console.log('Award gallery data found - displaying items');
-            GlobalGalleryLoader.displayGalleryItems(items, containerId, awardName, 'award');
+            return;
         }
-    } else {
-        console.log('Award gallery API failed - showing error');
-        GlobalGalleryLoader.showError(container, awardName, 'award', awardId, result.error, result.attemptedUrls);
+        
+        if (items.length === 0) {
+            console.log('❌ Items array is empty - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
+        }
+        
+        // Filter out null/undefined items
+        const validItems = items.filter(item => item !== null && item !== undefined);
+        console.log('✅ Valid items after filtering:', validItems.length);
+        
+        if (validItems.length === 0) {
+            console.log('❌ No valid items after filtering - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
+            return;
+        }
+        
+        console.log('🎉 Award gallery data found - displaying items');
+        GlobalGalleryLoader.displayGalleryItems(validItems, containerId, awardName, 'award');
+        
+    } catch (error) {
+        clearTimeout(loadingTimeout);
+        console.error('🚨 Error in loadAwardGallery:', error);
+        GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
     }
 };
 
@@ -489,53 +561,112 @@ window.loadGalleryItems = async function(galleryId, galleryName, containerId) {
     const container = document.getElementById(containerId);
     GlobalGalleryLoader.showLoading(container, galleryName, 'gallery', galleryId);
     
-    const result = await GlobalGalleryLoader.loadGalleryItems('gallery', galleryId, galleryName);
+    console.log(`🔍 Starting loadGalleryItems for ID: ${galleryId}, Name: ${galleryName}`);
     
-    console.log('Gallery API Result:', result);
+    // Set a maximum loading time of 8 seconds
+    const loadingTimeout = setTimeout(() => {
+        console.log('⏰ Loading timeout reached - showing no data state');
+        GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+    }, 8000);
     
-    if (result.success) {
-        // Check multiple possible data structures
+    try {
+        const result = await GlobalGalleryLoader.loadGalleryItems('gallery', galleryId, galleryName);
+        
+        clearTimeout(loadingTimeout); // Clear timeout if we get a response
+        
+        console.log('🎯 Gallery API Full Result:', result);
+        console.log('📊 Result.success:', result.success);
+        console.log('📊 Result.data:', result.data);
+        
+        // Immediate check for obvious no-data scenarios
+        if (!result || !result.success) {
+            console.log('❌ API failed or no success flag - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
+        }
+        
+        // Check multiple possible data structures with detailed logging
         let items = null;
         let hasValidData = false;
         
-        // Try different possible API response structures
-        if (result.data) {
-            if (result.data.success === true && result.data.items) {
-                items = result.data.items;
-            } else if (result.data.success === false) {
-                // API returned success=false, treat as no data
-                items = [];
-            } else if (Array.isArray(result.data)) {
-                items = result.data;
-            } else if (result.data.data) {
-                items = result.data.data;
-            } else {
-                // Unknown structure, assume no data
-                items = [];
-            }
-        } else {
-            items = [];
+        console.log('🔍 Analyzing data structure...');
+        
+        if (!result.data) {
+            console.log('❌ No result.data found - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
         }
         
-        console.log('Processed items for gallery:', items);
+        // Log the exact structure we received
+        console.log('📋 Data structure type:', typeof result.data);
+        console.log('📋 Data is array:', Array.isArray(result.data));
+        console.log('📋 Data keys:', Object.keys(result.data));
+        
+        // Try different possible API response structures
+        if (result.data.success === true && result.data.items) {
+            console.log('✅ Found data.success=true with items');
+            items = result.data.items;
+        } else if (result.data.success === false) {
+            console.log('❌ API returned success=false - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
+        } else if (Array.isArray(result.data)) {
+            console.log('✅ Data is direct array');
+            items = result.data;
+        } else if (result.data.data) {
+            console.log('✅ Found nested data.data');
+            items = result.data.data;
+        } else if (result.data.items) {
+            console.log('✅ Found data.items (without success flag)');
+            items = result.data.items;
+        } else {
+            console.log('❌ Unknown data structure - showing empty state');
+            console.log('🔍 Full data object:', result.data);
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
+        }
+        
+        console.log('📦 Extracted items:', items);
+        console.log('📦 Items type:', typeof items);
+        console.log('📦 Items is array:', Array.isArray(items));
+        console.log('📦 Items length:', items ? items.length : 'null');
         
         // Check if we have valid items
-        if (items && Array.isArray(items) && items.length > 0) {
-            // Filter out null/undefined items
-            const validItems = items.filter(item => item !== null && item !== undefined);
-            hasValidData = validItems.length > 0;
+        if (!items) {
+            console.log('❌ Items is null/undefined - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
         }
         
-        if (!hasValidData) {
-            console.log('No gallery data found - showing empty state');
+        if (!Array.isArray(items)) {
+            console.log('❌ Items is not an array - showing empty state');
             GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
-        } else {
-            console.log('Gallery data found - displaying items');
-            GlobalGalleryLoader.displayGalleryItems(items, containerId, galleryName, 'gallery');
+            return;
         }
-    } else {
-        console.log('Gallery API failed - showing error');
-        GlobalGalleryLoader.showError(container, galleryName, 'gallery', galleryId, result.error, result.attemptedUrls);
+        
+        if (items.length === 0) {
+            console.log('❌ Items array is empty - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
+        }
+        
+        // Filter out null/undefined items
+        const validItems = items.filter(item => item !== null && item !== undefined);
+        console.log('✅ Valid items after filtering:', validItems.length);
+        
+        if (validItems.length === 0) {
+            console.log('❌ No valid items after filtering - showing empty state');
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            return;
+        }
+        
+        console.log('🎉 Gallery data found - displaying items');
+        GlobalGalleryLoader.displayGalleryItems(validItems, containerId, galleryName, 'gallery');
+        
+    } catch (error) {
+        clearTimeout(loadingTimeout);
+        console.error('🚨 Error in loadGalleryItems:', error);
+        GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
     }
 };
 

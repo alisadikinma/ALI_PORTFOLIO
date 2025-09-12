@@ -12,14 +12,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-// Database configuration
-$host = 'localhost';
-$dbname = 'portfolio_db'; // Adjust to your database name
-$username = 'ali';        // Adjust to your database username
-$password = 'aL1889900@@@';            // Adjust to your database password
+// Load environment configuration from .env file
+function loadEnvConfig() {
+    $envPath = dirname(__DIR__) . '/.env';
+    
+    if (!file_exists($envPath)) {
+        throw new Exception('.env file not found at: ' . $envPath);
+    }
+    
+    $envVars = [];
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    
+    foreach ($lines as $line) {
+        // Skip comments
+        if (strpos(trim($line), '#') === 0) {
+            continue;
+        }
+        
+        // Parse key=value pairs
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $key = trim($key);
+            $value = trim($value);
+            
+            // Remove quotes if present
+            if ((substr($value, 0, 1) === '"' && substr($value, -1) === '"') ||
+                (substr($value, 0, 1) === "'" && substr($value, -1) === "'")) {
+                $value = substr($value, 1, -1);
+            }
+            
+            $envVars[$key] = $value;
+        }
+    }
+    
+    return $envVars;
+}
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    // Load environment configuration
+    $env = loadEnvConfig();
+    
+    // Database configuration from .env
+    $host = $env['DB_HOST'] ?? 'localhost';
+    $port = $env['DB_PORT'] ?? '3306';
+    $dbname = $env['DB_DATABASE'] ?? '';
+    $username = $env['DB_USERNAME'] ?? '';
+    $password = $env['DB_PASSWORD'] ?? '';
+    
+    // Validate required database config
+    if (empty($dbname) || empty($username)) {
+        throw new Exception('Database configuration incomplete in .env file');
+    }
+    
+    // Create PDO connection
+    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
+    $pdo = new PDO($dsn, $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     // Get parameters
@@ -40,6 +87,7 @@ try {
     }
     
     $items = [];
+    $baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/ALI_PORTFOLIO/public/file/galeri/';
     
     if ($type === 'award') {
         // Get gallery items for award
@@ -63,8 +111,6 @@ try {
             ORDER BY gi.sequence ASC, gi.id_gallery_item ASC
         ");
         
-        // Base URL for files - adjust as needed
-        $baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/ALI_PORTFOLIO/public/file/galeri/';
         $stmt->execute([$baseUrl, $id]);
         
     } elseif ($type === 'gallery') {
@@ -89,8 +135,6 @@ try {
             ORDER BY gi.sequence ASC, gi.id_gallery_item ASC
         ");
         
-        // Base URL for files - adjust as needed
-        $baseUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/ALI_PORTFOLIO/public/file/galeri/';
         $stmt->execute([$baseUrl, $id]);
         
     } else {
@@ -112,8 +156,11 @@ try {
         'query_type' => $type,
         'query_id' => $id,
         'items_found' => count($items),
-        'base_url' => $baseUrl ?? 'Not set',
-        'database_connected' => true
+        'base_url' => $baseUrl,
+        'database_connected' => true,
+        'env_loaded' => true,
+        'db_host' => $host,
+        'db_name' => $dbname
     ];
     
     if (count($items) > 0) {
@@ -139,19 +186,21 @@ try {
         'error' => 'Database connection failed',
         'message' => $e->getMessage(),
         'debug' => [
-            'host' => $host,
-            'database' => $dbname,
-            'error_code' => $e->getCode()
+            'db_host' => $host ?? 'not loaded',
+            'db_name' => $dbname ?? 'not loaded',
+            'error_code' => $e->getCode(),
+            'env_file_path' => dirname(__DIR__) . '/.env'
         ]
     ]);
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'error' => 'Unexpected error occurred',
+        'error' => 'Configuration or system error',
         'message' => $e->getMessage(),
         'debug' => [
             'file' => __FILE__,
-            'line' => $e->getLine()
+            'line' => $e->getLine(),
+            'env_file_exists' => file_exists(dirname(__DIR__) . '/.env')
         ]
     ]);
 }

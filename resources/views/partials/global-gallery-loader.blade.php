@@ -51,9 +51,9 @@ window.GlobalGalleryLoader = {
             try {
                 console.log(`Trying URL: ${url}`);
                 
-                // Add timeout to prevent hanging requests
+                // Reduced timeout to 3 seconds for faster no-data detection
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+                const timeoutId = setTimeout(() => controller.abort(), 3000); // Reduced from 10s to 3s
                 
                 const response = await fetch(url, {
                     method: 'GET',
@@ -183,7 +183,7 @@ window.GlobalGalleryLoader = {
                             `<img src="${thumbnailUrl}" alt="${title}" class="w-full h-full object-cover" style="object-fit: cover; width: 100%; height: 100%;">` :
                             `<div class="w-full h-full flex items-center justify-center bg-slate-600 text-white text-sm" style="height: 220px;">YouTube Video</div>`
                         }
-                        <div class="absolute inset-0 flex items-center justify-center" onclick="this.openYouTubeModal('${item.youtube_url}', '${title}')">
+                        <div class="absolute inset-0 flex items-center justify-center" onclick="GlobalGalleryLoader.openYouTubeModal('${item.youtube_url}', '${title}')">
                             <div class="bg-red-600 rounded-full p-3 group-hover:bg-red-700 transition-colors">
                                 <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8 5v14l11-7z"/>
@@ -363,11 +363,15 @@ window.GlobalGalleryLoader = {
                 <div class="text-yellow-400 text-6xl mb-4">${emoji}</div>
                 <h3 class="text-white text-xl font-semibold mb-2">${title}</h3>
                 <p class="text-gray-400 mb-4">"${itemName}" doesn't have any gallery items yet.</p>
+                <div class="text-gray-500 text-sm">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    No data available to display
+                </div>
             </div>
         `;
     },
     
-    // Show loading state
+    // Show loading state with faster timeout
     showLoading(container, itemName, type, id) {
         container.innerHTML = `
             <div class="flex items-center justify-center py-12">
@@ -375,6 +379,7 @@ window.GlobalGalleryLoader = {
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
                     <p class="text-gray-400 text-lg">Loading gallery...</p>
                     <p class="text-gray-500 text-sm mt-2">${type.charAt(0).toUpperCase() + type.slice(1)} ID: ${id}</p>
+                    <p class="text-gray-500 text-xs mt-1">Will show "No Data" if not found within 3 seconds</p>
                 </div>
             </div>
         `;
@@ -412,16 +417,19 @@ window.GlobalGalleryLoader = {
         return match ? match[1] : null;
     },
     
-    // Open YouTube modal
+    // Open YouTube modal with responsive container sizing
     openYouTubeModal(youtubeUrl, title) {
         const videoId = this.extractYouTubeId(youtubeUrl);
         const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : youtubeUrl;
         
         const modal = document.createElement('div');
         modal.className = 'fixed inset-0 bg-black bg-opacity-90 z-60 flex items-center justify-center p-4';
+        modal.style.maxHeight = '100vh';
+        modal.style.overflow = 'auto';
+        
         modal.innerHTML = `
-            <div class="relative w-full max-w-4xl">
-                <div class="relative w-full" style="padding-bottom: 56.25%;">
+            <div class="relative w-full max-w-4xl max-h-full">
+                <div class="relative w-full bg-black rounded-lg overflow-hidden" style="max-height: 80vh; padding-bottom: min(56.25%, 80vh - 120px);">
                     <iframe 
                         class="absolute top-0 left-0 w-full h-full" 
                         src="${embedUrl}" 
@@ -431,30 +439,237 @@ window.GlobalGalleryLoader = {
                         allowfullscreen>
                     </iframe>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors">
+                <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" 
+                        class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors z-70">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
+                <div class="text-center mt-4">
+                    <h3 class="text-white text-lg font-semibold">${title}</h3>
+                </div>
             </div>
         `;
         document.body.appendChild(modal);
         document.body.style.overflow = 'hidden';
+        
+        // Close on outside click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+                document.body.style.overflow = '';
+            }
+        });
     }
 };
 
-// Backward compatibility functions with immediate no-data handling
+// Enhanced GlobalImageModal for responsive image sizing
+if (typeof window.GlobalImageModal === 'undefined') {
+    window.GlobalImageModal = {
+        currentImages: [],
+        currentIndex: 0,
+        currentGalleryName: '',
+        
+        // Open gallery with proper image sizing
+        openGallery(images, startIndex = 0, galleryName = 'Gallery') {
+            this.currentImages = images || [];
+            this.currentIndex = startIndex || 0;
+            this.currentGalleryName = galleryName;
+            
+            if (this.currentImages.length === 0) {
+                console.warn('No images provided to gallery modal');
+                return;
+            }
+            
+            this.showModal();
+        },
+        
+        // Show modal with responsive image container
+        showModal() {
+            if (this.currentIndex < 0 || this.currentIndex >= this.currentImages.length) {
+                console.warn('Invalid image index:', this.currentIndex);
+                return;
+            }
+            
+            const currentImage = this.currentImages[this.currentIndex];
+            
+            // Remove existing modal
+            const existingModal = document.getElementById('global-image-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Create modal with responsive container
+            const modal = document.createElement('div');
+            modal.id = 'global-image-modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center';
+            modal.style.padding = '20px';
+            modal.style.boxSizing = 'border-box';
+            
+            modal.innerHTML = `
+                <div class="relative w-full h-full max-w-6xl max-h-full flex flex-col">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                        <div class="text-white">
+                            <h3 class="text-xl font-semibold">${this.currentGalleryName}</h3>
+                            <p class="text-gray-300 text-sm">Image ${this.currentIndex + 1} of ${this.currentImages.length}</p>
+                        </div>
+                        <button onclick="GlobalImageModal.closeModal()" 
+                                class="text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Image Container with controlled sizing -->
+                    <div class="flex-1 flex items-center justify-center relative overflow-hidden" style="min-height: 0;">
+                        <img id="modal-image" 
+                             src="${currentImage.url}" 
+                             alt="${currentImage.alt || currentImage.title}" 
+                             class="max-w-full max-h-full object-contain"
+                             style="max-width: 100%; max-height: 100%; width: auto; height: auto; display: block;"
+                             onload="this.style.opacity = '1';"
+                             style="opacity: 0; transition: opacity 0.3s ease;">
+                        
+                        <!-- Loading indicator -->
+                        <div id="modal-loading" class="absolute inset-0 flex items-center justify-center">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+                        </div>
+                        
+                        <!-- Navigation arrows -->
+                        ${this.currentImages.length > 1 ? `
+                            <button onclick="GlobalImageModal.previousImage()" 
+                                    class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-75 transition-colors ${this.currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    ${this.currentIndex === 0 ? 'disabled' : ''}>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <button onclick="GlobalImageModal.nextImage()" 
+                                    class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-75 transition-colors ${this.currentIndex === this.currentImages.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}"
+                                    ${this.currentIndex === this.currentImages.length - 1 ? 'disabled' : ''}>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        ` : ''}
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="mt-4 text-center flex-shrink-0">
+                        <p class="text-white font-medium">${currentImage.title}</p>
+                        ${this.currentImages.length > 1 ? `
+                            <div class="flex justify-center mt-2 space-x-1">
+                                ${this.currentImages.map((_, index) => `
+                                    <button onclick="GlobalImageModal.goToImage(${index})"
+                                            class="w-2 h-2 rounded-full transition-colors ${
+                                                index === this.currentIndex 
+                                                    ? 'bg-white' 
+                                                    : 'bg-gray-500 hover:bg-gray-300'
+                                            }"></button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+            
+            // Handle image load events
+            const img = document.getElementById('modal-image');
+            const loading = document.getElementById('modal-loading');
+            
+            img.onload = function() {
+                loading.style.display = 'none';
+                this.style.opacity = '1';
+            };
+            
+            img.onerror = function() {
+                loading.innerHTML = `
+                    <div class="text-center text-white">
+                        <div class="text-red-400 text-4xl mb-2">⚠️</div>
+                        <p>Failed to load image</p>
+                    </div>
+                `;
+            };
+            
+            // Close on outside click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    GlobalImageModal.closeModal();
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', this.handleKeyPress);
+        },
+        
+        // Navigation methods
+        previousImage() {
+            if (this.currentIndex > 0) {
+                this.currentIndex--;
+                this.showModal();
+            }
+        },
+        
+        nextImage() {
+            if (this.currentIndex < this.currentImages.length - 1) {
+                this.currentIndex++;
+                this.showModal();
+            }
+        },
+        
+        goToImage(index) {
+            if (index >= 0 && index < this.currentImages.length) {
+                this.currentIndex = index;
+                this.showModal();
+            }
+        },
+        
+        // Close modal
+        closeModal() {
+            const modal = document.getElementById('global-image-modal');
+            if (modal) {
+                modal.remove();
+            }
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', this.handleKeyPress);
+        },
+        
+        // Keyboard handler
+        handleKeyPress(e) {
+            switch(e.key) {
+                case 'Escape':
+                    GlobalImageModal.closeModal();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    GlobalImageModal.previousImage();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    GlobalImageModal.nextImage();
+                    break;
+            }
+        }
+    };
+}
+
+// Backward compatibility functions with faster no-data handling
 window.loadAwardGallery = async function(awardId, awardName, containerId) {
     const container = document.getElementById(containerId);
     GlobalGalleryLoader.showLoading(container, awardName, 'award', awardId);
     
     console.log(`🔍 Starting loadAwardGallery for ID: ${awardId}, Name: ${awardName}`);
     
-    // Set a maximum loading time of 8 seconds
+    // Reduced loading timeout to 3 seconds for faster no-data detection
     const loadingTimeout = setTimeout(() => {
         console.log('⏰ Loading timeout reached - showing no data state');
         GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
-    }, 8000);
+    }, 3000); // Reduced from 8s to 3s
     
     try {
         const result = await GlobalGalleryLoader.loadGalleryItems('award', awardId, awardName);
@@ -563,11 +778,11 @@ window.loadGalleryItems = async function(galleryId, galleryName, containerId) {
     
     console.log(`🔍 Starting loadGalleryItems for ID: ${galleryId}, Name: ${galleryName}`);
     
-    // Set a maximum loading time of 8 seconds
+    // Reduced loading timeout to 3 seconds for faster no-data detection
     const loadingTimeout = setTimeout(() => {
         console.log('⏰ Loading timeout reached - showing no data state');
         GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
-    }, 8000);
+    }, 3000); // Reduced from 8s to 3s
     
     try {
         const result = await GlobalGalleryLoader.loadGalleryItems('gallery', galleryId, galleryName);
@@ -670,5 +885,5 @@ window.loadGalleryItems = async function(galleryId, galleryName, containerId) {
     }
 };
 
-console.log('Global Gallery Loader loaded successfully');
+console.log('Enhanced Global Gallery Loader loaded successfully with faster no-data detection and responsive image modal');
 </script>

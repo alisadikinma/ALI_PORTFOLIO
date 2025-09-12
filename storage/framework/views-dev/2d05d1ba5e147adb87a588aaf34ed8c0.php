@@ -72,9 +72,61 @@
         animation: fade-out 0.3s ease-in-out;
     }
 <style>
-/* Custom CSS untuk hover effect social media icons */
+/* Custom CSS untuk hover effect social media icons dan Send Message Button */
 .social-icon:hover svg {
     color: #000000 !important;
+}
+
+/* PERBAIKAN 1: Memastikan font Send Message tetap hitam */
+.send-message-btn {
+    background-color: #fbbf24 !important;
+    color: #000000 !important;
+}
+
+.send-message-btn:hover {
+    background-color: #f59e0b !important;
+    color: #000000 !important;
+}
+
+.send-message-btn span {
+    color: #000000 !important;
+}
+
+.send-message-btn:hover span {
+    color: #000000 !important;
+}
+
+.send-message-btn svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
+.send-message-btn:hover svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
+/* PERBAIKAN 2: Gap yang lebih lebar antara Gallery dan Contact Section */
+#contact {
+    margin-top: 4rem !important; /* 96px - Desktop */
+}
+
+@media (max-width: 768px) {
+    #contact {
+        margin-top: 4rem !important; /* 64px - Mobile */
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    #contact {
+        margin-top: 5rem !important; /* 80px - Tablet */
+    }
+}
+
+/* Gap sebelum Articles section juga diperlebar */
+#articles {
+    margin-top: 4rem !important;
+    margin-bottom: 3rem !important;
 }
 </style>
 
@@ -853,6 +905,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <?php echo $__env->make('partials.gallery-updated', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
+<!-- PERBAIKAN 2: Gap yang lebih lebar antara Gallery dan Contact Section -->
+
 <!-- Articles Section -->
 <?php if($konf->articles_section_active ?? true): ?>
 <section id="articles" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-14">
@@ -964,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </section>
 <?php endif; ?>
 
-<!-- Contact Section -->
+<!-- Contact Section dengan gap yang diperlebar -->
 <?php if($konf->contact_section_active ?? true): ?>
 <section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
     <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
@@ -1067,11 +1121,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </select>
             </div>
             <textarea name="message" placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"></textarea>
-            <button type="submit" class="w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center">
-                <span class="text-neutral-900 text-base font-semibold capitalize leading-[40px] sm:leading-[72px]">
+            <button type="submit" class="send-message-btn w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center group">
+                <span class="text-black text-base font-semibold capitalize leading-[40px] sm:leading-[72px] group-hover:text-black">
                     Send Message
                 </span>
-                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                <svg class="w-5 sm:w-6 h-5 sm:h-6 text-black group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
                 </svg>
             </button>

@@ -18,104 +18,346 @@
                     </ul>
                 </div>
                 @endif
-                <form action="{{ route('project.update', $project->id_project) }}" method="POST" enctype="multipart/form-data">
+
+                <form action="{{ route('project.update', $project->id_project) }}" method="POST" enctype="multipart/form-data" id="projectForm">
                     @csrf
                     @method('PUT')
-                    <div class="form-group mb-2">
-                        <label for="">Nama Client <abbr title="" style="color: black">*</abbr></label>
-                        <input required type="text" class="form-control" name="nama_client" value="{{ $project->nama_client }}">
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">lokasi Client <abbr title="" style="color: black">*</abbr></label>
-                        <input required type="text" class="form-control" name="lokasi_client" value="{{ $project->lokasi_client }}">
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Nama Project <abbr title="" style="color: black">*</abbr></label>
-                        <input required type="text" class="form-control" placeholder="Masukkan Judul Project disini...." name="nama_project" value="{{ $project->nama_project }}">
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Jenis Project <abbr title="" style="color: black">*</abbr></label>
-                        <select name="jenis_project" class="form-control">
-                            <option value="Media Sosial" {{ $project->jenis_project == 'Media Sosial' ? 'selected' : '' }}>Media Sosial</option>
-                            <option value="Sistem Informasi" {{ $project->jenis_project == 'Sistem Informasi' ? 'selected' : '' }}>Sistem Informasi</option>
-                            <option value="Jual Beli atau Ecommerce" {{ $project->jenis_project == 'Jual Beli atau Ecommerce' ? 'selected' : '' }}>Jual Beli atau Ecommerce</option>
-                            <option value="Pencarian" {{ $project->jenis_project == 'Pencarian' ? 'selected' : '' }}>Pencarian</option>
-                            <option value="Informasi dan Berita" {{ $project->jenis_project == 'Informasi dan Berita' ? 'selected' : '' }}>Informasi dan Berita</option>
-                            <option value="Pemesanan" {{ $project->jenis_project == 'Pemesanan' ? 'selected' : '' }}>Pemesanan</option>
-                            <option value="Event" {{ $project->jenis_project == 'Event' ? 'selected' : '' }}>Event</option>
-                            <option value="Game" {{ $project->jenis_project == 'Game' ? 'selected' : '' }}>Game</option>
-                        </select>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="client_name">Nama Client <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="client_name" name="client_name" value="{{ old('client_name', $project->client_name) }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="location">Lokasi Client <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="location" name="location" value="{{ old('location', $project->location) }}">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group mb-2">
-                        <label for="">Info Project *(Maks 9 Kata)</label>
-                        <input required type="text" class="form-control" placeholder="Masukkan Info Project disini...." name="info_project" value="{{ $project->info_project }}">
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">Keterangan</label>
-                        <textarea name="keterangan_project" id="editor" cols="30" rows="10" class="form-control">{{ $project->keterangan_project }}</textarea>
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="">URL</label>
-                        <input required type="text" class="form-control" placeholder="Masukkan Url Project disini...." name="url_project" value="{{ $project->url_project }}">
-                    </div>
                     <div class="form-group mb-3">
-                        <label for="">Gambar</label>
-                        <input type="file" class="form-control" name="gambar_project" placeholder="" accept="image/*" id="preview_gambar" />
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="">Preview Foto</label>
-                        <img src="{{ asset('file/project/'.$project->gambar_project) }}" alt="" style="width: 200px;" id="gambar_nodin">
+                        <label for="project_name">Nama Project <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="project_name" name="project_name" value="{{ old('project_name', $project->project_name) }}">
                     </div>
 
-                     <div class="form-group mb-3">
-                        <label for="">Gambar 1</label>
-                        <input type="file" class="form-control" name="gambar_project1" placeholder="" accept="image/*" id="preview_gambar" />
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="">Preview Foto 1</label>
-                        <img src="{{ asset('file/project1/'.$project->gambar_project1) }}" alt="" style="width: 200px;" id="gambar_nodin">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="project_category">Kategori Project <span class="text-danger">*</span></label>
+                                <select name="project_category" id="project_category" class="form-control">
+                                    <option value="">Pilih Kategori Project</option>
+                                    <option value="Artificial Intelligence" {{ old('project_category', $project->project_category) == 'Artificial Intelligence' ? 'selected' : '' }}>Artificial Intelligence</option>
+                                    <option value="Web Application" {{ old('project_category', $project->project_category) == 'Web Application' ? 'selected' : '' }}>Web Application</option>
+                                    <option value="Mobile Application" {{ old('project_category', $project->project_category) == 'Mobile Application' ? 'selected' : '' }}>Mobile Application</option>
+                                    <option value="Data Visualization" {{ old('project_category', $project->project_category) == 'Data Visualization' ? 'selected' : '' }}>Data Visualization</option>
+                                    <option value="API Development" {{ old('project_category', $project->project_category) == 'API Development' ? 'selected' : '' }}>API Development</option>
+                                    <option value="Automation" {{ old('project_category', $project->project_category) == 'Automation' ? 'selected' : '' }}>Automation</option>
+                                    <option value="Internet of Things" {{ old('project_category', $project->project_category) == 'Internet of Things' ? 'selected' : '' }}>Internet of Things</option>
+                                    <option value="Blockchain" {{ old('project_category', $project->project_category) == 'Blockchain' ? 'selected' : '' }}>Blockchain</option>
+                                    <option value="Machine Learning" {{ old('project_category', $project->project_category) == 'Machine Learning' ? 'selected' : '' }}>Machine Learning</option>
+                                    <option value="System Integration" {{ old('project_category', $project->project_category) == 'System Integration' ? 'selected' : '' }}>System Integration</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="url_project">URL Project</label>
+                                <input type="url" class="form-control" id="url_project" name="url_project" value="{{ old('url_project', $project->url_project) }}">
+                            </div>
+                        </div>
                     </div>
 
-                     <div class="form-group mb-3">
-                        <label for="">Gambar 2</label>
-                        <input type="file" class="form-control" name="gambar_project2" placeholder="" accept="image/*" id="preview_gambar" />
-                    </div>
                     <div class="form-group mb-3">
-                        <label for="">Preview Foto 2</label>
-                        <img src="{{ asset('file/project2/'.$project->gambar_project2) }}" alt="" style="width: 200px;" id="gambar_nodin">
+                        <label for="sequence">Urutan Tampilan</label>
+                        <input type="number" class="form-control" id="sequence" name="sequence" value="{{ old('sequence', $project->sequence) }}" min="0">
                     </div>
 
-            </div>
-            <div class="card-footer">
-                <a href="{{ route('project.index') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
-                <button type="submit" class="btn btn-dark"><i class="fas fa-save"></i> Save</button>
+                    <div class="form-group mb-3">
+                        <label for="description">Deskripsi Project <span class="text-danger">*</span></label>
+                        <textarea name="description" id="description" cols="30" rows="6" class="form-control">{{ old('description', $project->description) }}</textarea>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="info_project">Detail Project <span class="text-danger">*</span></label>
+                        <textarea name="info_project" id="editor" cols="30" rows="10" class="form-control">{{ old('info_project', $project->info_project) }}</textarea>
+                    </div>
+
+                    <!-- Existing Images Section -->
+                    @php
+                        $existingImages = $project->images ? json_decode($project->images, true) : [];
+                    @endphp
+                    
+                    @if(!empty($existingImages))
+                    <div class="form-group mb-3">
+                        <label>Gambar Project Saat Ini</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row" id="existingImagesContainer">
+                                    @foreach($existingImages as $index => $image)
+                                    <div class="col-md-4 mb-3 existing-image-item" data-image="{{ $image }}">
+                                        <div class="card">
+                                            <img src="{{ asset('images/projects/' . $image) }}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Project Image">
+                                            <div class="card-body p-2">
+                                                <div class="form-check mb-2">
+                                                    <input type="radio" name="featured_image_index" value="{{ $index }}" 
+                                                           class="form-check-input" id="existing_featured_{{ $index }}"
+                                                           {{ $project->featured_image == $image ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="existing_featured_{{ $index }}">
+                                                        <small>Gambar Utama</small>
+                                                    </label>
+                                                </div>
+                                                <button type="button" class="btn btn-danger btn-sm delete-existing-image" 
+                                                        data-image="{{ $image }}">
+                                                    <i class="fas fa-trash"></i> Hapus
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                <div id="deleteImagesContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    <!-- New Images Upload Section -->
+                    <div class="form-group mb-3">
+                        <label>Tambah Gambar Baru</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-success" id="addImageBtn">
+                                        <i class="fas fa-plus"></i> Tambah Gambar
+                                    </button>
+                                    <small class="form-text text-muted">Format: JPEG, JPG, PNG, GIF, WebP. Maksimal 2MB per file.</small>
+                                </div>
+                                
+                                <div id="imageContainer">
+                                    <!-- New image upload fields will be added here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="text-right">
+                            <a href="{{ route('project.index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Kembali
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Project
+                            </button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- CKEditor -->
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-<script>
-    document.getElementById('inputImg').addEventListener('change', function() {
-        // Get the file input value and create a URL for the selected image
-        var input = this;
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('previewImg').setAttribute('src', e.target.result);
-                document.getElementById('previewImg').classList.add("d-block");
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
-    });
-</script>
+
+<style>
+.image-upload-item {
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    padding: 1rem;
+    background-color: #f8f9fc;
+}
+
+.existing-image-item .card {
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+}
+
+.existing-image-item .card:hover {
+    border-color: #007bff;
+}
+
+.featured-radio:checked + label {
+    font-weight: bold;
+    color: #007bff;
+}
+</style>
 
 <script>
-   ClassicEditor
-        .create(document.querySelector('#editor'))
+document.addEventListener('DOMContentLoaded', function() {
+    let imageIndex = 0;
+
+    // Initialize CKEditor
+    ClassicEditor
+        .create(document.querySelector('#editor'), {
+            toolbar: [
+                'heading', '|',
+                'bold', 'italic', 'link', '|',
+                'bulletedList', 'numberedList', '|',
+                'outdent', 'indent', '|',
+                'blockQuote', 'insertTable', '|',
+                'undo', 'redo'
+            ]
+        })
         .catch(error => {
             console.error(error);
         });
+
+    // Delete existing image functionality
+    document.querySelectorAll('.delete-existing-image').forEach(button => {
+        button.addEventListener('click', function() {
+            const imageName = this.getAttribute('data-image');
+            const imageItem = this.closest('.existing-image-item');
+            const wasSelected = imageItem.querySelector('input[type="radio"]').checked;
+            
+            if (confirm('Apakah Anda yakin ingin menghapus gambar ini?')) {
+                // Add to delete list
+                const deleteContainer = document.getElementById('deleteImagesContainer');
+                const deleteInput = document.createElement('input');
+                deleteInput.type = 'hidden';
+                deleteInput.name = 'delete_images[]';
+                deleteInput.value = imageName;
+                deleteContainer.appendChild(deleteInput);
+                
+                // Remove from display
+                imageItem.remove();
+                
+                // If removed item was featured, select first remaining
+                if (wasSelected) {
+                    const firstRadio = document.querySelector('input[name="featured_image_index"]');
+                    if (firstRadio) {
+                        firstRadio.checked = true;
+                    }
+                }
+                
+                reindexExistingImages();
+            }
+        });
+    });
+
+    // Add new image upload field
+    document.getElementById('addImageBtn').addEventListener('click', function() {
+        const container = document.getElementById('imageContainer');
+        const existingCount = document.querySelectorAll('.existing-image-item').length;
+        const newImageCount = document.querySelectorAll('.image-upload-item').length;
+        const totalIndex = existingCount + newImageCount;
+        
+        const newItem = document.createElement('div');
+        newItem.className = 'image-upload-item mb-3';
+        newItem.setAttribute('data-index', imageIndex);
+        
+        newItem.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <input type="file" name="images[]" class="form-control image-input" accept="image/*" data-index="${totalIndex}">
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input type="radio" name="featured_image_index" value="${totalIndex}" class="form-check-input featured-radio" id="new_featured_${imageIndex}">
+                        <label class="form-check-label" for="new_featured_${imageIndex}">
+                            Gambar Utama
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger btn-sm remove-image">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mt-2">
+                <img class="preview-image d-none img-thumbnail" style="max-width: 200px; max-height: 150px;" alt="Preview">
+            </div>
+        `;
+        
+        container.appendChild(newItem);
+        imageIndex++;
+        attachRemoveListeners();
+        attachImagePreview();
+    });
+
+    // Remove new image upload field
+    function attachRemoveListeners() {
+        document.querySelectorAll('.remove-image').forEach(button => {
+            button.removeEventListener('click', removeImageHandler);
+            button.addEventListener('click', removeImageHandler);
+        });
+    }
+
+    function removeImageHandler() {
+        const item = this.closest('.image-upload-item');
+        const wasSelected = item.querySelector('input[type="radio"]').checked;
+        
+        item.remove();
+        
+        // If removed item was featured, select first remaining
+        if (wasSelected) {
+            const firstRadio = document.querySelector('input[name="featured_image_index"]');
+            if (firstRadio) {
+                firstRadio.checked = true;
+            }
+        }
+        
+        reindexNewImages();
+    }
+
+    // Reindex existing images after removal
+    function reindexExistingImages() {
+        document.querySelectorAll('.existing-image-item').forEach((item, index) => {
+            const radio = item.querySelector('input[type="radio"]');
+            radio.value = index;
+            radio.id = `existing_featured_${index}`;
+            radio.nextElementSibling.setAttribute('for', `existing_featured_${index}`);
+        });
+        reindexNewImages();
+    }
+
+    // Reindex new images
+    function reindexNewImages() {
+        const existingCount = document.querySelectorAll('.existing-image-item').length;
+        
+        document.querySelectorAll('.image-upload-item').forEach((item, index) => {
+            const totalIndex = existingCount + index;
+            item.setAttribute('data-index', index);
+            
+            const input = item.querySelector('input[type="file"]');
+            const radio = item.querySelector('input[type="radio"]');
+            
+            input.setAttribute('data-index', totalIndex);
+            radio.value = totalIndex;
+            radio.id = `new_featured_${index}`;
+            radio.nextElementSibling.setAttribute('for', `new_featured_${index}`);
+        });
+    }
+
+    // Image preview functionality
+    function attachImagePreview() {
+        document.querySelectorAll('.image-input').forEach(input => {
+            input.removeEventListener('change', imagePreviewHandler);
+            input.addEventListener('change', imagePreviewHandler);
+        });
+    }
+
+    function imagePreviewHandler() {
+        const preview = this.closest('.image-upload-item').querySelector('.preview-image');
+        
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(this.files[0]);
+        } else {
+            preview.classList.add('d-none');
+        }
+    }
+
+    // Initialize
+    attachRemoveListeners();
+    attachImagePreview();
+});
 </script>
 @endsection

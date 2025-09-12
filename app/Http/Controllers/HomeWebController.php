@@ -44,13 +44,13 @@ class HomeWebController extends Controller
                 'award' => Award::where('status', 'Active')
                     ->orderBy('sequence', 'asc')
                     ->get(),
-                'projects' => DB::table('project')->select('nama_project', 'slug_project', 'gambar_project', 'keterangan_project', 'jenis_project')->orderBy('created_at', 'desc')->limit(9)->get(),
+                'projects' => DB::table('project')->select('project_name', 'slug_project', 'featured_image', 'description', 'project_category')->orderBy('created_at', 'desc')->limit(9)->get(),
             ];
         });
         
         // Cache project types
         $jenis_projects = Cache::remember('project_types', 3600, function() {
-            return DB::table('project')->distinct()->pluck('jenis_project')->filter()->values()->toArray();
+            return DB::table('project')->distinct()->pluck('project_category')->filter()->values()->toArray();
         });
         
         // Extract cached data
@@ -71,11 +71,11 @@ class HomeWebController extends Controller
         });
         
         $projects = Cache::remember('all_projects', 1800, function() {
-            return DB::table('project')->select('nama_project', 'slug_project', 'gambar_project', 'keterangan_project', 'jenis_project')->get();
+            return DB::table('project')->select('project_name', 'slug_project', 'featured_image', 'description', 'project_category')->get();
         });
         
         $jenis_projects = Cache::remember('project_types', 3600, function() {
-            return DB::table('project')->distinct()->pluck('jenis_project')->filter()->values()->toArray();
+            return DB::table('project')->distinct()->pluck('project_category')->filter()->values()->toArray();
         });
         
         return view('portfolio', compact('konf', 'projects','jenis_projects'));

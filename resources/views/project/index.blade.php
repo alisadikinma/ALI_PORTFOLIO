@@ -16,6 +16,14 @@
                     <p>{{ $message }}</p>
                 </div>
                 @endif
+
+                @if ($message = Session::get('error'))
+                <div class="alert alert-danger">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <p>{{ $message }}</p>
+                </div>
+                @endif
+
                 <table class="table table-bordered" id="example3">
                     <thead>
                         <tr>
@@ -23,29 +31,36 @@
                             <th>Project</th>
                             <th>Jenis</th>
                             <th>Status</th>
-                            
                             <th>Gambar</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($project as $row)
+                        @forelse ($project as $row)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $row->nama_project }}</td>
-                            <td>{{ $row->jenis_project }}</td>
-                            <td>{{ $row->info_project }}</td>
+                            <td>{{ $row->project_name ?? 'N/A' }}</td>
+                            <td>{{ $row->project_category ?? 'N/A' }}</td>
+                            <td>
+                                <span class="badge badge-{{ $row->status == 'Active' ? 'success' : 'secondary' }}">
+                                    {{ $row->status ?? 'N/A' }}
+                                </span>
+                            </td>
                            
                             <td>
-                                <img src="{{ asset('file/project/'.$row->gambar_project) }}" alt="{{ $row->nama_project }}" style="width: 50px; height: 50px; object-fit: cover;">
-                                <img src="{{ asset('file/project1/'.$row->gambar_project1) }}" alt="{{ $row->nama_project }}" style="width: 50px; height: 50px; object-fit: cover;">
-                                <img src="{{ asset('file/project2/'.$row->gambar_project2) }}" alt="{{ $row->nama_project }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                @if($row->featured_image)
+                                    <img src="{{ asset('images/projects/' . $row->featured_image) }}" alt="{{ $row->project_name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                @else
+                                    <div style="width: 50px; height: 50px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px; color: #6c757d;">
+                                        No Image
+                                    </div>
+                                @endif
                             </td>
                             <td>
                                 <a href="{{ route('project.edit', $row->id_project) }}" class="btn btn-primary btn-xs">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <a href="{{ route('project.show', $row->id_project) }}" class="btn btn-info btn-xs">
+                                <a href="{{ route('project.showAdmin', $row->id_project) }}" class="btn btn-info btn-xs">
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
 
@@ -58,7 +73,20 @@
                                 </form>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <div class="p-4">
+                                    <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No Projects Found</h5>
+                                    <p class="text-muted">Start by creating your first project!</p>
+                                    <a href="{{ route('project.create') }}" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Create Project
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

@@ -46,6 +46,8 @@ class AwardController extends Controller
         ];
         $request->validate([
             'nama_award' => 'required',
+            'company' => 'required',
+            'period' => 'required',
             'gambar_award' => 'required',
             'keterangan_award' => 'required',
         ],$messages);
@@ -55,6 +57,8 @@ class AwardController extends Controller
 
         $data = new Award();
         $data->nama_award = $request->nama_award;
+        $data->company = $request->company;
+        $data->period = $request->period;
         $data->gambar_award = $namagambaraward;
         $data->keterangan_award = $request->keterangan_award;
         $data->slug_award = Str::slug($request->nama_award);
@@ -91,6 +95,8 @@ class AwardController extends Controller
         $namagambaraward = $award->gambar_award;
         $update = [
             'nama_award' => $request->nama_award,
+            'company' => $request->company,
+            'period' => $request->period,
             'gambar_award' => $namagambaraward,
             'keterangan_award' => $request->keterangan_award,
             'slug_award' => Str::slug($request->nama_award),

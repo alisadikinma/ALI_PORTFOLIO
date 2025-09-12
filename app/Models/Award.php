@@ -12,6 +12,8 @@ class Award extends Model
     protected $primaryKey = 'id_award';
     protected $fillable = [
         'nama_award',
+        'company',
+        'period',
         'gambar_award',
         'keterangan_award',
         'slug_award',

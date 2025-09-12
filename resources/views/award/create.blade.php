@@ -25,6 +25,20 @@
                             <label for="">Nama award <abbr title="" style="color: black">*</abbr></label>
                             <input type="text" class="form-control" placeholder="Masukkan Judul award disini...." name="nama_award" value="{{ old('nama_award') }}">
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label for="">Company <abbr title="" style="color: black">*</abbr></label>
+                                    <input type="text" class="form-control" placeholder="Masukkan nama company/institusi...." name="company" value="{{ old('company') }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-2">
+                                    <label for="">Period <abbr title="" style="color: black">*</abbr></label>
+                                    <input type="text" class="form-control" placeholder="Contoh: 2024, 2023-2024, Q1 2024" name="period" value="{{ old('period') }}">
+                                </div>
+                            </div>
+                        </div>
                         <div class="form-group mb-2">
                             <label for="">Keterangan</label>
                             <textarea name="keterangan_award" id="editor" cols="30" rows="10" class="form-control">{{ old('keterangan_award') }}</textarea>

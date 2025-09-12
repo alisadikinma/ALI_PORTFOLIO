@@ -17,110 +17,68 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($award as $index => $row)
             @php
-            // Logo configurations with transparent background
-            $logoConfigs = [
-                'nextdev' => [
-                    'subtitle' => 'TELKOMSEL • 2018', 
-                    'color' => '#60a5fa'
-                ],
-                'alibaba' => [
-                    'subtitle' => 'ALIBABA UNCTAD • 2019', 
-                    'color' => '#fb923c'
-                ],
-                'google' => [
-                    'subtitle' => 'GOOGLE • 2018', 
-                    'color' => '#60a5fa'
-                ],
-                'wild' => [
-                    'subtitle' => 'FENOX • 2017', 
-                    'color' => '#4ade80'
-                ],
-                'fenox' => [
-                    'subtitle' => 'FENOX • 2017', 
-                    'color' => '#f87171'
-                ],
-                'bubu' => [
-                    'subtitle' => 'BUBU.com • 2017', 
-                    'color' => '#4ade80'
-                ],
-                'grind' => [
-                    'subtitle' => 'GOOGLE • 2024', 
-                    'color' => '#60a5fa'
-                ],
-                'default' => [
-                    'subtitle' => date('Y'), 
-                    'color' => '#fbbf24'
-                ]
-            ];
+            // Get company and period from database fields (new enhancement)
+            $companyName = $row->company ?? 'Unknown Company';
+            $periodInfo = $row->period ?? date('Y');
+            $keteranganAward = $row->keterangan_award ?? 'Achieved recognition in prestigious competition, demonstrating innovative solutions and excellence.';
             
-            $logoKey = 'default';
-            foreach(array_keys($logoConfigs) as $key) {
-                if(stripos($row->nama_award, $key) !== false) {
-                    $logoKey = $key;
-                    break;
-                }
-            }
-            
-            $logoConfig = $logoConfigs[$logoKey];
+            // Limit description to 300 characters with suffix "..."
+            $limitedDescription = strlen(strip_tags($keteranganAward)) > 350 
+                ? substr(strip_tags($keteranganAward), 0, 350) . '...' 
+                : strip_tags($keteranganAward);
             @endphp
             
             <!-- Award Card - Side by Side Layout -->
             <div class="award-card-exact group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 hover:shadow-xl" 
                  onclick="openAwardGallery({{ $row->id_award }}, '{{ addslashes($row->nama_award) }}')">
                 
-                <!-- Logo & Title Section - Side by Side -->
-                <div class="flex items-start gap-4 mb-6">
-                    <!-- Logo - Transparent Background -->
-                    <div class="flex-shrink-0">
-                        <div class="w-16 h-16 rounded-xl flex items-center justify-center" 
-                             style="background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.1);">
-                            @if($row->gambar_award && file_exists(public_path('file/award/' . $row->gambar_award)))
-                                <img src="{{ asset('file/award/' . $row->gambar_award) }}" 
-                                     alt="{{ $row->nama_award }}" 
-                                     class="w-10 h-10 object-contain" />
-                            @else
-                                <span class="text-white font-bold text-sm">
-                                    @if(stripos($row->nama_award, 'nextdev') !== false)
-                                        NextDev
-                                    @elseif(stripos($row->nama_award, 'alibaba') !== false)
-                                        Ali
-                                    @else
-                                        {{ substr($row->nama_award, 0, 3) }}
-                                    @endif
-                                </span>
-                            @endif
+                <!-- Main Content Container -->
+                <div class="award-content-container">
+                    <!-- Logo & Title Section - Side by Side -->
+                    <div class="flex items-start gap-4 mb-6">
+                        <!-- Logo - Perbesar dari w-16 h-16 menjadi w-20 h-20 -->
+                        <div class="flex-shrink-0">
+                            <div class="w-16 h-16 rounded-xl flex items-center justify-center" 
+                                 style="background-color: transparent; border: 2px solid rgba(255, 255, 255, 0.1);">
+                                @if($row->gambar_award && file_exists(public_path('file/award/' . $row->gambar_award)))
+                                    <img src="{{ asset('file/award/' . $row->gambar_award) }}" 
+                                         alt="{{ $row->nama_award }}" 
+                                         class="w-14 h-14 object-contain" />
+                                @else
+                                    <span class="text-white font-bold text-base">
+                                        {{ strtoupper(substr($companyName, 0, 3)) }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Title & Company Info -->
+                        <div class="flex-1 min-w-0">
+                            <!-- Award Title -->
+                            <h3 class="text-white text-xl font-bold mb-2 leading-tight">
+                                {{ $row->nama_award }}
+                            </h3>
+                            
+                            <!-- Company & Year - Using new database fields -->
+                            <p class="text-sm font-semibold uppercase tracking-wider text-yellow-400">
+                                {{ strtoupper($companyName) }} • {{ $periodInfo }}
+                            </p>
                         </div>
                     </div>
                     
-                    <!-- Title & Company Info -->
-                    <div class="flex-1 min-w-0">
-                        <!-- Award Title -->
-                        <h3 class="text-white text-xl font-bold mb-2 leading-tight">
-                            {{ $row->nama_award }}
-                        </h3>
-                        
-                        <!-- Company & Year -->
-                        <p class="text-sm font-semibold uppercase tracking-wider" 
-                           style="color: {{ $logoConfig['color'] }};">
-                            {{ $logoConfig['subtitle'] }}
-                        </p>
-                    </div>
+                    <!-- Description - Limited to 300 characters with suffix "..." -->
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                        {{ $limitedDescription }}
+                    </p>
                 </div>
                 
-                <!-- Description -->
-                <p class="text-gray-400 text-sm leading-relaxed mb-8">
-                    Achieved first place in prestigious startup competition, demonstrating innovative digital solutions and entrepreneurial excellence.
-                </p>
-                
-                <!-- View Gallery Button - Bottom Right -->
-                <div class="flex justify-end items-end mt-auto">
-                    <button class="flex items-center gap-2 text-gray-400 text-sm font-medium uppercase tracking-wide transition-colors hover:text-white">
-                        <span>VIEW GALLERY</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                        </svg>
-                    </button>
-                </div>
+                <!-- View Gallery Button - Fixed position at bottom right -->
+                <button class="view-gallery-btn flex items-center gap-2 text-gray-400 text-sm font-medium uppercase tracking-wide transition-colors hover:text-white">
+                    <span>VIEW GALLERY</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
             </div>
             @endforeach
         </div>
@@ -146,6 +104,7 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .award-card-exact:hover {
@@ -153,9 +112,48 @@
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
 }
 
-/* Logo transparent background styling */
-.award-card-exact .w-16.h-16 {
+/* Fixed VIEW GALLERY button positioning */
+.view-gallery-btn {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 10;
+    background: rgba(30, 41, 59, 0.8);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    transition: all 0.3s ease;
+}
+
+.view-gallery-btn:hover {
+    background: rgba(71, 85, 105, 0.9);
+    border-color: rgba(251, 191, 36, 0.5);
+    color: #fbbf24 !important;
+}
+
+.view-gallery-btn span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Content area adjustment to prevent overlap */
+.award-content-container {
+    padding-bottom: 3rem; /* Space for fixed button */
+    min-height: calc(100% - 3.5rem);
+}
+
+/* Remove old content area adjustment */
+
+/* Logo transparent background styling - Updated for larger logo */
+.award-card-exact .w-20.h-20 {
     backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+}
+
+.award-card-exact:hover .w-20.h-20 {
+    transform: scale(1.05);
 }
 
 /* Ensure text doesn't wrap awkwardly */
@@ -175,9 +173,28 @@
         gap: 1rem;
     }
     
-    .award-card-exact .w-16.h-16 {
-        width: 3.5rem;
-        height: 3.5rem;
+    .award-card-exact .w-20.h-20 {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+    
+    .award-card-exact .w-14.h-14 {
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .view-gallery-btn {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .view-gallery-btn span {
+        font-size: 0.7rem;
+    }
+    
+    .award-content-container {
+        padding-bottom: 2.5rem;
     }
 }
 
@@ -189,6 +206,25 @@
     
     .award-card-exact .text-xl {
         font-size: 1.125rem;
+    }
+    
+    .award-card-exact .w-20.h-20 {
+        width: 4rem;
+        height: 4rem;
+    }
+    
+    .award-card-exact .w-14.h-14 {
+        width: 2.75rem;
+        height: 2.75rem;
+    }
+    
+    .view-gallery-btn {
+        bottom: 0.875rem;
+        right: 0.875rem;
+    }
+    
+    .award-content-container {
+        padding-bottom: 2.25rem;
     }
 }
 </style>

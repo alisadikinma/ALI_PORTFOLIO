@@ -11,9 +11,16 @@
     </div>
 
     @if(isset($galeri) && $galeri->count() > 0)
-    <!-- Gallery Grid -->
-    <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full">
-        @foreach ($galeri->where('status', 'Active')->sortBy('sequence') as $index => $row)
+    @php
+    // Filter active gallery items and sort by sequence
+    $activeGallery = $galeri->where('status', 'Active')->sortBy('sequence');
+    $displayGallery = $activeGallery->take(6); // Show only 6 items in 2x3 grid
+    $hasMore = $activeGallery->count() > 6; // Check if there are more than 6 items
+    @endphp
+    
+    <!-- Gallery Grid - 2x3 Layout (6 images max) -->
+    <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl">
+        @foreach ($displayGallery as $index => $row)
         <div class="relative group rounded-lg bg-slate-900 outline outline-1 outline-slate-500 overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-md cursor-pointer" 
              onclick="openGalleryModal({{ $row->id_galeri }}, '{{ addslashes($row->nama_galeri) }}')">
             
@@ -61,6 +68,19 @@
         </div>
         @endforeach
     </div>
+    
+    <!-- See More Button - Show if more than 6 items -->
+    @if($hasMore)
+    <div class="mt-6">
+        <a href="{{ url('/gallery') }}" 
+           class="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <span>See More</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+        </a>
+    </div>
+    @endif
         
     @else
     <!-- No Data State -->

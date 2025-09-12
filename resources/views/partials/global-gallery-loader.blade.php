@@ -51,9 +51,9 @@ window.GlobalGalleryLoader = {
             try {
                 console.log(`Trying URL: ${url}`);
                 
-                // Reduced timeout to 3 seconds for faster no-data detection
+                // Increased timeout to 10 seconds for better stability
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000); // Reduced from 10s to 3s
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased back to 10s
                 
                 const response = await fetch(url, {
                     method: 'GET',
@@ -665,11 +665,11 @@ window.loadAwardGallery = async function(awardId, awardName, containerId) {
     
     console.log(`🔍 Starting loadAwardGallery for ID: ${awardId}, Name: ${awardName}`);
     
-    // Reduced loading timeout to 3 seconds for faster no-data detection
+    // Increased loading timeout to 8 seconds for better stability
     const loadingTimeout = setTimeout(() => {
         console.log('⏰ Loading timeout reached - showing no data state');
         GlobalGalleryLoader.showEmptyGallery(container, awardName, 'award');
-    }, 3000); // Reduced from 8s to 3s
+    }, 8000); // Increased back to 8s
     
     try {
         const result = await GlobalGalleryLoader.loadGalleryItems('award', awardId, awardName);
@@ -778,11 +778,11 @@ window.loadGalleryItems = async function(galleryId, galleryName, containerId) {
     
     console.log(`🔍 Starting loadGalleryItems for ID: ${galleryId}, Name: ${galleryName}`);
     
-    // Reduced loading timeout to 3 seconds for faster no-data detection
+    // Increased loading timeout to 8 seconds for better stability
     const loadingTimeout = setTimeout(() => {
         console.log('⏰ Loading timeout reached - showing no data state');
         GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
-    }, 3000); // Reduced from 8s to 3s
+    }, 8000); // Increased back to 8s
     
     try {
         const result = await GlobalGalleryLoader.loadGalleryItems('gallery', galleryId, galleryName);

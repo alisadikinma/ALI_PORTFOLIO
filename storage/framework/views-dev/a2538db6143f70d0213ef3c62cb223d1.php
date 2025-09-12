@@ -517,9 +517,9 @@ $konf = DB::table('setting')->first();
 
 <body class="bg-gradient-footer text-white font-['Inter']">
     <!-- Header -->
-    <header
-        class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-4 fixed top-0 left-0 z-50 bg-gradient-footer backdrop-blur-xl">
-        <div class="flex justify-between items-center">
+    <header class="w-full fixed top-0 left-0 z-50 bg-gradient-footer backdrop-blur-xl">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4" style="max-width: 1200px;">
+            <div class="flex justify-between items-center">
             <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">
                 <a href="<?php echo e(url('/')); ?>" class="flex items-center gap-4 hover:text-yellow-400 transition-colors">
                     <img src="<?php echo e(asset('logo/' . $konf->logo_setting)); ?>" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
@@ -609,6 +609,7 @@ $konf = DB::table('setting')->first();
                 <?php endif; ?>
             </nav>
 
+            </div>
         </div>
     </header>
 
@@ -618,13 +619,14 @@ $konf = DB::table('setting')->first();
     </main>
 
     <!-- Footer -->
-    <footer
-        class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 pt-12 sm:pt-28 pb-6 bg-gradient-footer flex flex-col items-center gap-6 sm:gap-8">
-        <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-6 sm:gap-0">
+    <footer class="w-full bg-gradient-footer">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-28 pb-6 flex flex-col items-center gap-6 sm:gap-8" style="max-width: 1200px;">
+            <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-6 sm:gap-0">
+            </div>
+            <div class="w-full max-w-96 h-0.5 outline outline-1 outline-slate-800"></div>
+            <div class="text-white text-sm font-normal leading-tight text-center">© Copyright 2025 | Portfolio by
+                <?php echo e($konf->pimpinan_setting); ?></div>
         </div>
-        <div class="w-full max-w-96 h-0.5 outline outline-1 outline-slate-800"></div>
-        <div class="text-white text-sm font-normal leading-tight text-center">© Copyright 2025 | Portfolio by
-            <?php echo e($konf->pimpinan_setting); ?></div>
     </footer>
 
     <script>

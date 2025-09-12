@@ -15,37 +15,50 @@ class HomeWebController extends Controller
 {
     public function index()
     {
-        // Clear ALL cache to ensure fresh data
-        Cache::flush();
+        // Remove cache flush to improve performance
+        // Cache::flush(); // Commented out - this was causing performance issues
         
         // Cache site configuration for 5 minutes (300 seconds)
         $konf = Cache::remember('site_config', 300, function() {
             return DB::table('setting')->first();
         });
         
-        // Cache homepage data for 30 minutes
+        // Cache homepage data for 30 minutes with error handling
         $data = Cache::remember('homepage_data', 1800, function() {
-            return [
-                'layanan' => DB::table('layanan')
-                    ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
-                    ->where('status', 'Active')
-                    ->orderBy('sequence', 'asc')
-                    ->get(),
-                'testimonial' => DB::table('testimonial')->select('judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan')->get(),
-                'galeri' => Galeri::with(['galleryItems' => function($query) {
-                        $query->where('status', 'Active')
-                              ->orderBy('sequence', 'asc');
-                    }])
-                    ->where('status', 'Active')
-                    ->orderBy('sequence', 'asc')
-                    ->limit(12)
-                    ->get(),
-                'article' => DB::table('berita')->select('judul_berita', 'slug_berita', 'gambar_berita', 'isi_berita', 'tanggal_berita', 'kategori_berita', 'meta_description', 'tags')->orderBy('tanggal_berita', 'desc')->limit(4)->get(),
-                'award' => Award::where('status', 'Active')
-                    ->orderBy('sequence', 'asc')
-                    ->get(),
-                'projects' => DB::table('project')->select('project_name', 'slug_project', 'featured_image', 'description', 'project_category')->orderBy('created_at', 'desc')->limit(9)->get(),
-            ];
+            try {
+                return [
+                    'layanan' => DB::table('layanan')
+                        ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
+                        ->where('status', 'Active')
+                        ->orderBy('sequence', 'asc')
+                        ->get(),
+                    'testimonial' => DB::table('testimonial')->select('judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan')->get(),
+                    'galeri' => Galeri::with(['galleryItems' => function($query) {
+                            $query->where('status', 'Active')
+                                  ->orderBy('sequence', 'asc');
+                        }])
+                        ->where('status', 'Active')
+                        ->orderBy('sequence', 'asc')
+                        ->limit(12)
+                        ->get(),
+                    'article' => DB::table('berita')->select('judul_berita', 'slug_berita', 'gambar_berita', 'isi_berita', 'tanggal_berita', 'kategori_berita', 'meta_description', 'tags')->orderBy('tanggal_berita', 'desc')->limit(4)->get(),
+                    'award' => Award::where('status', 'Active')
+                        ->orderBy('sequence', 'asc')
+                        ->get(),
+                    'projects' => DB::table('project')->select('project_name', 'slug_project', 'featured_image', 'description', 'project_category')->orderBy('created_at', 'desc')->limit(9)->get(),
+                ];
+            } catch (\Exception $e) {
+                \Log::error('Database error in homepage: ' . $e->getMessage());
+                // Return empty collections if database fails
+                return [
+                    'layanan' => collect(),
+                    'testimonial' => collect(),
+                    'galeri' => collect(),
+                    'article' => collect(),
+                    'award' => collect(),
+                    'projects' => collect(),
+                ];
+            }
         });
         
         // Cache project types

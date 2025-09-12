@@ -16,6 +16,22 @@ Route::get('/test', function () {
     return 'Laravel is working! Route system is functional.';
 });
 
+// TEST HOMEPAGE WITHOUT LOADING ISSUES
+Route::get('/test-homepage', function () {
+    try {
+        $controller = new HomeWebController();
+        // Get all the same data as the main index
+        $data = $controller->index()->getData();
+        // But render with the test template
+        return view('welcome-test', $data);
+    } catch (Exception $e) {
+        return view('welcome-simple', [
+            'error' => $e->getMessage(),
+            'message' => 'Test homepage failed to load'
+        ]);
+    }
+});
+
 // MAIN HOME ROUTE - This MUST work
 Route::get('/', function () {
     try {

@@ -71,6 +71,8 @@
     .animate-fade-out {
         animation: fade-out 0.3s ease-in-out;
     }
+</style>
+
 <style>
 /* Custom CSS untuk hover effect social media icons dan Send Message Button */
 .social-icon:hover svg {
@@ -667,49 +669,56 @@
 <script>
 // Global image error handler for missing project images
 document.addEventListener('DOMContentLoaded', function() {
-    // Handle image loading errors
-    const images = document.querySelectorAll('img');
-    
-    images.forEach(img => {
-        img.addEventListener('error', function() {
-            
-            // Create placeholder for missing project images
-            if (this.src.includes('file/project/')) {
-                const canvas = document.createElement('canvas');
-                canvas.width = 400;
-                canvas.height = 300;
-                const ctx = canvas.getContext('2d');
-                
-                // Create gradient background
-                const gradient = ctx.createLinearGradient(0, 0, 400, 300);
-                gradient.addColorStop(0, '#1e293b');
-                gradient.addColorStop(1, '#0f172a');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, 400, 300);
-                
-                // Add text
-                ctx.fillStyle = '#fbbf24';
-                ctx.font = 'bold 24px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText('Project Image', 200, 130);
-                
-                ctx.fillStyle = '#94a3b8';
-                ctx.font = '16px Arial';
-                ctx.fillText('Image Not Available', 200, 160);
-                
-                ctx.fillStyle = '#64748b';
-                ctx.font = '12px Arial';
-                ctx.fillText('Please update project image', 200, 180);
-                
-                // Replace image with canvas
-                this.src = canvas.toDataURL();
-            }
-            // For other images, use a simple placeholder
-            else if (!this.src.includes('data:image')) {
-                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNDAwJyBoZWlnaHQ9JzMwMCcgdmlld0JveD0nMCAwIDQwMCAzMDAnIGZpbGw9J25vbmUnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzQwMCcgaGVpZ2h0PSczMDAnIGZpbGw9JyMxZTI5M2InLz48dGV4dCB4PScyMDAnIHk9JzE1MCcgZmlsbD0nI2ZiYmYyNCcgZm9udC1zaXplPScyNCcgZm9udC1mYW1pbHk9J0FyaWFsJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+PC9zdmc+';
-            }
+    try {
+        // Handle image loading errors
+        const images = document.querySelectorAll('img');
+        
+        images.forEach(img => {
+            img.addEventListener('error', function() {
+                try {
+                    // Create placeholder for missing project images
+                    if (this.src.includes('file/project/')) {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 400;
+                        canvas.height = 300;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Create gradient background
+                        const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+                        gradient.addColorStop(0, '#1e293b');
+                        gradient.addColorStop(1, '#0f172a');
+                        ctx.fillStyle = gradient;
+                        ctx.fillRect(0, 0, 400, 300);
+                        
+                        // Add text
+                        ctx.fillStyle = '#fbbf24';
+                        ctx.font = 'bold 24px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('Project Image', 200, 130);
+                        
+                        ctx.fillStyle = '#94a3b8';
+                        ctx.font = '16px Arial';
+                        ctx.fillText('Image Not Available', 200, 160);
+                        
+                        ctx.fillStyle = '#64748b';
+                        ctx.font = '12px Arial';
+                        ctx.fillText('Please update project image', 200, 180);
+                        
+                        // Replace image with canvas
+                        this.src = canvas.toDataURL();
+                    }
+                    // For other images, use a simple placeholder
+                    else if (!this.src.includes('data:image')) {
+                        this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNDAwJyBoZWlnaHQ9JzMwMCcgdmlld0JveD0nMCAwIDQwMCAzMDAnIGZpbGw9J25vbmUnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHJlY3Qgd2lkdGg9JzQwMCcgaGVpZ2h0PSczMDAnIGZpbGw9JyMxZTI5M2InLz48dGV4dCB4PScyMDAnIHk9JzE1MCcgZmlsbD0nI2ZiYmYyNCcgZm9udC1zaXplPScyNCcgZm9udC1mYW1pbHk9J0FyaWFsJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+PC9zdmc+';
+                    }
+                } catch (e) {
+                    console.warn('Error handling image placeholder:', e);
+                }
+            });
         });
-    });
+    } catch (e) {
+        console.warn('Error initializing image error handler:', e);
+    }
 });
 </script>
 
@@ -833,72 +842,98 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById("testimonialSlider");
-    const dotsContainer = document.getElementById("testimonialDots");
-    let currentIndex = 0;
-    let slideInterval;
-
-    function getTotalPages() {
-        const itemsPerPage = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
-        return Math.ceil(slider.children.length / itemsPerPage);
-    }
-
-    function renderDots() {
-        dotsContainer.innerHTML = "";
-        const totalPages = getTotalPages();
-        for (let i = 0; i < totalPages; i++) {
-            const dot = document.createElement("span");
-            dot.className = "dot w-3 h-3 rounded-full bg-gray-500 inline-block cursor-pointer transition";
-            dot.addEventListener("click", () => {
-                showSlide(i);
-                stopAutoSlide();
-                startAutoSlide();
-            });
-            dotsContainer.appendChild(dot);
+    try {
+        const slider = document.getElementById("testimonialSlider");
+        const dotsContainer = document.getElementById("testimonialDots");
+        
+        if (!slider || !dotsContainer) {
+            console.warn('Testimonial elements not found');
+            return;
         }
-    }
+        
+        let currentIndex = 0;
+        let slideInterval;
 
-    function showSlide(index) {
-        const wrapper = slider.parentElement;
-        const wrapperWidth = wrapper.offsetWidth;
-        const totalPages = getTotalPages();
-
-        if (index < 0) index = totalPages - 1;
-        if (index >= totalPages) index = 0;
-
-        currentIndex = index;
-        const offset = -index * wrapperWidth;
-        slider.style.transform = `translateX(${offset}px)`;
-
-        const dots = dotsContainer.querySelectorAll(".dot");
-        dots.forEach((dot, i) => {
-            dot.classList.toggle("bg-yellow-400", i === index);
-            dot.classList.toggle("bg-gray-500", i !== index);
-        });
-    }
-
-    function startAutoSlide() {
-        if (getTotalPages() > 1) {
-            slideInterval = setInterval(() => {
-                showSlide(currentIndex + 1);
-            }, 5000);
+        function getTotalPages() {
+            const itemsPerPage = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
+            return Math.ceil(slider.children.length / itemsPerPage);
         }
-    }
 
-    function stopAutoSlide() {
-        if (slideInterval) {
-            clearInterval(slideInterval);
+        function renderDots() {
+            try {
+                dotsContainer.innerHTML = "";
+                const totalPages = getTotalPages();
+                for (let i = 0; i < totalPages; i++) {
+                    const dot = document.createElement("span");
+                    dot.className = "dot w-3 h-3 rounded-full bg-gray-500 inline-block cursor-pointer transition";
+                    dot.addEventListener("click", () => {
+                        showSlide(i);
+                        stopAutoSlide();
+                        startAutoSlide();
+                    });
+                    dotsContainer.appendChild(dot);
+                }
+            } catch (e) {
+                console.warn('Error rendering dots:', e);
+            }
         }
-    }
 
-    renderDots();
-    showSlide(0);
-    startAutoSlide();
+        function showSlide(index) {
+            try {
+                const wrapper = slider.parentElement;
+                const wrapperWidth = wrapper.offsetWidth;
+                const totalPages = getTotalPages();
 
-    window.addEventListener("resize", () => {
+                if (index < 0) index = totalPages - 1;
+                if (index >= totalPages) index = 0;
+
+                currentIndex = index;
+                const offset = -index * wrapperWidth;
+                slider.style.transform = `translateX(${offset}px)`;
+
+                const dots = dotsContainer.querySelectorAll(".dot");
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle("bg-yellow-400", i === index);
+                    dot.classList.toggle("bg-gray-500", i !== index);
+                });
+            } catch (e) {
+                console.warn('Error showing slide:', e);
+            }
+        }
+
+        function startAutoSlide() {
+            try {
+                if (getTotalPages() > 1) {
+                    slideInterval = setInterval(() => {
+                        showSlide(currentIndex + 1);
+                    }, 5000);
+                }
+            } catch (e) {
+                console.warn('Error starting auto slide:', e);
+            }
+        }
+
+        function stopAutoSlide() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
+            }
+        }
+
         renderDots();
-        showSlide(currentIndex);
-    });
+        showSlide(0);
+        startAutoSlide();
+
+        window.addEventListener("resize", () => {
+            try {
+                renderDots();
+                showSlide(currentIndex);
+            } catch (e) {
+                console.warn('Error on resize:', e);
+            }
+        });
+    } catch (e) {
+        console.error('Error initializing testimonial slider:', e);
+    }
 });
 </script>
 <?php endif; ?>

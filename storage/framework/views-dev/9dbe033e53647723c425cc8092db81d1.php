@@ -396,10 +396,11 @@ function extractYouTubeId(url) {
 // Simple image modal function
 function openImageModal(imageUrl, title) {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-95 z-60 flex items-center justify-center p-4';
+    // Ubah z-index menjadi lebih tinggi dari modal utama (z-50)
+    modal.className = 'fixed inset-0 bg-black bg-opacity-95 z-[9999] flex items-center justify-center p-4';
     modal.innerHTML = `
-        <div class="relative max-w-4xl max-h-full">
-            <img src="${imageUrl}" alt="${title}" class="max-w-full max-h-full object-contain">
+        <div class="relative max-w-4xl max-h-[90vh]">
+            <img src="${imageUrl}" alt="${title}" class="max-w-full max-h-[85vh] object-contain">
             <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" 
                     class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -407,7 +408,7 @@ function openImageModal(imageUrl, title) {
                 </svg>
             </button>
             <div class="absolute bottom-4 left-4 right-4 text-center">
-                <h3 class="text-white text-lg font-semibold">${title}</h3>
+                <h3 class="text-white text-lg font-semibold bg-black bg-opacity-50 rounded py-2">${title}</h3>
             </div>
         </div>
     `;

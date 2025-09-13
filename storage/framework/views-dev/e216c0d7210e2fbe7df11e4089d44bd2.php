@@ -63,12 +63,12 @@
 #globalImageModal {
     backdrop-filter: blur(5px);
     animation: fadeIn 0.3s ease-out;
-    z-index: 9999 !important; /* Force highest z-index */
+    z-index: 99999 !important; /* Force highest z-index above gallery popup */
 }
 
 #globalImageModal .relative {
     animation: scaleIn 0.3s ease-out;
-    z-index: 10000 !important; /* Ensure content is above backdrop */
+    z-index: 100000 !important; /* Ensure content is above backdrop and gallery */
 }
 
 @keyframes fadeIn {
@@ -213,7 +213,7 @@ window.GlobalImageModal = {
         const galleryInfo = document.getElementById('globalImageGalleryInfo');
         
         // Force highest z-index to ensure it's above gallery popup
-        modal.style.zIndex = '9999';
+        modal.style.zIndex = '99999';
         modal.style.position = 'fixed';
         
         // Show modal

@@ -5,8 +5,8 @@
 // Global Gallery Loader Object
 window.GlobalGalleryLoader = {
     
-    // Pagination settings
-    itemsPerPage: 6, // 2x3 grid
+    // Pagination settings for 2x3 grid layout
+    itemsPerPage: 6, // 2 columns x 3 rows = 6 items per page for perfect 2x3 grid
     currentPage: 1,
     totalPages: 1,
     allItems: [],
@@ -147,18 +147,83 @@ window.GlobalGalleryLoader = {
                 alt: `${this.currentType} image ${index + 1}`
             }));
         
-        // Build content with standardized 2x3 grid layout
+        // Build content with PROPER 2x3 grid layout
         let content = `
-            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <style>
+                .gallery-grid-2x3 {
+                    display: grid;
+                    gap: 1rem;
+                    margin-bottom: 1.5rem;
+                }
+                
+                /* Mobile: 2 columns × 3 rows (up to 6 items) */
+                @media (max-width: 767px) {
+                    .gallery-grid-2x3 {
+                        grid-template-columns: repeat(2, 1fr);
+                        grid-template-rows: repeat(3, 280px);
+                    }
+                }
+                
+                /* Desktop: 3 columns × 2 rows (exactly 6 items) */
+                @media (min-width: 768px) {
+                    .gallery-grid-2x3 {
+                        grid-template-columns: repeat(3, 1fr);
+                        grid-template-rows: repeat(2, 280px);
+                    }
+                }
+                
+                .gallery-item-2x3 {
+                    background-color: rgb(51 65 85);
+                    border-radius: 0.75rem;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    height: 280px;
+                }
+                
+                .gallery-item-2x3:hover {
+                    transform: scale(1.05);
+                }
+            </style>
+            <div class="gallery-grid-2x3">
         `;
         
-        currentPageItems.forEach((item, index) => {
+        // Ensure maximum 6 items for perfect 2x3 grid
+        const displayItems = currentPageItems.slice(0, 6); // Force maximum 6 items
+        
+        // Add empty placeholders if less than 6 items to maintain grid structure
+        while (displayItems.length < 6 && this.currentPage === this.totalPages) {
+            displayItems.push(null); // Add null placeholder
+        }
+        
+        displayItems.forEach((item, index) => {
+            // Handle empty placeholder
+            if (!item) {
+                content += `
+                    <div class="gallery-item-2x3" style="opacity: 0.3; background-color: rgb(30 41 59);">
+                        <div class="relative" style="height: 220px; overflow: hidden;">
+                            <div class="w-full h-full flex items-center justify-center bg-slate-800 text-gray-500 text-xs">
+                                <div class="text-center">
+                                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">⬜</div>
+                                    <p>Empty Slot</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3" style="height: 60px; display: flex; flex-direction: column; justify-content: center;">
+                            <h4 class="text-gray-500 font-semibold text-sm mb-1 truncate">-</h4>
+                            <p class="text-gray-600 text-xs">-</p>
+                        </div>
+                    </div>
+                `;
+                return; // Skip to next item
+            }
+            
             const globalIndex = startIndex + index; // Global index for gallery modal navigation
             const imageUrl = item.file_url || '';
             const title = item.gallery_name || this.currentItemName || 'Gallery Item';
             
             content += `
-                <div class="bg-slate-700 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group cursor-pointer" style="height: 280px;">
+                <div class="gallery-item-2x3 group">
                     <div class="relative" style="height: 220px; overflow: hidden;">
             `;
             
@@ -241,9 +306,13 @@ window.GlobalGalleryLoader = {
             <div class="flex flex-col sm:flex-row items-center justify-between bg-slate-800 rounded-lg p-4 gap-4">
                 <!-- Info Text -->
                 <div class="text-gray-300 text-sm">
-                    Showing <span class="font-semibold text-white">${startItem}</span> to 
-                    <span class="font-semibold text-white">${endItem}</span> of 
-                    <span class="font-semibold text-white">${totalItems}</span> items
+                    <div class="flex items-center gap-2">
+                        <span class="bg-slate-700 px-2 py-1 rounded text-xs">2x3 Grid</span>
+                        <span>Showing <span class="font-semibold text-white">${startItem}</span> to 
+                        <span class="font-semibold text-white">${endItem}</span> of 
+                        <span class="font-semibold text-white">${totalItems}</span> items</span>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">Page ${this.currentPage} of ${this.totalPages}</div>
                 </div>
                 
                 <!-- Pagination Buttons -->

@@ -7,9 +7,18 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeWebController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\LayananController;
+use App\Http\Controllers\GaleriController;
+use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\AwardController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ProfileController;
 
 // TEST ROUTE - Remove after confirming it works
 Route::get('/test', function () {
@@ -79,9 +88,62 @@ Route::get('/portfolio/{slug}', [HomeWebController::class, 'portfolioDetail'])->
 
 // AUTH ROUTES - Simple version
 Route::get('/login', function () {
-    return '<h1>Login Page</h1><p>Auth system placeholder</p>';
+   return view('auth.login');
 })->name('login');
 
-Route::post('/logout', function () {
+Route::post('/login', function (\Illuminate\Http\Request $request) {
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        return redirect()->intended('/dashboard');
+    }
+
+    return back()->withErrors([
+        'email' => 'The provided credentials do not match our records.',
+    ]);
+});
+
+Route::post('/logout', function (\Illuminate\Http\Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
     return redirect('/');
 })->name('logout');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    
+    // Profile routes
+    Route::get('/user/profile', function () {
+        return view('profile.index');
+    })->name('profile.show');
+    
+    // Profile update routes
+    Route::put('/user/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/user/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('password.update');
+    
+    Route::post('image-upload', [SettingController::class, 'storeImage'])->name('image.upload');
+    Route::resource('setting', SettingController::class);
+    
+    // Section Management Routes
+    Route::get('/setting/sections/manage', [SettingController::class, 'sections'])->name('setting.sections');
+    Route::put('/setting/sections/update', [SettingController::class, 'updateSections'])->name('setting.sections.update');
+
+    // API endpoint for article search
+    Route::get('/api/articles/search', [BeritaController::class, 'searchArticles'])->name('articles.search');
+
+    // Resource Routes
+    Route::resource('berita', BeritaController::class);
+    Route::resource('layanan', LayananController::class);
+    Route::resource('galeri', GaleriController::class);
+    Route::resource('project', ProjectController::class);
+    Route::resource('testimonial', TestimonialController::class);
+    Route::resource('award', AwardController::class);
+    Route::resource('contacts', ContactController::class);
+
+    Route::get('/tentang-sistem', [SettingController::class, 'about'])->name('setting.about');
+});

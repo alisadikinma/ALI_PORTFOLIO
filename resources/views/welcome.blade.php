@@ -505,7 +505,7 @@
                 <a href="{{ url('portfolio') }}" target="_blank"
                     class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3" style="min-width: 200px; text-align: center;">
                     <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        VIEW Portfolio
+                        View Portfolio
                     </span>
                 </a>
             </div>

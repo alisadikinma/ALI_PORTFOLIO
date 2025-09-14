@@ -2,8 +2,8 @@
 <!-- Include this file in your main layout -->
 
 <!-- Global Image Modal HTML -->
-<div id="globalImageModal" class="fixed inset-0 bg-black bg-opacity-98 z-[100] hidden flex items-center justify-center p-4" style="backdrop-filter: blur(15px);">
-    <div class="relative max-w-6xl max-h-full bg-slate-900/30 rounded-2xl overflow-hidden">
+<div id="globalImageModal" class="fixed inset-0 bg-black bg-opacity-98 z-[100] hidden flex items-center justify-center p-4" style="backdrop-filter: blur(15px); z-index: 1060 !important;">
+    <div class="relative max-w-6xl max-h-full bg-slate-900/30 rounded-2xl overflow-hidden" style="z-index: 1061 !important;">
         <!-- Loading Spinner -->
         <div id="globalImageLoading" class="absolute inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm rounded-2xl">
             <div class="text-center">
@@ -70,12 +70,22 @@
 #globalImageModal {
     backdrop-filter: blur(15px);
     animation: fadeIn 0.3s ease-out;
-    z-index: 9999 !important;
+    z-index: 1060 !important;
 }
 
 #globalImageModal .relative {
     animation: scaleIn 0.3s ease-out;
-    z-index: 10000 !important;
+    z-index: 1061 !important;
+}
+
+/* Ensure modal doesn't interfere with admin panel */
+.admin-panel #globalImageModal {
+    display: none !important;
+}
+
+/* Only show on public pages */
+body:not(.admin-panel) #globalImageModal {
+    z-index: 1060 !important;
 }
 
 @keyframes fadeIn {

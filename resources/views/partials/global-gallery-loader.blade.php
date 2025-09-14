@@ -1,5 +1,10 @@
 <!-- Gallery Loader Component with Fixed Layout -->
 <script>
+// Disable gallery loader in admin panel
+if (document.body.classList.contains('admin-panel')) {
+    console.log('Gallery loader disabled in admin panel');
+} else {
+
 // Gallery Loader Object
 window.GlobalGalleryLoader = {
     
@@ -586,4 +591,5 @@ window.loadGalleryItems = async function(galleryId, galleryName, containerId) {
 };
 
 console.log('🚀 Gallery Loader ready!');
+}
 </script>

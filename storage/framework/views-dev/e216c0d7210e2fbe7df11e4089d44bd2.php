@@ -1,74 +1,81 @@
-<!-- Global Image Modal Component -->
+<!-- Enhanced Global Image Modal Component - Awards Style Design -->
 <!-- Include this file in your main layout -->
 
 <!-- Global Image Modal HTML -->
-<div id="globalImageModal" class="fixed inset-0 bg-black bg-opacity-95 z-[100] hidden flex items-center justify-center p-4">
-    <div class="relative max-w-full max-h-full">
+<div id="globalImageModal" class="fixed inset-0 bg-black bg-opacity-98 z-[100] hidden flex items-center justify-center p-4" style="backdrop-filter: blur(15px);">
+    <div class="relative max-w-6xl max-h-full bg-slate-900/30 rounded-2xl overflow-hidden">
         <!-- Loading Spinner -->
-        <div id="globalImageLoading" class="absolute inset-0 flex items-center justify-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
+        <div id="globalImageLoading" class="absolute inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm rounded-2xl">
+            <div class="text-center">
+                <div class="relative mb-6">
+                    <div class="animate-spin rounded-full h-16 w-16 border-4 border-slate-600 border-t-yellow-400 mx-auto"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="text-2xl">🖼️</div>
+                    </div>
+                </div>
+                <h3 class="text-white text-xl font-semibold mb-2">Loading Image...</h3>
+                <p class="text-gray-400 text-sm">Enhanced Awards-style Gallery</p>
+            </div>
         </div>
         
         <!-- Main Image -->
         <img id="globalImageModalImg" 
              src="" 
              alt="Image Preview" 
-             class="max-w-full max-h-full object-contain rounded-lg shadow-2xl opacity-0 transition-opacity duration-300"
+             class="max-w-full max-h-full object-contain rounded-2xl shadow-2xl opacity-0 transition-opacity duration-300"
              onload="GlobalImageModal.handleImageLoad(this);"
              onerror="GlobalImageModal.handleImageError(this);">
         
-        <!-- Close Button -->
+        <!-- Enhanced Close Button -->
         <button onclick="GlobalImageModal.close()" 
-                class="absolute top-4 right-4 text-white bg-black bg-opacity-60 rounded-full p-3 hover:bg-opacity-80 transition-all duration-300 shadow-lg z-10">
+                class="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-500 rounded-full p-3 transition-all duration-200 shadow-lg hover:scale-110 z-10">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </button>
         
-        <!-- Navigation Buttons (for gallery mode) -->
+        <!-- Enhanced Navigation Buttons (for gallery mode) -->
         <button id="globalImagePrev" 
                 onclick="GlobalImageModal.previous()" 
-                class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-60 rounded-full p-3 hover:bg-opacity-80 transition-all duration-300 shadow-lg hidden">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-slate-800 bg-opacity-80 rounded-full p-4 hover:bg-opacity-100 transition-all duration-200 shadow-xl hover:scale-110 hidden">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
         </button>
         
         <button id="globalImageNext" 
                 onclick="GlobalImageModal.next()" 
-                class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-60 rounded-full p-3 hover:bg-opacity-80 transition-all duration-300 shadow-lg hidden">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white bg-slate-800 bg-opacity-80 rounded-full p-4 hover:bg-opacity-100 transition-all duration-200 shadow-xl hover:scale-110 hidden">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
             </svg>
         </button>
         
-        <!-- Gallery Navigation Dots (for paginated galleries) -->
+        <!-- Enhanced Gallery Navigation Dots -->
         <div id="globalImageDots" class="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2 hidden">
             <!-- Dots will be generated dynamically -->
         </div>
         
-        <!-- Image Info -->
-        <div id="globalImageInfo" class="absolute bottom-4 left-4 right-4 text-center">
-            <div class="bg-black bg-opacity-60 backdrop-blur-sm px-4 py-2 rounded-lg">
-                <p id="globalImageTitle" class="text-white text-sm font-medium mb-1"></p>
-                <p id="globalImageCounter" class="text-gray-300 text-xs"></p>
-                <p id="globalImageGalleryInfo" class="text-gray-400 text-xs mt-1 hidden"></p>
-            </div>
+        <!-- Enhanced Image Info -->
+        <div id="globalImageInfo" class="absolute bottom-4 left-4 right-4 text-center bg-black/60 rounded-lg p-3 backdrop-blur-sm">
+            <h3 id="globalImageTitle" class="text-white text-lg font-semibold"></h3>
+            <p id="globalImageCounter" class="text-gray-300 text-sm mt-1"></p>
+            <p class="text-gray-400 text-xs mt-1">Click outside or press ESC to close</p>
         </div>
     </div>
 </div>
 
-<!-- Global Image Modal Styles -->
+<!-- Enhanced Global Image Modal Styles -->
 <style>
 #globalImageModal {
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(15px);
     animation: fadeIn 0.3s ease-out;
-    z-index: 99999 !important; /* Force highest z-index above gallery popup */
+    z-index: 9999 !important;
 }
 
 #globalImageModal .relative {
     animation: scaleIn 0.3s ease-out;
-    z-index: 100000 !important; /* Ensure content is above backdrop and gallery */
+    z-index: 10000 !important;
 }
 
 @keyframes fadeIn {
@@ -87,328 +94,263 @@
     }
 }
 
-/* Hide scrollbar when modal is open */
 body.modal-open {
     overflow: hidden;
 }
 
-/* Gallery dots styling */
 #globalImageDots .dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.4);
     cursor: pointer;
     transition: all 0.3s ease;
+    border: 2px solid transparent;
 }
 
 #globalImageDots .dot.active {
     background-color: #fbbf24;
-    transform: scale(1.2);
+    transform: scale(1.3);
+    border-color: rgba(251, 191, 36, 0.5);
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
 }
 
 #globalImageDots .dot:hover {
     background-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.1);
 }
 
-/* Responsive adjustments */
+#globalImageModal button:not(.dot) {
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+#globalImageModal button:not(.dot):hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
 @media (max-width: 768px) {
     #globalImageModal .absolute.top-4.right-4 {
         top: 1rem;
         right: 1rem;
-        padding: 0.5rem;
+        padding: 0.75rem;
     }
     
     #globalImageModal .absolute.left-4,
     #globalImageModal .absolute.right-16 {
-        padding: 0.5rem;
+        padding: 0.75rem;
+    }
+    
+    #globalImageModal .absolute.left-4 {
+        left: 1rem;
+    }
+    
+    #globalImageModal .absolute.right-16 {
+        right: 4rem;
     }
     
     #globalImageInfo {
         bottom: 1rem;
         left: 1rem;
         right: 1rem;
+        padding: 0.75rem;
     }
-    
-    #globalImageDots {
-        bottom: 5rem;
-    }
-    
-    #globalImageDots .dot {
-        width: 10px;
-        height: 10px;
-    }
-}
-
-/* Keyboard navigation hint */
-.keyboard-hint {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    opacity: 0.7;
 }
 </style>
 
-<!-- Global Image Modal JavaScript -->
+<!-- Enhanced Global Image Modal JavaScript -->
 <script>
-// Global Image Modal Object
 window.GlobalImageModal = {
-    isOpen: false,
+    currentGallery: [],
     currentIndex: 0,
-    images: [],
-    currentTitle: '',
-    galleryMode: false,
-    showDots: false,
+    isGalleryMode: false,
     
-    // Open modal with single image
-    open: function(imageUrl, title = '', altText = '') {
-        console.log('GlobalImageModal: Opening single image', imageUrl);
-        
-        this.images = [{
+    // Open single image
+    open(imageUrl, title = '', alt = '') {
+        this.currentGallery = [{
             url: imageUrl,
             title: title,
-            alt: altText || title || 'Image Preview'
+            alt: alt
         }];
         this.currentIndex = 0;
-        this.currentTitle = title;
-        this.galleryMode = false;
-        this.showDots = false;
-        
+        this.isGalleryMode = false;
         this.showModal();
     },
     
-    // Open modal with image gallery (array of images)
-    openGallery: function(images, startIndex = 0, galleryTitle = '', showDots = true) {
-        console.log('GlobalImageModal: Opening gallery', images.length, 'images, starting at', startIndex);
-        
-        // Normalize image data structure
-        this.images = images.map((img, index) => ({
-            url: img.url || img.src || img.file_url || img,
-            title: img.title || img.alt || img.name || `Image ${index + 1}`,
-            alt: img.alt || img.title || img.name || `Gallery Image ${index + 1}`
-        }));
-        
-        this.currentIndex = Math.max(0, Math.min(startIndex, this.images.length - 1));
-        this.currentTitle = galleryTitle;
-        this.galleryMode = true;
-        this.showDots = showDots && this.images.length > 1 && this.images.length <= 20; // Show dots only for reasonable number of images
-        
+    // Open gallery with multiple images
+    openGallery(images, startIndex = 0, galleryTitle = '') {
+        this.currentGallery = images || [];
+        this.currentIndex = Math.max(0, Math.min(startIndex, this.currentGallery.length - 1));
+        this.isGalleryMode = this.currentGallery.length > 1;
         this.showModal();
-        this.updateNavigation();
-        this.updateCounter();
-        this.updateDots();
     },
     
     // Show the modal
-    showModal: function() {
+    showModal() {
         const modal = document.getElementById('globalImageModal');
         const img = document.getElementById('globalImageModalImg');
         const loading = document.getElementById('globalImageLoading');
-        const title = document.getElementById('globalImageTitle');
-        const galleryInfo = document.getElementById('globalImageGalleryInfo');
         
-        // Force highest z-index to ensure it's above gallery popup
-        modal.style.zIndex = '99999';
-        modal.style.position = 'fixed';
-        
-        // Show modal
         modal.classList.remove('hidden');
         document.body.classList.add('modal-open');
         
-        // Reset states
+        loading.classList.remove('hidden');
         img.style.opacity = '0';
-        loading.style.display = 'flex';
         
-        // Set image and title
-        const currentImage = this.images[this.currentIndex];
-        img.src = currentImage.url;
-        img.alt = currentImage.alt;
-        title.textContent = currentImage.title;
-        
-        // Show gallery info if in gallery mode
-        if (this.galleryMode && this.currentTitle) {
-            galleryInfo.textContent = `Gallery: ${this.currentTitle}`;
-            galleryInfo.classList.remove('hidden');
-        } else {
-            galleryInfo.classList.add('hidden');
-        }
-        
-        this.isOpen = true;
-        
-        console.log('Image modal opened with z-index:', modal.style.zIndex);
+        this.updateNavigation();
+        this.loadCurrentImage();
+        this.updateGalleryInfo();
     },
     
-    // Handle successful image load
-    handleImageLoad: function(imgElement) {
-        const loading = document.getElementById('globalImageLoading');
-        loading.style.display = 'none';
-        imgElement.style.opacity = '1';
-    },
-    
-    // Handle image load error
-    handleImageError: function(imgElement) {
-        const loading = document.getElementById('globalImageLoading');
-        const title = document.getElementById('globalImageTitle');
-        
-        loading.style.display = 'none';
-        imgElement.style.opacity = '1';
-        imgElement.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjNDA0MDQwIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmaWxsPSIjODA4MDgwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiPkltYWdlIE5vdCBGb3VuZDwvdGV4dD4KPHN2Zz4K';
-        title.textContent = 'Image could not be loaded';
-    },
-    
-    // Navigate to previous image
-    previous: function() {
-        if (this.images.length <= 1) return;
-        
-        this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.images.length - 1;
-        this.updateImage();
-        this.updateCounter();
-        this.updateDots();
-    },
-    
-    // Navigate to next image
-    next: function() {
-        if (this.images.length <= 1) return;
-        
-        this.currentIndex = this.currentIndex < this.images.length - 1 ? this.currentIndex + 1 : 0;
-        this.updateImage();
-        this.updateCounter();
-        this.updateDots();
-    },
-    
-    // Update current image
-    updateImage: function() {
-        const img = document.getElementById('globalImageModalImg');
-        const loading = document.getElementById('globalImageLoading');
-        const title = document.getElementById('globalImageTitle');
-        
-        // Show loading and hide image
-        img.style.opacity = '0';
-        loading.style.display = 'flex';
-        
-        // Update image and title
-        const currentImage = this.images[this.currentIndex];
-        img.src = currentImage.url;
-        img.alt = currentImage.alt;
-        title.textContent = currentImage.title;
-    },
-    
-    // Update navigation buttons visibility
-    updateNavigation: function() {
-        const prevBtn = document.getElementById('globalImagePrev');
-        const nextBtn = document.getElementById('globalImageNext');
-        
-        if (this.galleryMode && this.images.length > 1) {
-            prevBtn.classList.remove('hidden');
-            nextBtn.classList.remove('hidden');
-        } else {
-            prevBtn.classList.add('hidden');
-            nextBtn.classList.add('hidden');
-        }
-    },
-    
-    // Update counter display
-    updateCounter: function() {
-        const counter = document.getElementById('globalImageCounter');
-        
-        if (this.galleryMode && this.images.length > 1) {
-            counter.textContent = `${this.currentIndex + 1} of ${this.images.length}`;
-            counter.style.display = 'block';
-        } else {
-            counter.style.display = 'none';
-        }
-    },
-    
-    // Update navigation dots
-    updateDots: function() {
-        const dotsContainer = document.getElementById('globalImageDots');
-        
-        if (!this.showDots || this.images.length <= 1) {
-            dotsContainer.classList.add('hidden');
-            return;
-        }
-        
-        // Generate dots
-        let dotsHtml = '';
-        for (let i = 0; i < this.images.length; i++) {
-            const activeClass = i === this.currentIndex ? 'active' : '';
-            dotsHtml += `<div class="dot ${activeClass}" onclick="GlobalImageModal.goToImage(${i})"></div>`;
-        }
-        
-        dotsContainer.innerHTML = dotsHtml;
-        dotsContainer.classList.remove('hidden');
-    },
-    
-    // Close modal
-    close: function() {
+    // Close the modal
+    close() {
         const modal = document.getElementById('globalImageModal');
         modal.classList.add('hidden');
         document.body.classList.remove('modal-open');
         
-        // Reset states
-        this.isOpen = false;
-        this.images = [];
+        this.currentGallery = [];
         this.currentIndex = 0;
-        this.currentTitle = '';
-        this.galleryMode = false;
-        this.showDots = false;
+        this.isGalleryMode = false;
+    },
+    
+    // Load current image
+    loadCurrentImage() {
+        if (!this.currentGallery[this.currentIndex]) return;
         
-        // Clear image source to prevent memory leaks
         const img = document.getElementById('globalImageModalImg');
-        img.src = '';
+        const currentImage = this.currentGallery[this.currentIndex];
         
-        // Hide dots
+        img.src = currentImage.url;
+        img.alt = currentImage.alt || currentImage.title || 'Image';
+    },
+    
+    // Handle image load success
+    handleImageLoad(img) {
+        const loading = document.getElementById('globalImageLoading');
+        loading.classList.add('hidden');
+        img.style.opacity = '1';
+    },
+    
+    // Handle image load error
+    handleImageError(img) {
+        const loading = document.getElementById('globalImageLoading');
+        loading.classList.add('hidden');
+        img.style.opacity = '1';
+        img.src = 'data:image/svg+xml;base64,' + btoa(`
+            <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="400" height="300" fill="#1e293b"/>
+                <text x="200" y="140" text-anchor="middle" fill="#64748b" font-family="Arial" font-size="16">Image not found</text>
+                <text x="200" y="170" text-anchor="middle" fill="#475569" font-family="Arial" font-size="14">Failed to load image</text>
+            </svg>
+        `);
+    },
+    
+    // Navigate to previous image
+    previous() {
+        if (!this.isGalleryMode || this.currentGallery.length <= 1) return;
+        
+        this.currentIndex = (this.currentIndex - 1 + this.currentGallery.length) % this.currentGallery.length;
+        this.showLoading();
+        this.loadCurrentImage();
+        this.updateGalleryInfo();
+        this.updateDots();
+    },
+    
+    // Navigate to next image
+    next() {
+        if (!this.isGalleryMode || this.currentGallery.length <= 1) return;
+        
+        this.currentIndex = (this.currentIndex + 1) % this.currentGallery.length;
+        this.showLoading();
+        this.loadCurrentImage();
+        this.updateGalleryInfo();
+        this.updateDots();
+    },
+    
+    // Go to specific image
+    goTo(index) {
+        if (index < 0 || index >= this.currentGallery.length) return;
+        
+        this.currentIndex = index;
+        this.showLoading();
+        this.loadCurrentImage();
+        this.updateGalleryInfo();
+        this.updateDots();
+    },
+    
+    // Show loading state
+    showLoading() {
+        const loading = document.getElementById('globalImageLoading');
+        const img = document.getElementById('globalImageModalImg');
+        
+        loading.classList.remove('hidden');
+        img.style.opacity = '0';
+    },
+    
+    // Update navigation buttons visibility
+    updateNavigation() {
+        const prevBtn = document.getElementById('globalImagePrev');
+        const nextBtn = document.getElementById('globalImageNext');
         const dotsContainer = document.getElementById('globalImageDots');
-        dotsContainer.classList.add('hidden');
-    },
-    
-    // Go to specific image index
-    goToImage: function(index) {
-        if (index >= 0 && index < this.images.length && index !== this.currentIndex) {
-            this.currentIndex = index;
-            this.updateImage();
-            this.updateCounter();
-            this.updateDots();
+        
+        if (this.isGalleryMode) {
+            prevBtn.classList.remove('hidden');
+            nextBtn.classList.remove('hidden');
+            dotsContainer.classList.remove('hidden');
+            this.createDots();
+        } else {
+            prevBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            dotsContainer.classList.add('hidden');
         }
     },
     
-    // Toggle gallery view mode (for future enhancements)
-    toggleViewMode: function() {
-        // Future enhancement: Toggle between single view and grid view
-        console.log('Toggle view mode - Feature coming soon');
-    },
-    
-    // Preload adjacent images for better performance
-    preloadAdjacentImages: function() {
-        const preloadIndices = [];
+    // Create navigation dots
+    createDots() {
+        const dotsContainer = document.getElementById('globalImageDots');
+        dotsContainer.innerHTML = '';
         
-        // Add previous image
-        if (this.currentIndex > 0) {
-            preloadIndices.push(this.currentIndex - 1);
+        if (this.currentGallery.length <= 1 || this.currentGallery.length > 10) {
+            return;
         }
         
-        // Add next image
-        if (this.currentIndex < this.images.length - 1) {
-            preloadIndices.push(this.currentIndex + 1);
-        }
-        
-        preloadIndices.forEach(index => {
-            if (this.images[index]) {
-                const img = new Image();
-                img.src = this.images[index].url;
-            }
+        this.currentGallery.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.className = `dot ${index === this.currentIndex ? 'active' : ''}`;
+            dot.onclick = () => this.goTo(index);
+            dotsContainer.appendChild(dot);
         });
+    },
+    
+    // Update dots active state
+    updateDots() {
+        const dots = document.querySelectorAll('#globalImageDots .dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === this.currentIndex);
+        });
+    },
+    
+    // Update gallery info
+    updateGalleryInfo() {
+        const titleElement = document.getElementById('globalImageTitle');
+        const counterElement = document.getElementById('globalImageCounter');
+        
+        if (!this.currentGallery[this.currentIndex]) return;
+        
+        const currentImage = this.currentGallery[this.currentIndex];
+        titleElement.textContent = currentImage.title || `Image ${this.currentIndex + 1}`;
+        
+        if (this.isGalleryMode) {
+            counterElement.textContent = `${this.currentIndex + 1} of ${this.currentGallery.length}`;
+        } else {
+            counterElement.textContent = '';
+        }
     }
 };
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
-    // Close modal when clicking outside the image
+    // Click outside to close
     document.getElementById('globalImageModal').addEventListener('click', function(e) {
         if (e.target === this) {
             GlobalImageModal.close();
@@ -417,73 +359,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
-        if (!GlobalImageModal.isOpen) return;
-        
-        switch(e.key) {
-            case 'Escape':
-                GlobalImageModal.close();
-                break;
-            case 'ArrowLeft':
-                e.preventDefault();
-                GlobalImageModal.previous();
-                break;
-            case 'ArrowRight':
-                e.preventDefault();
-                GlobalImageModal.next();
-                break;
-            case 'Home':
-                e.preventDefault();
-                GlobalImageModal.goToImage(0);
-                break;
-            case 'End':
-                e.preventDefault();
-                GlobalImageModal.goToImage(GlobalImageModal.images.length - 1);
-                break;
-            case ' ':
-                e.preventDefault();
-                GlobalImageModal.next();
-                break;
-        }
-    });
-    
-    // Touch/swipe support for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-    
-    document.getElementById('globalImageModal').addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-    
-    document.getElementById('globalImageModal').addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        
-        const swipeThreshold = 50;
-        const swipeDistance = touchStartX - touchEndX;
-        
-        if (Math.abs(swipeDistance) > swipeThreshold) {
-            if (swipeDistance > 0) {
-                // Swipe left - next image
-                GlobalImageModal.next();
-            } else {
-                // Swipe right - previous image
-                GlobalImageModal.previous();
+        const modal = document.getElementById('globalImageModal');
+        if (!modal.classList.contains('hidden')) {
+            switch(e.key) {
+                case 'Escape':
+                    GlobalImageModal.close();
+                    break;
+                case 'ArrowLeft':
+                    GlobalImageModal.previous();
+                    break;
+                case 'ArrowRight':
+                    GlobalImageModal.next();
+                    break;
             }
         }
     });
 });
 
-// Global functions for backward compatibility and ease of use
-window.openImageModal = function(imageUrl, title, altText) {
-    GlobalImageModal.open(imageUrl, title, altText);
-};
-
-window.openImageGallery = function(images, startIndex, galleryTitle) {
-    GlobalImageModal.openGallery(images, startIndex, galleryTitle);
-};
-
-window.closeImageModal = function() {
-    GlobalImageModal.close();
-};
-
-console.log('Global Image Modal loaded successfully');
-</script><?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/partials/global-image-modal.blade.php ENDPATH**/ ?>
+console.log('🖼️ Enhanced Global Image Modal with Awards-style design loaded successfully!');
+</script>
+<?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/partials/global-image-modal.blade.php ENDPATH**/ ?>

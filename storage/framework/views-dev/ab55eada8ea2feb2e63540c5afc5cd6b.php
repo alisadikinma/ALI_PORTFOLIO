@@ -1,4 +1,4 @@
-<!-- Gallery Section - ENHANCED VERSION with Global Gallery System -->
+<!-- Gallery Section - ENHANCED VERSION with Global System Integration (Updated 9/14/2025) -->
 <?php if($konf->gallery_section_active ?? true): ?>
 <section id="gallery" class="w-full max-w-screen-xl mx-auto px-3 sm:px-4 py-6 flex flex-col items-center gap-6 sm:gap-10">
     <!-- Header -->
@@ -95,152 +95,101 @@
     <?php endif; ?>
 </section>
 
-<!-- Enhanced Gallery Modal using Global Gallery System -->
-<div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-800 rounded-2xl w-full max-w-4xl h-auto max-h-[85vh] overflow-hidden shadow-2xl">
-        <!-- Modal Header -->
-        <div class="flex justify-between items-center p-4 border-b border-slate-600 bg-slate-700">
-            <h3 id="galleryModalTitle" class="text-lg font-bold text-white truncate mr-4">Gallery</h3>
-            <div class="flex items-center gap-2">
-                <!-- Close X Button -->
-                <button onclick="closeGalleryModal()" 
-                        class="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-slate-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
+<!-- Enhanced Gallery Modal with Global System Integration -->
+<div id="galleryModal" class="fixed inset-0 bg-black bg-opacity-85 z-50 hidden flex items-center justify-center p-4" style="backdrop-filter: blur(8px);">
+    <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl w-full max-w-6xl h-auto max-h-[90vh] overflow-hidden shadow-2xl border border-slate-600">
+        <!-- Enhanced Modal Header -->
+        <div class="flex justify-between items-center p-6 border-b border-slate-600 bg-gradient-to-r from-slate-700 to-slate-800">
+            <div class="flex items-center gap-3">
+                <span class="text-yellow-400 text-2xl">🖼️</span>
+                <div>
+                    <h3 id="galleryModalTitle" class="text-xl font-bold text-white">Gallery</h3>
+                </div>
             </div>
+            <button onclick="closeGalleryModal()" 
+                    class="text-gray-400 hover:text-white bg-slate-700 hover:bg-slate-600 transition-all duration-200 p-2 rounded-lg shadow-lg">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
         
-        <!-- Modal Content -->
-        <div id="galleryModalContent" class="p-4 overflow-y-auto" style="max-height: calc(85vh - 80px);">
-            <!-- Gallery content will be loaded here -->
+        <!-- Enhanced Modal Content -->
+        <div id="galleryModalContent" class="p-6 overflow-y-auto bg-gradient-to-b from-slate-900 to-slate-800" style="max-height: calc(90vh - 100px);">
+            <!-- Enhanced gallery content will be loaded here via GlobalGalleryLoader -->
         </div>
     </div>
 </div>
 
 <script>
 async function openGalleryModal(galleryId, galleryName) {
-    console.log('Opening gallery modal for gallery ID:', galleryId, 'Name:', galleryName);
+    console.log('🚀 Enhanced Opening gallery modal for gallery ID:', galleryId, 'Name:', galleryName);
     
-    document.getElementById('galleryModalTitle').textContent = `${galleryName} - Gallery`;
+    document.getElementById('galleryModalTitle').textContent = `${galleryName}`;
     document.getElementById('galleryModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     
     const container = document.getElementById('galleryModalContent');
     
-    // Show loading first
-    container.innerHTML = `
-        <div class="flex items-center justify-center py-12">
-            <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
-                <p class="text-gray-400 text-lg">Loading gallery...</p>
-            </div>
-        </div>
-    `;
-    
-    try {
-        // Try to load with a shorter timeout
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    // Use enhanced GlobalGalleryLoader
+    if (window.GlobalGalleryLoader) {
+        console.log('🎯 Using enhanced GlobalGalleryLoader for Gallery');
         
-        const baseUrl = window.location.origin;
-        const currentPath = window.location.pathname;
-        let basePath = '';
-        if (currentPath.includes('/ALI_PORTFOLIO/')) {
-            basePath = '/ALI_PORTFOLIO';
-        }
+        // Show enhanced loading
+        GlobalGalleryLoader.showLoading(container, galleryName, 'gallery', galleryId);
         
-        const response = await fetch(`${baseUrl}${basePath}/public/global_gallery_api.php?type=gallery&id=${galleryId}`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (response.ok) {
-            const data = await response.json();
+        try {
+            // Load data with enhanced loader
+            const result = await GlobalGalleryLoader.loadGalleryItems('gallery', galleryId, galleryName);
             
-            if (data.success && data.items && data.items.length > 0) {
-                // Display images in a grid
-                let content = `<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">`;
+            if (result.success && result.data) {
+                let items = null;
                 
-                data.items.forEach((item, index) => {
-                    if (item.type === 'image' && item.file_url) {
-                        content += `
-                            <div class="bg-slate-700 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group cursor-pointer" style="height: 280px;">
-                                <div class="relative" style="height: 220px; overflow: hidden;">
-                                    <img src="${item.file_url}" 
-                                         alt="${galleryName} - Image ${index + 1}" 
-                                         class="w-full h-full object-cover group-hover:opacity-90 transition-opacity" 
-                                         style="object-fit: cover; width: 100%; height: 100%;"
-                                         onclick="openImageModal('${item.file_url}', '${galleryName} - Image ${index + 1}')"
-                                         onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-slate-600 text-white text-sm\\' style=\\'height: 220px;\\'>Image Error</div>';">
-                                    <div class="absolute top-2 right-2">
-                                        <span class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">Image</span>
-                                    </div>
-                                </div>
-                                <div class="p-3" style="height: 60px; display: flex; flex-direction: column; justify-content: center;">
-                                    <h4 class="text-white font-semibold text-sm mb-1 truncate">${galleryName}</h4>
-                                    <p class="text-gray-400 text-xs">Image ${index + 1} of ${data.items.length}</p>
-                                </div>
-                            </div>
-                        `;
-                    } else if (item.type === 'youtube' && item.youtube_url) {
-                        const videoId = extractYouTubeId(item.youtube_url);
-                        const thumbnailUrl = videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : '';
+                // Handle different data structures
+                if (result.data.success === true && result.data.items) {
+                    items = result.data.items;
+                } else if (Array.isArray(result.data)) {
+                    items = result.data;
+                } else if (result.data.items) {
+                    items = result.data.items;
+                }
+                
+                if (items && Array.isArray(items) && items.length > 0) {
+                    const validItems = items.filter(item => item !== null && item !== undefined);
+                    
+                    if (validItems.length > 0) {
+                        console.log('🎉 Enhanced gallery displaying', validItems.length, 'items with pagination');
                         
-                        content += `
-                            <div class="bg-slate-700 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group cursor-pointer" style="height: 280px;">
-                                <div class="relative" style="height: 220px; overflow: hidden;">
-                                    ${thumbnailUrl ? 
-                                        `<img src="${thumbnailUrl}" alt="${galleryName} - Video ${index + 1}" class="w-full h-full object-cover" style="object-fit: cover; width: 100%; height: 100%;">` :
-                                        `<div class="w-full h-full flex items-center justify-center bg-slate-600 text-white text-sm" style="height: 220px;">YouTube Video</div>`
-                                    }
-                                    <div class="absolute inset-0 flex items-center justify-center" onclick="window.open('${item.youtube_url}', '_blank')">
-                                        <div class="bg-red-600 rounded-full p-3 group-hover:bg-red-700 transition-colors">
-                                            <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M8 5v14l11-7z"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div class="absolute top-2 right-2">
-                                        <span class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">Video</span>
-                                    </div>
-                                </div>
-                                <div class="p-3" style="height: 60px; display: flex; flex-direction: column; justify-content: center;">
-                                    <h4 class="text-white font-semibold text-sm mb-1 truncate">${galleryName}</h4>
-                                    <p class="text-gray-400 text-xs">Video ${index + 1} of ${data.items.length}</p>
-                                </div>
-                            </div>
-                        `;
+                        // Create a container for the enhanced gallery
+                        container.innerHTML = '<div id="galleryEnhancedContainer"></div>';
+                        
+                        // Use enhanced display with 2x3 grid pagination
+                        GlobalGalleryLoader.displayGalleryItems(validItems, 'galleryEnhancedContainer', galleryName, 'gallery');
+                        return;
                     }
-                });
-                
-                content += '</div>';
-                container.innerHTML = content;
-            } else {
-                throw new Error('No items found');
+                }
             }
-        } else {
-            throw new Error('API request failed');
+            
+            // Fallback to empty state
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
+            
+        } catch (error) {
+            console.error('🚨 Enhanced gallery loading error:', error);
+            GlobalGalleryLoader.showEmptyGallery(container, galleryName, 'gallery');
         }
-    } catch (error) {
-        console.log('Gallery loading failed:', error.message);
-        // Show no gallery message if loading fails
+    } else {
+        // Fallback if GlobalGalleryLoader not available
+        console.log('⚠️ GlobalGalleryLoader not found, showing fallback message');
         container.innerHTML = `
-            <div class="text-center py-12">
-                <div class="text-yellow-400 text-6xl mb-4">🖼️</div>
-                <h3 class="text-white text-xl font-semibold mb-2">No Gallery Items</h3>
-                <p class="text-gray-400 mb-4">"${galleryName}" doesn't have any gallery items yet.</p>
-                <div class="text-gray-500 text-sm">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    ${error.name === 'AbortError' ? 'Loading timed out' : 'Gallery temporarily unavailable'}
+            <div class="text-center py-16 bg-slate-800/30 rounded-xl border-2 border-dashed border-slate-600">
+                <div class="text-red-400 text-8xl mb-6">⚠️</div>
+                <h3 class="text-white text-2xl font-bold mb-4">Gallery System Not Available</h3>
+                <p class="text-gray-400 text-lg mb-6 max-w-md mx-auto">
+                    The global gallery system is not loaded. Please ensure global-gallery-loader.blade.php is included.
+                </p>
+                <div class="flex items-center justify-center gap-2 text-gray-500 text-sm bg-slate-700/50 inline-flex px-4 py-2 rounded-full">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Missing dependency: GlobalGalleryLoader</span>
                 </div>
             </div>
         `;
@@ -250,43 +199,6 @@ async function openGalleryModal(galleryId, galleryName) {
 function closeGalleryModal() {
     document.getElementById('galleryModal').classList.add('hidden');
     document.body.style.overflow = '';
-}
-
-// Helper function to extract YouTube ID
-function extractYouTubeId(url) {
-    if (!url) return null;
-    const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
-}
-
-// Simple image modal function
-function openImageModal(imageUrl, title) {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-95 z-60 flex items-center justify-center p-4';
-    modal.innerHTML = `
-        <div class="relative max-w-4xl max-h-full">
-            <img src="${imageUrl}" alt="${title}" class="max-w-full max-h-full object-contain">
-            <button onclick="this.parentElement.parentElement.remove(); document.body.style.overflow = '';" 
-                    class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-colors">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-            <div class="absolute bottom-4 left-4 right-4 text-center">
-                <h3 class="text-white text-lg font-semibold">${title}</h3>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-    
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.remove();
-            document.body.style.overflow = '';
-        }
-    });
 }
 
 // Modal event listeners
@@ -303,9 +215,11 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Debug: Log when page loads
-console.log('Enhanced Gallery with Global Gallery Loader loaded');
-console.log('Current location:', window.location);
+// Enhanced debug logging
+console.log('🚀 Enhanced Gallery with Global Gallery System loaded (Updated 9/14/2025)');
+console.log('📍 Current location:', window.location.href);
+console.log('🔧 GlobalGalleryLoader available:', typeof window.GlobalGalleryLoader !== 'undefined');
+console.log('🖼️ GlobalImageModal available:', typeof window.GlobalImageModal !== 'undefined');
 </script>
 
 <?php endif; ?><?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/partials/gallery-updated.blade.php ENDPATH**/ ?>

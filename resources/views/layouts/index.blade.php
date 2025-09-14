@@ -522,6 +522,9 @@ $konf = DB::table('setting')->first();
     </script>
     <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+    <!-- Global Gallery Components -->
+    @include('partials.global-image-modal')
+    @include('partials.global-gallery-loader')
 
 </body>
 

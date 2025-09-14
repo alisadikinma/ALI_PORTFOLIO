@@ -137,4 +137,82 @@
 .text-red-400 { color: #f87171; }
 .text-yellow-400 { color: #fbbf24; }
 </style>
+
+<!-- Award Gallery Modal -->
+<div id="award-gallery-modal" class="fixed inset-0 bg-black bg-opacity-95 z-50 hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-7xl max-h-full bg-slate-900 rounded-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="flex justify-between items-center p-6 border-b border-slate-700">
+            <div>
+                <h3 id="award-gallery-title" class="text-white text-2xl font-bold">Award Gallery</h3>
+            </div>
+            <button onclick="closeAwardGallery()" 
+                    class="text-white bg-red-600 hover:bg-red-500 rounded-full p-3 transition-all duration-200 shadow-lg hover:scale-110">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Gallery Content -->
+        <div class="p-6">
+            <div id="award-gallery-container">
+                <!-- Gallery will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Award Gallery Functions
+function openAwardGallery(awardId, awardName) {
+    console.log('🏆 Opening award gallery for ID:', awardId);
+    
+    // Show modal
+    document.getElementById('award-gallery-modal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    
+    // Update title
+    document.getElementById('award-gallery-title').textContent = awardName;
+    
+    // Load gallery using GlobalGalleryLoader
+    if (typeof loadAwardGallery === 'function') {
+        loadAwardGallery(awardId, awardName, 'award-gallery-container');
+    } else {
+        console.error('GlobalGalleryLoader not found');
+        document.getElementById('award-gallery-container').innerHTML = `
+            <div class="text-center py-16">
+                <div class="text-red-400 text-6xl mb-4">⚠️</div>
+                <h3 class="text-white text-xl font-semibold mb-2">Gallery System Error</h3>
+                <p class="text-gray-400">Gallery loader not available. Please refresh the page.</p>
+            </div>
+        `;
+    }
+}
+
+function closeAwardGallery() {
+    document.getElementById('award-gallery-modal').classList.add('hidden');
+    document.body.style.overflow = '';
+    
+    // Clear gallery content
+    document.getElementById('award-gallery-container').innerHTML = '';
+}
+
+// Close modal when clicking outside
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('award-gallery-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAwardGallery();
+        }
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('award-gallery-modal');
+        if (!modal.classList.contains('hidden') && e.key === 'Escape') {
+            closeAwardGallery();
+        }
+    });
+});
+</script>
 @endif

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ isset($portfolio) ? $portfolio->project_name : 'Portfolio Detail' }} - Ali Sadikin</title>
+    <title><?php echo e(isset($portfolio) ? $portfolio->project_name : 'Portfolio Detail'); ?> - Ali Sadikin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -38,28 +38,29 @@
 
     <!-- Breadcrumb -->
     <nav class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-4 flex justify-center items-center gap-2 pt-24">
-        <a href="{{ url('/') }}#portfolio" class="text-stone-300 text-base font-normal leading-normal tracking-tight">Portfolio</a>
+        <a href="<?php echo e(url('/')); ?>#portfolio" class="text-stone-300 text-base font-normal leading-normal tracking-tight">Portfolio</a>
         <span class="text-stone-300 text-base font-medium leading-normal tracking-tight">/</span>
         <span class="text-white text-base font-medium leading-normal tracking-tight">
-            {{ isset($portfolio) ? $portfolio->project_name : 'Portfolio Detail' }}
+            <?php echo e(isset($portfolio) ? $portfolio->project_name : 'Portfolio Detail'); ?>
+
         </span>
     </nav>
 
     <!-- Debug Section (Simple) -->
-    @if(!isset($portfolio))
+    <?php if(!isset($portfolio)): ?>
         <div class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8">
             <div class="bg-red-800 p-4 rounded mb-4">
                 <h2 class="text-red-200 font-bold">❌ Error: Portfolio variable not found</h2>
-                <p class="text-red-100 mt-2">URL Slug: {{ request()->route('slug') ?? 'No slug parameter' }}</p>
-                <p class="text-red-100">Route Name: {{ request()->route()->getName() ?? 'No route name' }}</p>
+                <p class="text-red-100 mt-2">URL Slug: <?php echo e(request()->route('slug') ?? 'No slug parameter'); ?></p>
+                <p class="text-red-100">Route Name: <?php echo e(request()->route()->getName() ?? 'No route name'); ?></p>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 
     <!-- Project Detail Section -->
-    @if(isset($portfolio))
+    <?php if(isset($portfolio)): ?>
     <section id="project" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-12">
-        @php
+        <?php
             $images = [];
             // Parse images field if it contains multiple images (JSON or comma-separated)
             if (!empty($portfolio->images)) {
@@ -89,51 +90,51 @@
             if (empty($images) && !empty($portfolio->featured_image)) {
                 $images[] = asset('file/project/' . $portfolio->featured_image);
             }
-        @endphp
+        ?>
         
-        @if (!empty($images))
+        <?php if(!empty($images)): ?>
             <div class="w-full max-w-4xl overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
                 <div class="flex flex-row gap-4 min-w-max">
-                    @foreach ($images as $index => $image)
-                        <img src="{{ $image }}"
-                             alt="{{ $portfolio->project_name }} - Image {{ $index + 1 }}"
+                    <?php $__currentLoopData = $images; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <img src="<?php echo e($image); ?>"
+                             alt="<?php echo e($portfolio->project_name); ?> - Image <?php echo e($index + 1); ?>"
                              class="w-full max-w-4xl h-auto rounded-3xl snap-center shrink-0 object-cover" 
-                             onerror="this.src='{{ asset('images/placeholder/project-placeholder.jpg') }}'" />
-                    @endforeach
+                             onerror="this.src='<?php echo e(asset('images/placeholder/project-placeholder.jpg')); ?>'" />
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
-        @else
-            <img src="{{ asset('file/project/placeholder.png') }}"
-                 alt="{{ $portfolio->project_name ?? 'Portfolio' }} - Placeholder"
+        <?php else: ?>
+            <img src="<?php echo e(asset('file/project/placeholder.png')); ?>"
+                 alt="<?php echo e($portfolio->project_name ?? 'Portfolio'); ?> - Placeholder"
                  class="w-full max-w-4xl h-auto rounded-3xl" />
-        @endif
+        <?php endif; ?>
         
         <div class="w-full max-w-4xl flex flex-col gap-8">
             <div class="flex flex-col gap-3">
-                <h1 class="text-white text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]">{{ $portfolio->project_name ?? 'Portfolio Project' }}</h1>
+                <h1 class="text-white text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]"><?php echo e($portfolio->project_name ?? 'Portfolio Project'); ?></h1>
                 <div class="flex gap-2">
-                    @if (!empty($portfolio->project_category))
-                        <span class="text-yellow-400 text-base font-normal leading-none">{{ $portfolio->project_category }}</span>
-                    @endif
-                    @if (!empty($portfolio->client_name))
-                        @if (!empty($portfolio->project_category))
+                    <?php if(!empty($portfolio->project_category)): ?>
+                        <span class="text-yellow-400 text-base font-normal leading-none"><?php echo e($portfolio->project_category); ?></span>
+                    <?php endif; ?>
+                    <?php if(!empty($portfolio->client_name)): ?>
+                        <?php if(!empty($portfolio->project_category)): ?>
                             <span class="text-yellow-400 text-xs font-normal leading-none">-</span>
-                        @endif
-                        <span class="text-yellow-400 text-base font-normal leading-none">Client: {{ $portfolio->client_name }}</span>
-                    @endif
+                        <?php endif; ?>
+                        <span class="text-yellow-400 text-base font-normal leading-none">Client: <?php echo e($portfolio->client_name); ?></span>
+                    <?php endif; ?>
                 </div>
-                @if (!empty($portfolio->location))
-                    <div class="text-neutral-400 text-xs font-normal leading-normal">{{ $portfolio->location }}</div>
-                @endif
+                <?php if(!empty($portfolio->location)): ?>
+                    <div class="text-neutral-400 text-xs font-normal leading-normal"><?php echo e($portfolio->location); ?></div>
+                <?php endif; ?>
             </div>
             <div class="w-full h-px bg-slate-800"></div>
             
-            @if (!empty($portfolio->description))
-                <div class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->description !!}</div>
-            @endif
+            <?php if(!empty($portfolio->description)): ?>
+                <div class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed"><?php echo $portfolio->description; ?></div>
+            <?php endif; ?>
             
-            @if (!empty($portfolio->url_project))
-                <a href="{{ $portfolio->url_project }}" target="_blank"
+            <?php if(!empty($portfolio->url_project)): ?>
+                <a href="<?php echo e($portfolio->url_project); ?>" target="_blank"
                    class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-xl flex items-center gap-2.5 text-neutral-900 hover:bg-yellow-500 transition-colors w-fit">
                     <span class="text-base font-semibold capitalize leading-tight tracking-tight">View Live Project</span>
                     <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,18 +142,18 @@
                               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                 </a>
-            @endif
+            <?php endif; ?>
         </div>
     </section>
-    @else
+    <?php else: ?>
         <section class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 text-center">
             <h2 class="text-red-400 text-2xl font-bold">Portfolio Not Found</h2>
             <p class="text-red-300 mt-4">The requested portfolio could not be found. Please check the URL and try again.</p>
-            <a href="{{ url('/') }}#portfolio" class="inline-block mt-6 px-6 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 transition-colors">
+            <a href="<?php echo e(url('/')); ?>#portfolio" class="inline-block mt-6 px-6 py-3 bg-yellow-400 text-gray-900 rounded-lg hover:bg-yellow-500 transition-colors">
                 Back to Portfolio
             </a>
         </section>
-    @endif
+    <?php endif; ?>
 
 
 
@@ -203,4 +204,4 @@
         });
     </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/portfolio_detail.blade.php ENDPATH**/ ?>

@@ -114,19 +114,22 @@ class HomeWebController extends Controller
 
     public function portfolioDetail($slug)
     {
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
-        
-        $portfolio = Cache::remember("portfolio_{$slug}", 1800, function() use ($slug) {
-            return DB::table('project')->where('slug_project', $slug)->first();
-        });
-        
-        if (!$portfolio) {
-            abort(404, 'Portfolio not found');
+        try {
+            // Simple query without cache for debugging
+            $portfolio = DB::table('project')->where('slug_project', $slug)->first();
+            
+            if (!$portfolio) {
+                abort(404, 'Portfolio not found');
+            }
+            
+            $konf = DB::table('setting')->first();
+            
+            return view('portfolio_detail', compact('konf', 'portfolio'));
+            
+        } catch (\Exception $e) {
+            \Log::error('Portfolio detail error: ' . $e->getMessage());
+            return response()->view('errors.500', ['error' => $e->getMessage()], 500);
         }
-        
-        return view('portfolio_detail', compact('konf', 'portfolio'));
     }
 
     public function articleDetail($slug)

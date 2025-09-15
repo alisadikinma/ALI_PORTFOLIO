@@ -86,6 +86,9 @@ Route::get('/articles', [HomeWebController::class, 'articles'])->name('articles'
 Route::get('/article/{slug}', [HomeWebController::class, 'articleDetail'])->name('article.detail');
 Route::get('/portfolio/{slug}', [HomeWebController::class, 'portfolioDetail'])->name('portfolio.detail');
 
+// Add public project route
+Route::get('/project/{slug}', [ProjectController::class, 'show'])->name('project.public.show');
+
 // AUTH ROUTES - Simple version
 Route::get('/login', function () {
    return view('auth.login');
@@ -144,6 +147,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('testimonial', TestimonialController::class);
     Route::resource('award', AwardController::class);
     Route::resource('contacts', ContactController::class);
+    
+    // Additional project routes
+    Route::get('/project/{id}/admin', [ProjectController::class, 'showAdmin'])->name('project.showAdmin');
 
     Route::get('/tentang-sistem', [SettingController::class, 'about'])->name('setting.about');
 });

@@ -1,46 +1,45 @@
-@extends('layouts.index')
-@section('content')
+<?php $__env->startSection('content'); ?>
 <div class="row">
     <div class="col">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{ $title }}</h3>
+                <h3 class="card-title"><?php echo e($title); ?></h3>
             </div>
             <div class="card-body">
-                @if ($errors->any())
+                <?php if($errors->any()): ?>
                 <div class="alert alert-danger">
                     <strong>Error!</strong>
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                     <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
+                        <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li><?php echo e($error); ?></li>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </ul>
                 </div>
-                @endif
+                <?php endif; ?>
 
-                <form action="{{ route('project.update', $project->id_project) }}" method="POST" enctype="multipart/form-data" id="projectForm">
-                    @csrf
-                    @method('PUT')
+                <form action="<?php echo e(route('project.update', $project->id_project)); ?>" method="POST" enctype="multipart/form-data" id="projectForm">
+                    <?php echo csrf_field(); ?>
+                    <?php echo method_field('PUT'); ?>
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="client_name">Nama Client <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="client_name" name="client_name" value="{{ old('client_name', $project->client_name) }}">
+                                <input type="text" class="form-control" id="client_name" name="client_name" value="<?php echo e(old('client_name', $project->client_name)); ?>">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="location">Lokasi Client <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="location" name="location" value="{{ old('location', $project->location) }}">
+                                <input type="text" class="form-control" id="location" name="location" value="<?php echo e(old('location', $project->location)); ?>">
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="project_name">Nama Project <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="project_name" name="project_name" value="{{ old('project_name', $project->project_name) }}">
+                        <input type="text" class="form-control" id="project_name" name="project_name" value="<?php echo e(old('project_name', $project->project_name)); ?>">
                     </div>
 
                     <div class="row">
@@ -49,80 +48,80 @@
                                 <label for="project_category">Kategori Project <span class="text-danger">*</span></label>
                                 <select name="project_category" id="project_category" class="form-control">
                                     <option value="">Pilih Kategori Project</option>
-                                    <option value="Artificial Intelligence" {{ old('project_category', $project->project_category) == 'Artificial Intelligence' ? 'selected' : '' }}>Artificial Intelligence</option>
-                                    <option value="Web Application" {{ old('project_category', $project->project_category) == 'Web Application' ? 'selected' : '' }}>Web Application</option>
-                                    <option value="Mobile Application" {{ old('project_category', $project->project_category) == 'Mobile Application' ? 'selected' : '' }}>Mobile Application</option>
-                                    <option value="Data Visualization" {{ old('project_category', $project->project_category) == 'Data Visualization' ? 'selected' : '' }}>Data Visualization</option>
-                                    <option value="API Development" {{ old('project_category', $project->project_category) == 'API Development' ? 'selected' : '' }}>API Development</option>
-                                    <option value="Automation" {{ old('project_category', $project->project_category) == 'Automation' ? 'selected' : '' }}>Automation</option>
-                                    <option value="Internet of Things" {{ old('project_category', $project->project_category) == 'Internet of Things' ? 'selected' : '' }}>Internet of Things</option>
-                                    <option value="Blockchain" {{ old('project_category', $project->project_category) == 'Blockchain' ? 'selected' : '' }}>Blockchain</option>
-                                    <option value="Machine Learning" {{ old('project_category', $project->project_category) == 'Machine Learning' ? 'selected' : '' }}>Machine Learning</option>
-                                    <option value="System Integration" {{ old('project_category', $project->project_category) == 'System Integration' ? 'selected' : '' }}>System Integration</option>
+                                    <option value="Artificial Intelligence" <?php echo e(old('project_category', $project->project_category) == 'Artificial Intelligence' ? 'selected' : ''); ?>>Artificial Intelligence</option>
+                                    <option value="Web Application" <?php echo e(old('project_category', $project->project_category) == 'Web Application' ? 'selected' : ''); ?>>Web Application</option>
+                                    <option value="Mobile Application" <?php echo e(old('project_category', $project->project_category) == 'Mobile Application' ? 'selected' : ''); ?>>Mobile Application</option>
+                                    <option value="Data Visualization" <?php echo e(old('project_category', $project->project_category) == 'Data Visualization' ? 'selected' : ''); ?>>Data Visualization</option>
+                                    <option value="API Development" <?php echo e(old('project_category', $project->project_category) == 'API Development' ? 'selected' : ''); ?>>API Development</option>
+                                    <option value="Automation" <?php echo e(old('project_category', $project->project_category) == 'Automation' ? 'selected' : ''); ?>>Automation</option>
+                                    <option value="Internet of Things" <?php echo e(old('project_category', $project->project_category) == 'Internet of Things' ? 'selected' : ''); ?>>Internet of Things</option>
+                                    <option value="Blockchain" <?php echo e(old('project_category', $project->project_category) == 'Blockchain' ? 'selected' : ''); ?>>Blockchain</option>
+                                    <option value="Machine Learning" <?php echo e(old('project_category', $project->project_category) == 'Machine Learning' ? 'selected' : ''); ?>>Machine Learning</option>
+                                    <option value="System Integration" <?php echo e(old('project_category', $project->project_category) == 'System Integration' ? 'selected' : ''); ?>>System Integration</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-3">
                                 <label for="url_project">URL Project</label>
-                                <input type="url" class="form-control" id="url_project" name="url_project" value="{{ old('url_project', $project->url_project) }}">
+                                <input type="url" class="form-control" id="url_project" name="url_project" value="<?php echo e(old('url_project', $project->url_project)); ?>">
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="sequence">Urutan Tampilan</label>
-                        <input type="number" class="form-control" id="sequence" name="sequence" value="{{ old('sequence', $project->sequence) }}" min="0">
+                        <input type="number" class="form-control" id="sequence" name="sequence" value="<?php echo e(old('sequence', $project->sequence)); ?>" min="0">
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="summary_description">Ringkasan Project</label>
-                        <textarea name="summary_description" id="summary_description" cols="30" rows="3" class="form-control">{{ old('summary_description', $project->summary_description ?? '') }}</textarea>
+                        <textarea name="summary_description" id="summary_description" cols="30" rows="3" class="form-control"><?php echo e(old('summary_description', $project->summary_description ?? '')); ?></textarea>
                     </div>
 
                     <div class="form-group mb-3">
                         <label for="description">Deskripsi Project <span class="text-danger">*</span></label>
-                        <textarea name="description" id="editor" cols="30" rows="10" class="form-control">{{ old('description', $project->description) }}</textarea>
+                        <textarea name="description" id="editor" cols="30" rows="10" class="form-control"><?php echo e(old('description', $project->description)); ?></textarea>
                     </div>
 
                     <!-- Existing Images Section -->
-                    @php
+                    <?php
                         $existingImages = $project->images ? json_decode($project->images, true) : [];
-                    @endphp
+                    ?>
                     
-                    @if(!empty($existingImages))
+                    <?php if(!empty($existingImages)): ?>
                     <div class="form-group mb-3">
                         <label>Gambar Project Saat Ini</label>
                         <div class="card">
                             <div class="card-body">
                                 <div class="row" id="existingImagesContainer">
-                                    @foreach($existingImages as $index => $image)
-                                    <div class="col-md-4 mb-3 existing-image-item" data-image="{{ $image }}">
+                                    <?php $__currentLoopData = $existingImages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $image): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="col-md-4 mb-3 existing-image-item" data-image="<?php echo e($image); ?>">
                                         <div class="card">
-                                            <img src="{{ asset('images/projects/' . $image) }}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Project Image">
+                                            <img src="<?php echo e(asset('images/projects/' . $image)); ?>" class="card-img-top" style="height: 150px; object-fit: cover;" alt="Project Image">
                                             <div class="card-body p-2">
                                                 <div class="form-check mb-2">
-                                                    <input type="radio" name="featured_image_index" value="{{ $index }}" 
-                                                           class="form-check-input" id="existing_featured_{{ $index }}"
-                                                           {{ $project->featured_image == $image ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="existing_featured_{{ $index }}">
+                                                    <input type="radio" name="featured_image_index" value="<?php echo e($index); ?>" 
+                                                           class="form-check-input" id="existing_featured_<?php echo e($index); ?>"
+                                                           <?php echo e($project->featured_image == $image ? 'checked' : ''); ?>>
+                                                    <label class="form-check-label" for="existing_featured_<?php echo e($index); ?>">
                                                         <small>Gambar Utama</small>
                                                     </label>
                                                 </div>
                                                 <button type="button" class="btn btn-danger btn-sm delete-existing-image" 
-                                                        data-image="{{ $image }}">
+                                                        data-image="<?php echo e($image); ?>">
                                                     <i class="fas fa-trash"></i> Hapus
                                                 </button>
                                             </div>
                                         </div>
                                     </div>
-                                    @endforeach
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 </div>
                                 <div id="deleteImagesContainer"></div>
                             </div>
                         </div>
                     </div>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- New Images Upload Section -->
                     <div class="form-group mb-3">
@@ -145,7 +144,7 @@
 
                     <div class="form-group">
                         <div class="text-right">
-                            <a href="{{ route('project.index') }}" class="btn btn-secondary">
+                            <a href="<?php echo e(route('project.index')); ?>" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Kembali
                             </a>
                             <button type="submit" class="btn btn-primary">
@@ -275,13 +274,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             
                             const data = new FormData();
                             data.append('upload', file);
-                            data.append('_token', '{{ csrf_token() }}');
+                            data.append('_token', '<?php echo e(csrf_token()); ?>');
                             
-                            fetch('{{ route("image.upload") }}', {
+                            fetch('<?php echo e(route("image.upload")); ?>', {
                                 method: 'POST',
                                 body: data,
                                 headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'X-CSRF-TOKEN': '<?php echo e(csrf_token()); ?>',
                                     'Accept': 'application/json'
                                 }
                             })
@@ -491,4 +490,6 @@ document.addEventListener('DOMContentLoaded', function() {
     attachImagePreview();
 });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.index', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/project/edit.blade.php ENDPATH**/ ?>

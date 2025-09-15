@@ -271,19 +271,89 @@ class SettingController extends Controller
 
     public function storeImage(Request $request)
     {
-        if ($request->hasFile('upload')) {
-            $originName = $request->file('upload')->getClientOriginalName();
-            $fileName = pathinfo($originName, PATHINFO_FILENAME);
-            $extension = $request->file('upload')->getClientOriginalExtension();
-            $fileName = $fileName . '_' . time() . '.' . $extension;
+        try {
+            // Validate the uploaded file
+            $request->validate([
+                'upload' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:5120' // 5MB max
+            ]);
 
-            $request->file('upload')->move(public_path('images'), $fileName);
+            if ($request->hasFile('upload')) {
+                $file = $request->file('upload');
+                $originName = $file->getClientOriginalName();
+                $fileName = pathinfo($originName, PATHINFO_FILENAME);
+                $extension = $file->getClientOriginalExtension();
+                $fileName = $fileName . '_' . time() . '.' . $extension;
 
-            $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-            $url = asset('images/' . $fileName);
-            $msg = 'Image uploaded successfully';
-            $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
+                // Create directory if it doesn't exist
+                $uploadPath = public_path('images/uploads');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
 
+                // Move file to uploads directory
+                $file->move($uploadPath, $fileName);
+
+                $url = asset('images/uploads/' . $fileName);
+
+                // Check if this is a CKEditor 5 request (JSON response)
+                if ($request->expectsJson() || $request->header('Content-Type') === 'application/json') {
+                    return response()->json([
+                        'success' => true,
+                        'url' => $url,
+                        'filename' => $fileName,
+                        'message' => 'Image uploaded successfully'
+                    ]);
+                }
+
+                // Legacy CKEditor 4 support
+                $CKEditorFuncNum = $request->input('CKEditorFuncNum');
+                $msg = 'Image uploaded successfully';
+                $response = "<script>window.parent.CKEDITOR.tools.callFunction($CKEditorFuncNum, '$url', '$msg')</script>";
+
+                @header('Content-type: text/html; charset=utf-8');
+                echo $response;
+                return;
+            }
+
+            // No file uploaded
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No file uploaded'
+                ], 400);
+            }
+
+            $response = "<script>window.parent.CKEDITOR.tools.callFunction({$request->input('CKEditorFuncNum')}, '', 'No file uploaded')</script>";
+            @header('Content-type: text/html; charset=utf-8');
+            echo $response;
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->errors();
+            $message = isset($errors['upload']) ? $errors['upload'][0] : 'Validation failed';
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message
+                ], 422);
+            }
+
+            $response = "<script>window.parent.CKEDITOR.tools.callFunction({$request->input('CKEditorFuncNum')}, '', '$message')</script>";
+            @header('Content-type: text/html; charset=utf-8');
+            echo $response;
+
+        } catch (\Exception $e) {
+            \Log::error('Image upload error: ' . $e->getMessage());
+            $message = 'Failed to upload image. Please try again.';
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message
+                ], 500);
+            }
+
+            $response = "<script>window.parent.CKEDITOR.tools.callFunction({$request->input('CKEditorFuncNum')}, '', '$message')</script>";
             @header('Content-type: text/html; charset=utf-8');
             echo $response;
         }

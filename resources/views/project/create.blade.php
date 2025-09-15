@@ -76,13 +76,13 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="description">Deskripsi Project <span class="text-danger">*</span></label>
-                        <textarea name="description" id="description" cols="30" rows="6" class="form-control" placeholder="Masukkan deskripsi singkat project...">{{ old('description') }}</textarea>
+                        <label for="summary_description">Ringkasan Project</label>
+                        <textarea name="summary_description" id="summary_description" cols="30" rows="3" class="form-control" placeholder="Masukkan ringkasan singkat project...">{{ old('summary_description') }}</textarea>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="info_project">Detail Project <span class="text-danger">*</span></label>
-                        <textarea name="info_project" id="editor" cols="30" rows="10" class="form-control" placeholder="Masukkan detail lengkap project...">{{ old('info_project') }}</textarea>
+                        <label for="description">Deskripsi Project <span class="text-danger">*</span></label>
+                        <textarea name="description" id="editor" cols="30" rows="10" class="form-control" placeholder="Masukkan deskripsi lengkap project...">{{ old('description') }}</textarea>
                     </div>
 
                     <!-- Dynamic Image Upload Section -->
@@ -143,8 +143,8 @@
     </div>
 </div>
 
-<!-- CKEditor -->
-<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<!-- CKEditor 5 with Full Features & Image Upload -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
 
 <style>
 .image-upload-item {
@@ -167,26 +167,157 @@
     font-weight: bold;
     color: #007bff;
 }
+
+/* CKEditor 5 Custom Styles */
+.ck-editor__editable {
+    min-height: 300px;
+}
+
+.ck.ck-editor {
+    max-width: 100%;
+}
+
+.ck.ck-editor__main>.ck-editor__editable {
+    background: #ffffff;
+    border: 1px solid #d1d3e2;
+    border-radius: 0.35rem;
+}
+
+.ck.ck-editor__main>.ck-editor__editable:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let imageIndex = 1;
 
-    // Initialize CKEditor
+    // Initialize CKEditor 5 with Full Features
     ClassicEditor
         .create(document.querySelector('#editor'), {
             toolbar: [
                 'heading', '|',
-                'bold', 'italic', 'link', '|',
+                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                'bold', 'italic', 'underline', 'strikethrough', '|',
+                'link', '|',
                 'bulletedList', 'numberedList', '|',
                 'outdent', 'indent', '|',
-                'blockQuote', 'insertTable', '|',
+                'alignment', '|',
+                'insertImage', 'insertTable', '|',
+                'blockQuote', 'codeBlock', 'horizontalLine', '|',
                 'undo', 'redo'
-            ]
+            ],
+            fontSize: {
+                options: [
+                    9, 11, 13, 'default', 17, 19, 21
+                ]
+            },
+            fontFamily: {
+                options: [
+                    'default',
+                    'Arial, Helvetica, sans-serif',
+                    'Courier New, Courier, monospace',
+                    'Georgia, serif',
+                    'Lucida Sans Unicode, Lucida Grande, sans-serif',
+                    'Tahoma, Geneva, sans-serif',
+                    'Times New Roman, Times, serif',
+                    'Trebuchet MS, Helvetica, sans-serif',
+                    'Verdana, Geneva, sans-serif'
+                ]
+            },
+            image: {
+                toolbar: [
+                    'imageTextAlternative',
+                    'imageStyle:inline',
+                    'imageStyle:block',
+                    'imageStyle:side'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells'
+                ]
+            }
+        })
+        .then(editor => {
+            window.editor = editor;
+            console.log('CKEditor 5 initialized successfully!');
+            
+            // Custom image upload adapter for copy-paste functionality
+            class MyUploadAdapter {
+                constructor(loader) {
+                    this.loader = loader;
+                }
+                
+                upload() {
+                    return this.loader.file
+                        .then(file => new Promise((resolve, reject) => {
+                            console.log('Starting image upload...', file.name);
+                            
+                            const data = new FormData();
+                            data.append('upload', file);
+                            data.append('_token', '{{ csrf_token() }}');
+                            
+                            fetch('{{ route("image.upload") }}', {
+                                method: 'POST',
+                                body: data,
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => {
+                                console.log('Upload response status:', response.status);
+                                return response.json();
+                            })
+                            .then(result => {
+                                console.log('Upload result:', result);
+                                if (result.success && result.url) {
+                                    resolve({
+                                        default: result.url
+                                    });
+                                } else {
+                                    reject(result.message || 'Upload failed');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Upload error:', error);
+                                reject('Upload failed: ' + error.message);
+                            });
+                        }));
+                }
+                
+                abort() {
+                    console.log('Upload aborted');
+                }
+            }
+            
+            // Enable image upload on paste/drop
+            try {
+                if (editor.plugins.has('FileRepository')) {
+                    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                        return new MyUploadAdapter(loader);
+                    };
+                    console.log('Image upload adapter registered successfully');
+                } else {
+                    console.warn('FileRepository plugin not available');
+                }
+            } catch (error) {
+                console.error('Error setting up image upload:', error);
+            }
         })
         .catch(error => {
-            console.error(error);
+            console.error('CKEditor initialization failed:', error);
+            // Fallback to simple textarea if CKEditor fails
+            const editorElement = document.querySelector('#editor');
+            if (editorElement) {
+                editorElement.style.display = 'block';
+                editorElement.style.minHeight = '200px';
+                console.log('Fallback: Using simple textarea');
+            }
         });
 
     // Add image upload field

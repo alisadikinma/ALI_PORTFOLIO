@@ -1,4 +1,4 @@
-{{-- Portfolio Section with 3D Coverflow Slider - REVISED --}}
+
 <section class="portfolio-section" id="portfolio">
     <div class="container">
         <div class="row">
@@ -10,7 +10,7 @@
         
         <div class="coverflow-container" id="coverflowContainer">
             <div class="coverflow-wrapper" id="coverflowWrapper">
-                {{-- 3D coverflow cards will be populated by JavaScript --}}
+                
             </div>
             
             <button class="coverflow-nav prev" id="prevBtn">
@@ -28,12 +28,12 @@
         
         <!-- Centered Portfolio Dots -->
         <div class="portfolio-dots d-flex justify-content-center mt-4 mb-4" id="portfolioDots">
-            {{-- Dots will be populated by JavaScript --}}
+            
         </div>
         
         <!-- View All Projects Button -->
         <div class="text-center">
-            <a href="{{ url('portfolio') }}" class="view-all-btn">
+            <a href="<?php echo e(url('portfolio')); ?>" class="view-all-btn">
                 <span>View All Projects</span>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -654,7 +654,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isAnimating = false;
 
     try {
-        @php
+        <?php
             $projects = \App\Models\Project::active()->ordered()->get();
             $portfolioDataArray = $projects->map(function($project) {
                 return [
@@ -667,8 +667,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     'link' => $project->slug_project ? route('project.public.show', $project->slug_project) : '#'
                 ];
             });
-        @endphp
-        portfolioData = @json($portfolioDataArray);
+        ?>
+        portfolioData = <?php echo json_encode($portfolioDataArray, 15, 512) ?>;
     } catch (error) {
         console.warn('Error loading portfolio data:', error);
         portfolioData = [
@@ -932,3 +932,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+<?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/partials/portfolio.blade.php ENDPATH**/ ?>

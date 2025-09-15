@@ -77,8 +77,8 @@ class ProjectController extends Controller
                 'project_name' => 'required|string|max:255',
                 'client_name' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
-                'description' => 'required|string|max:1000',
-                'info_project' => 'required|string',
+                'description' => 'required|string',
+                'summary_description' => 'nullable|string|max:500',
                 'project_category' => 'required',
                 'images' => 'required|array|min:1',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
@@ -148,7 +148,7 @@ class ProjectController extends Controller
                 'client_name' => trim($request->client_name),
                 'location' => trim($request->location),
                 'description' => trim($request->description),
-                'info_project' => $request->info_project,
+                'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
                 'project_category' => $request->project_category,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,
@@ -205,16 +205,18 @@ class ProjectController extends Controller
     public function show($slug)
     {
         try {
-            $project = DB::table('project')
+            $portfolio = DB::table('project')
                         ->where('slug_project', $slug)
                         ->where('status', 'Active')
                         ->first();
             
-            if (!$project) {
+            if (!$portfolio) {
                 abort(404, 'Project not found');
             }
             
-            return view('frontend.project-detail', compact('project'));
+            $konf = DB::table('setting')->first();
+            
+            return view('portfolio_detail', compact('portfolio', 'konf'));
         } catch (Exception $e) {
             \Log::error('Project Show Error: ' . $e->getMessage());
             abort(404, 'Project not found');
@@ -271,8 +273,8 @@ class ProjectController extends Controller
                 'project_name' => 'required|string|max:255',
                 'client_name' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
-                'description' => 'required|string|max:1000',
-                'info_project' => 'required|string',
+                'description' => 'required|string',
+                'summary_description' => 'nullable|string|max:500',
                 'project_category' => 'required',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
             ];
@@ -360,7 +362,7 @@ class ProjectController extends Controller
                 'client_name' => trim($request->client_name),
                 'location' => trim($request->location),
                 'description' => trim($request->description),
-                'info_project' => $request->info_project,
+                'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
                 'project_category' => $request->project_category,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,

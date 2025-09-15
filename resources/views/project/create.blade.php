@@ -159,14 +159,48 @@
 
                     <!-- Other Projects Section -->
                     <div class="form-group mb-3">
-                        <label for="other_projects">Other Projects</label>
-                        <div class="position-relative">
-                            <input type="text" class="form-control" id="other_projects" name="other_projects" 
-                                   placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
-                                   value="{{ old('other_projects') }}" autocomplete="off">
-                            <div id="other_projects_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                        <label>Other Projects</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-success btn-sm" id="addOtherProjectBtn">
+                                        <i class="fas fa-plus"></i> Tambah Project Lain
+                                    </button>
+                                    <small class="form-text text-muted">Tambahkan project lain yang terkait dengan project ini</small>
+                                </div>
+                                
+                                <div id="otherProjectsContainer">
+                                    <!-- Initial other project field -->
+                                    <div class="other-project-item mb-3" data-index="0">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-10">
+                                                <div class="position-relative">
+                                                    <input type="text" class="form-control other-project-input" 
+                                                           name="other_projects[]" 
+                                                           placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
+                                                           value="{{ old('other_projects.0') }}" 
+                                                           data-index="0"
+                                                           autocomplete="off">
+                                                    <div class="other-projects-dropdown dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-danger btn-sm remove-other-project" style="display: none;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected projects display -->
+                                <div id="selectedProjectsDisplay" style="display: none;">
+                                    <hr>
+                                    <label class="font-weight-bold">Selected Other Projects:</label>
+                                    <div id="selectedProjectsList" class="mt-2"></div>
+                                </div>
+                            </div>
                         </div>
-                        <small class="form-text text-muted">Pilih project lain yang terkait dengan project ini</small>
                     </div>
 
                     <div class="form-group">
@@ -247,6 +281,17 @@
 }
 
 /* Other Projects Autocomplete Styles */
+.other-project-item {
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    padding: 1rem;
+    background-color: #f8f9fc;
+}
+
+.other-project-item:hover {
+    background-color: #f5f5f5;
+}
+
 .other-projects-dropdown {
     position: absolute;
     top: 100%;
@@ -303,6 +348,32 @@
     text-align: center;
     color: #666;
     font-style: italic;
+}
+
+.selected-project-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    margin: 4px;
+    font-size: 0.875rem;
+}
+
+.selected-project-badge .remove-selected {
+    background: none;
+    border: none;
+    color: white;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    line-height: 1;
+    padding: 0;
+}
+
+.selected-project-badge .remove-selected:hover {
+    color: #ffcccc;
 }
 </style>
 
@@ -465,17 +536,21 @@ document.addEventListener('DOMContentLoaded', function() {
                             data.append('file', file);
                             data.append('_token', '{{ csrf_token() }}');
                             
-                            const uploadUrl = '{{ url("/project/upload-editor-image") }}';
-                            const fallbackUrl = '{{ url("/upload-image") }}';
-                            console.log('Primary Upload URL:', uploadUrl);
-                            console.log('Fallback Upload URL:', fallbackUrl);
-                            console.log('FormData contents:', {
-                                file: file.name,
-                                token: '{{ csrf_token() }}'
-                            });
+                            // Try multiple upload URLs
+                            const uploadUrls = [
+                                '{{ url("/debug-simple-upload") }}',      // Debug route with logging
+                                '{{ url("/project/upload-editor-image") }}',
+                                '{{ url("/upload-editor-image-controller") }}',
+                                '{{ url("/upload-image") }}',
+                                '{{ url("/test-upload.php") }}'  // Simple PHP fallback
+                            ];
+                            
+                            console.log('Available upload URLs:', uploadUrls);
                             
                             // Function to try upload with a specific URL
-                            const tryUpload = (url) => {
+                            const tryUpload = (url, index = 0) => {
+                                console.log(`Trying upload URL ${index + 1}/${uploadUrls.length}: ${url}`);
+                                
                                 return fetch(url, {
                                     method: 'POST',
                                     body: data,
@@ -483,62 +558,59 @@ document.addEventListener('DOMContentLoaded', function() {
                                         'X-Requested-With': 'XMLHttpRequest',
                                         'Accept': 'application/json'
                                     }
+                                })
+                                .then(response => {
+                                    console.log(`Response from ${url}:`, {
+                                        status: response.status,
+                                        statusText: response.statusText,
+                                        ok: response.ok
+                                    });
+                                    
+                                    if (!response.ok) {
+                                        // Try next URL if available
+                                        if (index < uploadUrls.length - 1) {
+                                            console.log(`Trying next URL...`);
+                                            return tryUpload(uploadUrls[index + 1], index + 1);
+                                        } else {
+                                            throw new Error(`All upload URLs failed. Last status: ${response.status}`);
+                                        }
+                                    }
+                                    return response.json();
+                                })
+                                .then(result => {
+                                    console.log('Upload result:', result);
+                                    if (result.success && result.url) {
+                                        console.log('✅ Upload successful! Image URL:', result.url);
+                                        resolve({
+                                            default: result.url
+                                        });
+                                    } else {
+                                        console.error('❌ Upload failed - Invalid response format:', result);
+                                        reject(result.message || 'Upload failed - Invalid response format');
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error(`❌ Upload error with ${url}:`, error);
+                                    console.error('Error details:', {
+                                        message: error.message,
+                                        stack: error.stack,
+                                        name: error.name,
+                                        cause: error.cause
+                                    });
+                                    
+                                    // Try next URL if available
+                                    if (index < uploadUrls.length - 1) {
+                                        console.log(`Trying next URL after error...`);
+                                        return tryUpload(uploadUrls[index + 1], index + 1);
+                                    } else {
+                                        console.error('All upload URLs failed. Final error:', error);
+                                        reject('All upload URLs failed. Last error: ' + error.message + '. Please check browser console for details.');
+                                    }
                                 });
                             };
                             
-                            // Try primary URL first, then fallback
-                            console.log('Attempting upload with primary URL...');
-                            tryUpload(uploadUrl)
-                            .then(response => {
-                                console.log('Primary upload response:', {
-                                    status: response.status,
-                                    statusText: response.statusText,
-                                    ok: response.ok,
-                                    url: response.url
-                                });
-                                
-                                if (!response.ok) {
-                                    console.warn('Primary URL failed, trying fallback...');
-                                    return tryUpload(fallbackUrl);
-                                }
-                                return response;
-                            })
-                            .then(response => {
-                                console.log('Final upload response:', {
-                                    status: response.status,
-                                    statusText: response.statusText,
-                                    ok: response.ok,
-                                    url: response.url
-                                });
-                                
-                                if (!response.ok) {
-                                    return response.text().then(text => {
-                                        console.error('Both upload URLs failed. Response body:', text);
-                                        throw new Error(`HTTP ${response.status}: ${response.statusText}\nResponse: ${text}`);
-                                    });
-                                }
-                                return response.json();
-                            })
-                            .then(result => {
-                                console.log('Upload result:', result);
-                                if (result.success && result.url) {
-                                    console.log('✅ Upload successful! Image URL:', result.url);
-                                    resolve({
-                                        default: result.url
-                                    });
-                                } else {
-                                    console.error('❌ Upload failed - Invalid response format:', result);
-                                    reject(result.message || 'Upload failed - Invalid response format');
-                                }
-                            })
-                            .catch(error => {
-                                console.error('❌ Upload error:', error);
-                                console.error('Error details:', {
-                                    message: error.message,
-                                    stack: error.stack
-                                });
-                                reject('Upload failed: ' + error.message);
-                            });
+                            // Start with first URL
+                            tryUpload(uploadUrls[0], 0);
                         }));
                 }
                 
@@ -719,66 +791,150 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('project_detail_draft');
     });
 
-    // Other Projects Autocomplete functionality
-    let searchTimeout;
-    let selectedIndex = -1;
-    let searchResults = [];
+    // Multiple Other Projects functionality
+    let otherProjectIndex = 1;
+    let selectedOtherProjects = new Set(); // Track selected projects to avoid duplicates
     
-    const otherProjectsInput = document.getElementById('other_projects');
-    const dropdown = document.getElementById('other_projects_dropdown');
-    
-    if (otherProjectsInput && dropdown) {
-        otherProjectsInput.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            clearTimeout(searchTimeout);
-            
-            if (query.length < 3) {
-                hideDropdown();
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => {
-                searchProjects(query);
-            }, 300);
-        });
+    // Add new other project input
+    document.getElementById('addOtherProjectBtn').addEventListener('click', function() {
+        const container = document.getElementById('otherProjectsContainer');
+        const newItem = document.createElement('div');
+        newItem.className = 'other-project-item mb-3';
+        newItem.setAttribute('data-index', otherProjectIndex);
         
-        otherProjectsInput.addEventListener('keydown', function(e) {
-            if (dropdown.style.display === 'none') return;
-            
-            switch(e.key) {
-                case 'ArrowDown':
-                    e.preventDefault();
-                    selectedIndex = Math.min(selectedIndex + 1, searchResults.length - 1);
-                    updateSelection();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    selectedIndex = Math.max(selectedIndex - 1, -1);
-                    updateSelection();
-                    break;
-                case 'Enter':
-                    e.preventDefault();
-                    if (selectedIndex >= 0 && searchResults[selectedIndex]) {
-                        selectProject(searchResults[selectedIndex]);
-                    }
-                    break;
-                case 'Escape':
-                    hideDropdown();
-                    break;
-            }
-        });
+        newItem.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-10">
+                    <div class="position-relative">
+                        <input type="text" class="form-control other-project-input" 
+                               name="other_projects[]" 
+                               placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
+                               data-index="${otherProjectIndex}"
+                               autocomplete="off">
+                        <div class="other-projects-dropdown dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger btn-sm remove-other-project">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
         
-        otherProjectsInput.addEventListener('blur', function() {
-            // Delay hiding to allow click on dropdown items
-            setTimeout(() => {
-                hideDropdown();
-            }, 200);
+        container.appendChild(newItem);
+        otherProjectIndex++;
+        updateOtherProjectButtons();
+        attachOtherProjectsListeners();
+    });
+
+    // Remove other project input
+    function attachOtherProjectRemoveListeners() {
+        document.querySelectorAll('.remove-other-project').forEach(button => {
+            button.addEventListener('click', function() {
+                const item = this.closest('.other-project-item');
+                const input = item.querySelector('.other-project-input');
+                
+                // Remove from selected set if it was selected
+                if (input.value) {
+                    selectedOtherProjects.delete(input.value);
+                }
+                
+                item.remove();
+                updateOtherProjectButtons();
+                updateSelectedProjectsDisplay();
+            });
         });
     }
-    
-    function searchProjects(query) {
-        showLoading();
+
+    // Update remove button visibility
+    function updateOtherProjectButtons() {
+        const items = document.querySelectorAll('.other-project-item');
+        items.forEach((item, index) => {
+            const removeBtn = item.querySelector('.remove-other-project');
+            removeBtn.style.display = items.length > 1 ? 'inline-block' : 'none';
+        });
+        attachOtherProjectRemoveListeners();
+    }
+
+    // Attach all other projects event listeners
+    function attachOtherProjectsListeners() {
+        document.querySelectorAll('.other-project-input').forEach(input => {
+            // Remove existing listeners to avoid duplicates
+            input.removeEventListener('input', handleOtherProjectInput);
+            input.removeEventListener('keydown', handleOtherProjectKeydown);
+            input.removeEventListener('blur', handleOtherProjectBlur);
+            
+            // Add fresh listeners
+            input.addEventListener('input', handleOtherProjectInput);
+            input.addEventListener('keydown', handleOtherProjectKeydown);
+            input.addEventListener('blur', handleOtherProjectBlur);
+        });
+    }
+
+    // Handle input for other projects search
+    function handleOtherProjectInput(e) {
+        const input = e.target;
+        const dropdown = input.parentElement.querySelector('.other-projects-dropdown');
+        const query = input.value.trim();
+        
+        clearTimeout(input.searchTimeout);
+        
+        if (query.length < 3) {
+            hideOtherProjectDropdown(dropdown);
+            return;
+        }
+        
+        input.searchTimeout = setTimeout(() => {
+            searchOtherProjects(query, input, dropdown);
+        }, 300);
+    }
+
+    // Handle keyboard navigation
+    function handleOtherProjectKeydown(e) {
+        const input = e.target;
+        const dropdown = input.parentElement.querySelector('.other-projects-dropdown');
+        
+        if (dropdown.style.display === 'none') return;
+        
+        const items = dropdown.querySelectorAll('.other-projects-item');
+        let selectedIndex = Array.from(items).findIndex(item => item.classList.contains('active'));
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                updateOtherProjectSelection(dropdown, selectedIndex);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateOtherProjectSelection(dropdown, selectedIndex);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && items[selectedIndex]) {
+                    selectOtherProject(input, dropdown, items[selectedIndex]);
+                }
+                break;
+            case 'Escape':
+                hideOtherProjectDropdown(dropdown);
+                break;
+        }
+    }
+
+    // Handle blur event
+    function handleOtherProjectBlur(e) {
+        const dropdown = e.target.parentElement.querySelector('.other-projects-dropdown');
+        // Delay hiding to allow click on dropdown items
+        setTimeout(() => {
+            hideOtherProjectDropdown(dropdown);
+        }, 200);
+    }
+
+    // Search for other projects
+    function searchOtherProjects(query, input, dropdown) {
+        showOtherProjectLoading(dropdown);
         
         fetch(`{{ route('project.search') }}?query=${encodeURIComponent(query)}`, {
             method: 'GET',
@@ -790,80 +946,125 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                searchResults = data.data;
-                displayResults(searchResults);
+                // Filter out already selected projects
+                const availableProjects = data.data.filter(project => 
+                    !selectedOtherProjects.has(project.text)
+                );
+                displayOtherProjectResults(availableProjects, input, dropdown);
             } else {
                 console.error('Search failed:', data.message);
-                hideDropdown();
+                hideOtherProjectDropdown(dropdown);
             }
         })
         .catch(error => {
             console.error('Search error:', error);
-            hideDropdown();
+            hideOtherProjectDropdown(dropdown);
         });
     }
-    
-    function showLoading() {
+
+    // Show loading indicator
+    function showOtherProjectLoading(dropdown) {
         dropdown.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
         dropdown.style.display = 'block';
-        selectedIndex = -1;
     }
-    
-    function displayResults(results) {
+
+    // Display search results
+    function displayOtherProjectResults(results, input, dropdown) {
         if (results.length === 0) {
-            dropdown.innerHTML = '<div class="loading-indicator">No projects found</div>';
+            dropdown.innerHTML = '<div class="loading-indicator">No available projects found</div>';
         } else {
             const html = results.map((project, index) => `
-                <div class="other-projects-item" data-index="${index}" onclick="selectProjectByIndex(${index})">
+                <div class="other-projects-item" data-project-text="${escapeHtml(project.text)}" data-project-subtitle="${escapeHtml(project.subtitle)}">
                     <div class="other-projects-title">${escapeHtml(project.text)}</div>
                     <div class="other-projects-subtitle">${escapeHtml(project.subtitle)}</div>
                 </div>
             `).join('');
             dropdown.innerHTML = html;
+            
+            // Add click listeners to dropdown items
+            dropdown.querySelectorAll('.other-projects-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    selectOtherProject(input, dropdown, item);
+                });
+            });
         }
         dropdown.style.display = 'block';
-        selectedIndex = -1;
     }
-    
-    function updateSelection() {
+
+    // Update selection highlighting
+    function updateOtherProjectSelection(dropdown, selectedIndex) {
         const items = dropdown.querySelectorAll('.other-projects-item');
         items.forEach((item, index) => {
             item.classList.toggle('active', index === selectedIndex);
         });
     }
-    
-    function selectProject(project) {
-        otherProjectsInput.value = project.text;
-        hideDropdown();
+
+    // Select a project
+    function selectOtherProject(input, dropdown, item) {
+        const projectText = item.dataset.projectText;
+        const projectSubtitle = item.dataset.projectSubtitle;
+        
+        input.value = projectText;
+        selectedOtherProjects.add(projectText);
+        hideOtherProjectDropdown(dropdown);
+        updateSelectedProjectsDisplay();
+        
+        // Add visual feedback
+        input.classList.add('is-valid');
+        setTimeout(() => {
+            input.classList.remove('is-valid');
+        }, 2000);
     }
-    
-    function selectProjectByIndex(index) {
-        if (searchResults[index]) {
-            selectProject(searchResults[index]);
+
+    // Hide dropdown
+    function hideOtherProjectDropdown(dropdown) {
+        dropdown.style.display = 'none';
+    }
+
+    // Update the selected projects display
+    function updateSelectedProjectsDisplay() {
+        const selectedProjects = Array.from(selectedOtherProjects);
+        const displayDiv = document.getElementById('selectedProjectsDisplay');
+        const listDiv = document.getElementById('selectedProjectsList');
+        
+        if (selectedProjects.length > 0) {
+            displayDiv.style.display = 'block';
+            listDiv.innerHTML = selectedProjects.map(project => `
+                <span class="selected-project-badge">
+                    ${escapeHtml(project)}
+                    <button type="button" class="remove-selected" onclick="removeSelectedProject('${escapeHtml(project)}')" title="Remove project">
+                        ×
+                    </button>
+                </span>
+            `).join('');
+        } else {
+            displayDiv.style.display = 'none';
         }
     }
-    
-    // Make selectProjectByIndex available globally for onclick
-    window.selectProjectByIndex = selectProjectByIndex;
-    
-    function hideDropdown() {
-        dropdown.style.display = 'none';
-        selectedIndex = -1;
-        searchResults = [];
-    }
-    
+
+    // Remove selected project (global function)
+    window.removeSelectedProject = function(projectText) {
+        selectedOtherProjects.delete(projectText);
+        
+        // Clear the input that contains this project
+        document.querySelectorAll('.other-project-input').forEach(input => {
+            if (input.value === projectText) {
+                input.value = '';
+            }
+        });
+        
+        updateSelectedProjectsDisplay();
+    };
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!otherProjectsInput.contains(e.target) && !dropdown.contains(e.target)) {
-            hideDropdown();
-        }
-    });
+
+    // Initialize other projects functionality
+    updateOtherProjectButtons();
+    attachOtherProjectsListeners();
 
     // Initialize
     updateRemoveButtons();

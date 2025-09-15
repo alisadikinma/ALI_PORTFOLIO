@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\HomeWebController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ContactController;
@@ -110,8 +111,59 @@ Route::get('/project/create_project', function () {
     }
 })->name('project.create');
 
-// EDITOR IMAGE UPLOAD ROUTE - MOVED TO TOP TO AVOID CONFLICTS
-Route::post('/project/upload-editor-image', [ProjectController::class, 'uploadEditorImage'])->name('project.upload-editor-image');
+// ENHANCED EDITOR IMAGE UPLOAD ROUTE WITH DEBUGGING
+Route::post('/project/upload-editor-image', function (\Illuminate\Http\Request $request) {
+    try {
+        Log::info('Upload route accessed directly');
+        
+        // Validate the uploaded file
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048'
+        ]);
+
+        // Create editor directory if it doesn't exist
+        $editorDir = public_path('images/editor');
+        if (!File::exists($editorDir)) {
+            File::makeDirectory($editorDir, 0755, true);
+        }
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+            $filename = 'editor_' . time() . '_' . uniqid() . '.' . $extension;
+            
+            // Move file to editor directory
+            if ($file->move($editorDir, $filename)) {
+                $imageUrl = asset('images/editor/' . $filename);
+                
+                return response()->json([
+                    'success' => true,
+                    'url' => $imageUrl,
+                    'message' => 'Image uploaded successfully',
+                    'filename' => $filename,
+                    'debug' => 'Direct route worked!'
+                ]);
+            }
+        }
+
+        throw new Exception('Upload failed');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed: ' . implode(', ', $e->errors()['file'] ?? ['Invalid file']),
+            'errors' => $e->errors()
+        ], 422);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Upload failed: ' . $e->getMessage()
+        ], 500);
+    }
+})->name('project.upload-editor-image.direct');
+
+// ORIGINAL CONTROLLER-BASED ROUTE
+Route::post('/upload-editor-image-controller', [ProjectController::class, 'uploadEditorImage'])->name('project.upload-editor-image.controller');
 
 // SIMPLE DIRECT UPLOAD ROUTE FOR TESTING
 Route::post('/upload-image', function (\Illuminate\Http\Request $request) {
@@ -159,6 +211,233 @@ Route::post('/upload-image', function (\Illuminate\Http\Request $request) {
     }
 });
 
+// COMPREHENSIVE UPLOAD DEBUGGING ROUTES
+Route::get('/debug-upload-system', function () {
+    try {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Upload system debug information',
+            'system_info' => [
+                'php_version' => PHP_VERSION,
+                'laravel_version' => app()->version(),
+                'upload_max_filesize' => ini_get('upload_max_filesize'),
+                'post_max_size' => ini_get('post_max_size'),
+                'max_execution_time' => ini_get('max_execution_time'),
+                'memory_limit' => ini_get('memory_limit')
+            ],
+            'directories' => [
+                'public_exists' => File::exists(public_path()),
+                'images_exists' => File::exists(public_path('images')),
+                'editor_exists' => File::exists(public_path('images/editor')),
+                'projects_exists' => File::exists(public_path('images/projects')),
+                'editor_writable' => is_writable(public_path('images/editor')),
+                'projects_writable' => is_writable(public_path('images/projects'))
+            ],
+            'routes_available' => [
+                'upload_editor_image' => Route::has('project.upload-editor-image.direct'),
+                'upload_controller' => Route::has('project.upload-editor-image.controller'),
+                'simple_upload' => true, // This is a closure route
+            ],
+            'csrf_token' => csrf_token(),
+            'current_url' => url('/'),
+            'base_url' => config('app.url')
+        ]);
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Debug failed: ' . $e->getMessage()
+        ], 500);
+    }
+});
+
+// SIMPLE UPLOAD TEST ROUTE
+Route::post('/debug-simple-upload', function (\Illuminate\Http\Request $request) {
+    Log::info('=== DEBUG SIMPLE UPLOAD START ===');
+    Log::info('Request method: ' . $request->method());
+    Log::info('Content type: ' . $request->header('Content-Type'));
+    Log::info('Has file: ' . ($request->hasFile('file') ? 'YES' : 'NO'));
+    Log::info('All files: ' . json_encode(array_keys($request->allFiles())));
+    Log::info('File details: ' . json_encode($_FILES));
+    
+    try {
+        if (!$request->hasFile('file')) {
+            throw new Exception('No file in request');
+        }
+        
+        $file = $request->file('file');
+        Log::info('File object: ' . get_class($file));
+        Log::info('File valid: ' . ($file->isValid() ? 'YES' : 'NO'));
+        Log::info('File error: ' . $file->getError());
+        Log::info('File size: ' . $file->getSize());
+        Log::info('File type: ' . $file->getMimeType());
+        Log::info('File original name: ' . $file->getClientOriginalName());
+        
+        // Simple validation
+        if (!$file->isValid()) {
+            throw new Exception('File is not valid, error: ' . $file->getError());
+        }
+        
+        if ($file->getSize() > 2048000) {
+            throw new Exception('File too large: ' . $file->getSize() . ' bytes');
+        }
+        
+        $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array($file->getMimeType(), $allowedMimes)) {
+            throw new Exception('Invalid file type: ' . $file->getMimeType());
+        }
+        
+        // Create directory
+        $uploadDir = public_path('images/editor');
+        if (!File::exists($uploadDir)) {
+            File::makeDirectory($uploadDir, 0755, true);
+            Log::info('Created directory: ' . $uploadDir);
+        }
+        
+        // Generate filename
+        $extension = $file->getClientOriginalExtension();
+        $filename = 'debug_' . time() . '_' . uniqid() . '.' . $extension;
+        
+        Log::info('Attempting to save file as: ' . $filename);
+        
+        // Save file
+        $result = $file->move($uploadDir, $filename);
+        
+        if ($result) {
+            $imageUrl = asset('images/editor/' . $filename);
+            Log::info('File saved successfully: ' . $imageUrl);
+            
+            return response()->json([
+                'success' => true,
+                'url' => $imageUrl,
+                'message' => 'Debug upload successful!',
+                'filename' => $filename,
+                'file_path' => $uploadDir . '/' . $filename,
+                'file_exists' => File::exists($uploadDir . '/' . $filename)
+            ]);
+        } else {
+            throw new Exception('Failed to move file');
+        }
+        
+    } catch (Exception $e) {
+        Log::error('Debug upload error: ' . $e->getMessage());
+        Log::error('Exception trace: ' . $e->getTraceAsString());
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Debug upload failed: ' . $e->getMessage(),
+            'debug_info' => [
+                'request_method' => $request->method(),
+                'content_type' => $request->header('Content-Type'),
+                'has_file' => $request->hasFile('file'),
+                'files_count' => count($request->allFiles()),
+                'post_data' => $request->except(['file', '_token']),
+                'server_info' => [
+                    'upload_max_filesize' => ini_get('upload_max_filesize'),
+                    'post_max_size' => ini_get('post_max_size'),
+                    'max_file_uploads' => ini_get('max_file_uploads')
+                ]
+            ]
+        ], 500);
+    }
+});
+
+// DEBUGGING DASHBOARD
+Route::get('/debug-dashboard', function () {
+    return response()->file(public_path('debug-upload.html'));
+});
+
+// VIEW LARAVEL LOGS FOR DEBUGGING
+Route::get('/debug-logs', function () {
+    try {
+        $logFile = storage_path('logs/laravel.log');
+        
+        if (!File::exists($logFile)) {
+            return response()->json([
+                'status' => 'info',
+                'message' => 'No log file found',
+                'log_path' => $logFile
+            ]);
+        }
+        
+        // Get last 50 lines of log
+        $command = 'tail -n 50 ' . escapeshellarg($logFile);
+        $output = shell_exec($command);
+        
+        if ($output === null) {
+            // Fallback: read file directly
+            $content = File::get($logFile);
+            $lines = explode("\n", $content);
+            $output = implode("\n", array_slice($lines, -50));
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Last 50 lines of Laravel log',
+            'log_path' => $logFile,
+            'log_content' => $output,
+            'file_size' => File::size($logFile),
+            'last_modified' => date('Y-m-d H:i:s', File::lastModified($logFile))
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to read logs: ' . $e->getMessage()
+        ], 500);
+    }
+});
+
+// CHECK ROUTES EXISTENCE
+Route::get('/debug-routes', function () {
+    $allRoutes = collect(Route::getRoutes())->map(function ($route) {
+        return [
+            'method' => implode('|', $route->methods()),
+            'uri' => $route->uri(),
+            'name' => $route->getName(),
+            'action' => $route->getActionName()
+        ];
+    });
+    
+    $uploadRoutes = $allRoutes->filter(function ($route) {
+        return str_contains($route['uri'], 'upload') || 
+               str_contains($route['name'] ?? '', 'upload') ||
+               str_contains($route['action'], 'upload');
+    });
+    
+    return response()->json([
+        'status' => 'success',
+        'upload_routes' => $uploadRoutes->values(),
+        'total_routes' => $allRoutes->count(),
+        'test_urls' => [
+            'debug_upload' => url('/debug-simple-upload'),
+            'simple_upload' => url('/upload-image'),
+            'editor_upload' => url('/project/upload-editor-image'),
+            'controller_upload' => url('/upload-editor-image-controller'),
+            'php_upload' => url('/test-upload.php')
+        ]
+    ]);
+});
+
+// TEST UPLOAD ROUTE AVAILABILITY
+Route::get('/test-upload-availability', function () {
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Upload test route is accessible!',
+        'available_routes' => [
+            'direct_upload' => url('/project/upload-editor-image'),
+            'controller_upload' => url('/upload-editor-image-controller'),
+            'simple_upload' => url('/upload-image')
+        ],
+        'directory_status' => [
+            'images_exists' => File::exists(public_path('images')),
+            'projects_exists' => File::exists(public_path('images/projects')),
+            'editor_exists' => File::exists(public_path('images/editor')),
+            'editor_writable' => is_writable(public_path('images/editor')) || !File::exists(public_path('images/editor'))
+        ],
+        'csrf_token' => csrf_token()
+    ]);
+});
+
 // TEST UPLOAD VERIFICATION ROUTE
 Route::get('/test-upload-route', function () {
     return response()->json([
@@ -194,6 +473,249 @@ Route::post('/test-upload', function (\Illuminate\Http\Request $request) {
         return response()->json([
             'success' => false,
             'message' => 'Test upload failed: ' . $e->getMessage()
+        ], 500);
+    }
+});
+
+// FIND AND REMOVE SPECIFIC CONSTRAINT
+Route::get('/remove-other-projects-check-constraint', function () {
+    try {
+        // Get all constraints for the project table
+        $constraints = DB::select("
+            SELECT 
+                CONSTRAINT_NAME, 
+                CONSTRAINT_TYPE,
+                CHECK_CLAUSE
+            FROM information_schema.TABLE_CONSTRAINTS tc
+            LEFT JOIN information_schema.CHECK_CONSTRAINTS cc 
+                ON tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME 
+                AND tc.CONSTRAINT_SCHEMA = cc.CONSTRAINT_SCHEMA
+            WHERE tc.TABLE_SCHEMA = ? 
+            AND tc.TABLE_NAME = 'project'
+            AND (tc.CONSTRAINT_TYPE = 'CHECK' OR tc.CONSTRAINT_NAME LIKE '%other_projects%')
+        ", [env('DB_DATABASE', 'portfolio_db')]);
+        
+        $removedConstraints = [];
+        
+        // Try to remove any constraints that might be related to other_projects
+        $possibleConstraintNames = [
+            'project_other_projects',
+            'other_projects',
+            'chk_other_projects',
+            'project_chk_other_projects'
+        ];
+        
+        foreach ($possibleConstraintNames as $constraintName) {
+            try {
+                DB::statement("ALTER TABLE project DROP CONSTRAINT `{$constraintName}`");
+                $removedConstraints[] = $constraintName;
+            } catch (Exception $e) {
+                // Constraint doesn't exist or already removed
+            }
+        }
+        
+        // Also try the MySQL syntax for dropping check constraints
+        foreach ($possibleConstraintNames as $constraintName) {
+            try {
+                DB::statement("ALTER TABLE project DROP CHECK `{$constraintName}`");
+                $removedConstraints[] = $constraintName . " (CHECK)";
+            } catch (Exception $e) {
+                // Constraint doesn't exist
+            }
+        }
+        
+        // Now recreate the column without any constraints
+        DB::statement("ALTER TABLE project MODIFY COLUMN other_projects LONGTEXT NULL");
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Attempted to remove all possible constraints on other_projects column',
+            'found_constraints' => $constraints,
+            'removed_constraints' => $removedConstraints,
+            'final_action' => 'Modified other_projects column to LONGTEXT NULL',
+            'test_url' => url('/project/create_project')
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to remove constraints: ' . $e->getMessage(),
+            'suggestion' => 'Try the manual SQL approach: ' . url('/manual-fix-other-projects')
+        ], 500);
+    }
+});
+
+// MANUAL SQL FIX ROUTE
+Route::get('/manual-fix-other-projects', function () {
+    try {
+        // Get the current CREATE TABLE statement to see the exact constraint
+        $createTable = DB::select("SHOW CREATE TABLE project");
+        
+        // Try a more aggressive approach - drop and recreate the column
+        DB::statement("ALTER TABLE project DROP COLUMN other_projects");
+        DB::statement("ALTER TABLE project ADD COLUMN other_projects LONGTEXT NULL");
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully dropped and recreated other_projects column without any constraints',
+            'previous_schema' => $createTable,
+            'action' => 'Dropped and recreated other_projects column as LONGTEXT NULL',
+            'test_url' => url('/project/create_project')
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Manual fix failed: ' . $e->getMessage(),
+            'suggestion' => 'You may need to manually run SQL commands in phpMyAdmin',
+            'sql_commands' => [
+                'ALTER TABLE project DROP COLUMN other_projects;',
+                'ALTER TABLE project ADD COLUMN other_projects LONGTEXT NULL;'
+            ]
+        ], 500);
+    }
+});
+
+// FIX OTHER_PROJECTS CONSTRAINT ROUTE
+Route::get('/fix-other-projects-constraint', function () {
+    try {
+        // Check current column definition
+        $currentSchema = DB::select("SHOW CREATE TABLE project");
+        
+        // The issue might be with utf8mb4_bin collation, let's change it to utf8mb4_unicode_ci
+        DB::statement("ALTER TABLE project MODIFY COLUMN other_projects LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL");
+        
+        // Also check if there are any hidden check constraints and remove them
+        try {
+            DB::statement("ALTER TABLE project DROP CHECK project_other_projects");
+        } catch (Exception $e) {
+            // Constraint might not exist, that's fine
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'other_projects column constraint fixed!',
+            'actions' => [
+                'Modified other_projects column collation to utf8mb4_unicode_ci',
+                'Attempted to remove any check constraints'
+            ],
+            'previous_schema' => $currentSchema,
+            'test_urls' => [
+                'create_project' => url('/project/create_project'),
+                'schema_check' => url('/check-project-schema')
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fix constraint: ' . $e->getMessage(),
+            'suggestion' => 'Try checking the schema first: ' . url('/check-project-schema'),
+            'alternative_solution' => 'Try the simple test: ' . url('/test-simple-insert')
+        ], 500);
+    }
+});
+
+// TEST SIMPLE INSERT ROUTE
+Route::get('/test-simple-insert', function () {
+    try {
+        // Try inserting a very simple project to isolate the issue
+        $testData = [
+            'project_name' => 'Simple Test Project',
+            'client_name' => 'Simple Test Client',
+            'location' => 'Test Location',
+            'description' => 'Simple test description',
+            'project_category' => 'Test',
+            'slug_project' => 'simple-test-' . time(),
+            'images' => json_encode(['test.jpg']),
+            'featured_image' => 'test.jpg',
+            'sequence' => 1,
+            'status' => 'Active',
+            'other_projects' => null, // Start with null
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+        
+        $result = DB::table('project')->insert($testData);
+        
+        if ($result) {
+            // Now try with the problematic value
+            $testData2 = $testData;
+            $testData2['project_name'] = 'Test with Other Projects';
+            $testData2['slug_project'] = 'test-other-projects-' . time();
+            $testData2['other_projects'] = 'BUS Request MYSATNUSA'; // The problematic value
+            
+            $result2 = DB::table('project')->insert($testData2);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Both test inserts successful!',
+                'results' => [
+                    'simple_insert' => $result,
+                    'with_other_projects' => $result2
+                ],
+                'next_step' => 'Try creating your project again: ' . url('/project/create_project')
+            ]);
+        }
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Test insert failed: ' . $e->getMessage(),
+            'error_code' => $e->getCode(),
+            'sql_state' => method_exists($e, 'errorInfo') ? $e->errorInfo : 'N/A',
+            'suggestion' => 'Try the constraint fix: ' . url('/fix-other-projects-constraint')
+        ], 500);
+    }
+});
+
+// DATABASE SCHEMA CHECK ROUTE
+Route::get('/check-project-schema', function () {
+    try {
+        // Get table schema
+        $tableInfo = DB::select("DESCRIBE project");
+        
+        // Get constraints
+        $constraints = DB::select("
+            SELECT CONSTRAINT_NAME, CONSTRAINT_TYPE, CHECK_CLAUSE 
+            FROM information_schema.CHECK_CONSTRAINTS 
+            WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+        ", [env('DB_DATABASE', 'portfolio_db'), 'project']);
+        
+        // Try to insert a simple test record to see what fails
+        $testData = [
+            'project_name' => 'Test Project',
+            'client_name' => 'Test Client',
+            'location' => 'Test Location',
+            'description' => 'Test Description',
+            'summary_description' => 'Test Summary',
+            'project_category' => 'Test Category',
+            'slug_project' => 'test-project-' . time(),
+            'images' => json_encode(['test.jpg']),
+            'featured_image' => 'test.jpg',
+            'sequence' => 1,
+            'status' => 'Active',
+            'other_projects' => null, // Try with null first
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+        
+        return response()->json([
+            'status' => 'success',
+            'table_info' => $tableInfo,
+            'constraints' => $constraints,
+            'test_data' => $testData,
+            'message' => 'Schema information retrieved successfully'
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Schema check failed: ' . $e->getMessage(),
+            'error_details' => [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]
         ], 500);
     }
 });

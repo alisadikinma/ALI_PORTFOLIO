@@ -175,14 +175,77 @@
 
                     <!-- Other Projects Section -->
                     <div class="form-group mb-3">
-                        <label for="other_projects">Other Projects</label>
-                        <div class="position-relative">
-                            <input type="text" class="form-control" id="other_projects" name="other_projects" 
-                                   placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
-                                   value="{{ old('other_projects', $project->other_projects ?? '') }}" autocomplete="off">
-                            <div id="other_projects_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                        <label>Other Projects</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <button type="button" class="btn btn-success btn-sm" id="addOtherProjectBtn">
+                                        <i class="fas fa-plus"></i> Tambah Project Lain
+                                    </button>
+                                    <small class="form-text text-muted">Tambahkan project lain yang terkait dengan project ini</small>
+                                </div>
+                                
+                                <div id="otherProjectsContainer">
+                                    @php
+                                        $existingOtherProjects = [];
+                                        if ($project->other_projects) {
+                                            // Check if it's JSON (new format) or string (old format)
+                                            $decoded = json_decode($project->other_projects, true);
+                                            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                                $existingOtherProjects = $decoded;
+                                            } else {
+                                                // Old format - single string
+                                                $existingOtherProjects = [$project->other_projects];
+                                            }
+                                        }
+                                        
+                                        // If we have existing data, use it, otherwise show one empty field
+                                        if (empty($existingOtherProjects)) {
+                                            $existingOtherProjects = [''];
+                                        }
+                                    @endphp
+                                    
+                                    @foreach($existingOtherProjects as $index => $otherProject)
+                                    <div class="other-project-item mb-3" data-index="{{ $index }}">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-10">
+                                                <div class="position-relative">
+                                                    <input type="text" class="form-control other-project-input" 
+                                                           name="other_projects[]" 
+                                                           placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
+                                                           value="{{ old('other_projects.' . $index, $otherProject) }}" 
+                                                           data-index="{{ $index }}"
+                                                           autocomplete="off">
+                                                    <div class="other-projects-dropdown dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-danger btn-sm remove-other-project" style="display: {{ count($existingOtherProjects) > 1 ? 'inline-block' : 'none' }};">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                
+                                <!-- Selected projects display -->
+                                <div id="selectedProjectsDisplay" style="display: {{ !empty(array_filter($existingOtherProjects)) ? 'block' : 'none' }};">
+                                    <hr>
+                                    <label class="font-weight-bold">Selected Other Projects:</label>
+                                    <div id="selectedProjectsList" class="mt-2">
+                                        @foreach(array_filter($existingOtherProjects) as $project)
+                                        <span class="selected-project-badge">
+                                            {{ $project }}
+                                            <button type="button" class="remove-selected" onclick="removeSelectedProject('{{ addslashes($project) }}')" title="Remove project">
+                                                ×
+                                            </button>
+                                        </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <small class="form-text text-muted">Pilih project lain yang terkait dengan project ini</small>
                     </div>
 
                     <div class="form-group">
@@ -263,6 +326,17 @@
 }
 
 /* Other Projects Autocomplete Styles */
+.other-project-item {
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    padding: 1rem;
+    background-color: #f8f9fc;
+}
+
+.other-project-item:hover {
+    background-color: #f5f5f5;
+}
+
 .other-projects-dropdown {
     position: absolute;
     top: 100%;
@@ -319,6 +393,32 @@
     text-align: center;
     color: #666;
     font-style: italic;
+}
+
+.selected-project-badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    margin: 4px;
+    font-size: 0.875rem;
+}
+
+.selected-project-badge .remove-selected {
+    background: none;
+    border: none;
+    color: white;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    line-height: 1;
+    padding: 0;
+}
+
+.selected-project-badge .remove-selected:hover {
+    color: #ffcccc;
 }
 </style>
 

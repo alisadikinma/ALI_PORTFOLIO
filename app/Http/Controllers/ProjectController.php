@@ -157,11 +157,20 @@ class ProjectController extends Controller
                 $slug = Str::slug($slug);
             }
 
-            // Handle other projects
-            $otherProjects = $request->input('other_projects', '');
+            // Handle other projects - now expecting an array
+            $otherProjectsArray = $request->input('other_projects', []);
             $otherProjectsData = null;
-            if (!empty($otherProjects)) {
-                $otherProjectsData = $otherProjects;
+            
+            if (!empty($otherProjectsArray) && is_array($otherProjectsArray)) {
+                // Filter out empty values and trim each item
+                $cleanedProjects = array_filter(array_map('trim', $otherProjectsArray), function($item) {
+                    return !empty($item);
+                });
+                
+                if (!empty($cleanedProjects)) {
+                    // Store as JSON array for multiple projects
+                    $otherProjectsData = json_encode($cleanedProjects);
+                }
             }
 
             // Prepare data for insertion
@@ -385,11 +394,20 @@ class ProjectController extends Controller
                 $slug = Str::slug($slug);
             }
 
-            // Handle other projects
-            $otherProjects = $request->input('other_projects', '');
+            // Handle other projects - now expecting an array
+            $otherProjectsArray = $request->input('other_projects', []);
             $otherProjectsData = null;
-            if (!empty($otherProjects)) {
-                $otherProjectsData = $otherProjects;
+            
+            if (!empty($otherProjectsArray) && is_array($otherProjectsArray)) {
+                // Filter out empty values and trim each item
+                $cleanedProjects = array_filter(array_map('trim', $otherProjectsArray), function($item) {
+                    return !empty($item);
+                });
+                
+                if (!empty($cleanedProjects)) {
+                    // Store as JSON array for multiple projects
+                    $otherProjectsData = json_encode($cleanedProjects);
+                }
             }
 
             // Update data

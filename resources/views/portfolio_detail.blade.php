@@ -59,6 +59,7 @@
     <!-- Project Detail Section -->
     @if(isset($portfolio))
     <section id="project" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-12">
+<<<<<<< HEAD
         @php
             $images = [];
             // Parse images field if it contains multiple images (JSON or comma-separated)
@@ -108,6 +109,8 @@
                  class="w-full max-w-4xl h-auto rounded-3xl" />
         @endif
         
+=======
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
         <div class="w-full max-w-4xl flex flex-col gap-8">
             <div class="flex flex-col gap-3">
                 <h1 class="text-white text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]">{{ $portfolio->project_name ?? 'Portfolio Project' }}</h1>
@@ -127,9 +130,18 @@
                 @endif
             </div>
             <div class="w-full h-px bg-slate-800"></div>
+<<<<<<< HEAD
             
             @if (!empty($portfolio->description))
                 <div class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->description !!}</div>
+=======
+            <div class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->keterangan_project !!}</div>
+            @if ($portfolio->info_project)
+                <div class="flex flex-col gap-3">
+                    <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Additional Information</h2>
+                    <p class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->info_project !!}</p>
+                </div>
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
             @endif
             
             @if (!empty($portfolio->url_project))

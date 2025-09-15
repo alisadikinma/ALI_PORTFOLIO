@@ -43,6 +43,12 @@ class ProjectController extends Controller
                 File::makeDirectory($imageDir, 0755, true);
             }
             
+            // Ensure editor directory exists
+            $editorDir = public_path('images/editor');
+            if (!File::exists($editorDir)) {
+                File::makeDirectory($editorDir, 0755, true);
+            }
+            
             // Verify database connection
             DB::connection()->getPdo();
             
@@ -72,13 +78,17 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validation rules
             $rules = [
                 'project_name' => 'required|string|max:255',
                 'client_name' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
+<<<<<<< HEAD
                 'description' => 'required|string',
                 'summary_description' => 'nullable|string|max:500',
+=======
+                'summary_description' => 'required|string|max:500',
+                'description' => 'required|string',
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => 'required',
                 'images' => 'required|array|min:1',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
@@ -147,8 +157,12 @@ class ProjectController extends Controller
                 'project_name' => trim($request->project_name),
                 'client_name' => trim($request->client_name),
                 'location' => trim($request->location),
+                'summary_description' => trim($request->summary_description),
                 'description' => trim($request->description),
+<<<<<<< HEAD
                 'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
+=======
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => $request->project_category,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,
@@ -214,9 +228,13 @@ class ProjectController extends Controller
                 abort(404, 'Project not found');
             }
             
+<<<<<<< HEAD
             $konf = DB::table('setting')->first();
             
             return view('portfolio_detail', compact('portfolio', 'konf'));
+=======
+            return view('project-detail', compact('project'));
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
         } catch (Exception $e) {
             \Log::error('Project Show Error: ' . $e->getMessage());
             abort(404, 'Project not found');
@@ -273,8 +291,13 @@ class ProjectController extends Controller
                 'project_name' => 'required|string|max:255',
                 'client_name' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
+<<<<<<< HEAD
                 'description' => 'required|string',
                 'summary_description' => 'nullable|string|max:500',
+=======
+                'summary_description' => 'required|string|max:500',
+                'description' => 'required|string',
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => 'required',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
             ];
@@ -361,8 +384,12 @@ class ProjectController extends Controller
                 'project_name' => trim($request->project_name),
                 'client_name' => trim($request->client_name),
                 'location' => trim($request->location),
+                'summary_description' => trim($request->summary_description),
                 'description' => trim($request->description),
+<<<<<<< HEAD
                 'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
+=======
+>>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => $request->project_category,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,
@@ -464,6 +491,60 @@ class ProjectController extends Controller
         } catch (Exception $e) {
             \Log::error('Project Delete Image Error: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Error deleting image: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Handle image upload for TinyMCE editor
+     */
+    public function uploadEditorImage(Request $request)
+    {
+        try {
+            // Validate the uploaded file
+            $request->validate([
+                'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048'
+            ]);
+
+            // Create editor directory if it doesn't exist
+            $editorDir = public_path('images/editor');
+            if (!File::exists($editorDir)) {
+                File::makeDirectory($editorDir, 0755, true);
+            }
+
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $extension = $file->getClientOriginalExtension();
+                $filename = 'editor_' . time() . '_' . uniqid() . '.' . $extension;
+                
+                // Move file to editor directory
+                if ($file->move($editorDir, $filename)) {
+                    $imageUrl = asset('images/editor/' . $filename);
+                    
+                    return response()->json([
+                        'success' => true,
+                        'url' => $imageUrl,
+                        'message' => 'Image uploaded successfully'
+                    ]);
+                } else {
+                    throw new Exception('Failed to move uploaded file');
+                }
+            }
+
+            throw new Exception('No file was uploaded');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed: ' . implode(', ', $e->errors()['file'] ?? ['Invalid file'])
+            ], 422);
+
+        } catch (Exception $e) {
+            \Log::error('Editor Image Upload Error: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Upload failed: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

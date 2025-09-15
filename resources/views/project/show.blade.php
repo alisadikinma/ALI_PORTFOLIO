@@ -115,7 +115,7 @@
                     </div>
                 </div>
 
-                <!-- Description Section -->
+                <!-- Project Description Section -->
                 @if($project->description)
                 <div class="row mt-4">
                     <div class="col-12">
@@ -124,26 +124,8 @@
                                 <h5 class="card-title">Deskripsi Project</h5>
                             </div>
                             <div class="card-body">
-                                <div class="text-justify">
-                                    {{ $project->description }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-                <!-- Detailed Info Section -->
-                @if($project->info_project)
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Detail Project</h5>
-                            </div>
-                            <div class="card-body">
                                 <div class="content">
-                                    {!! $project->info_project !!}
+                                    {!! $project->description !!}
                                 </div>
                             </div>
                         </div>

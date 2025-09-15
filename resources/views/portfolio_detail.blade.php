@@ -30,6 +30,12 @@
         .scrollbar-track-slate-900 {
             /* No additional track styling needed */
         }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
     </style>
 </head>
 <body class="bg-gradient-footer text-white font-['Inter']">
@@ -92,6 +98,62 @@
                               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                 </a>
+            @endif
+            
+            @if (!empty($portfolio->other_projects))
+                <div class="w-full h-px bg-slate-800 mt-8"></div>
+                <div class="mt-6">
+                    <h3 class="text-white text-xl sm:text-2xl font-semibold leading-tight mb-4">Other Related Projects</h3>
+                    <div class="bg-slate-800/30 rounded-xl p-4 sm:p-6">
+                        <p class="text-zinc-300 text-base leading-relaxed">{{ $portfolio->other_projects }}</p>
+                        @php
+                            // Try to find related projects based on the other_projects field
+                            $relatedProjects = collect();
+                            if (!empty($portfolio->other_projects)) {
+                                try {
+                                    $relatedProjects = \Illuminate\Support\Facades\DB::table('project')
+                                        ->where('status', 'Active')
+                                        ->where('id_project', '!=', $portfolio->id_project)
+                                        ->where(function($query) use ($portfolio) {
+                                            $query->where('project_name', 'LIKE', '%' . $portfolio->other_projects . '%')
+                                                  ->orWhere('client_name', 'LIKE', '%' . $portfolio->other_projects . '%')
+                                                  ->orWhere('project_category', 'LIKE', '%' . $portfolio->other_projects . '%');
+                                        })
+                                        ->limit(3)
+                                        ->get();
+                                } catch (Exception $e) {
+                                    $relatedProjects = collect();
+                                }
+                            }
+                        @endphp
+                        
+                        @if ($relatedProjects->count() > 0)
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                                @foreach ($relatedProjects as $relatedProject)
+                                    <a href="{{ url('/project/' . $relatedProject->slug_project) }}" 
+                                       class="block bg-slate-700/50 rounded-lg p-4 hover:bg-slate-700/70 transition-colors">
+                                        @php
+                                            $images = $relatedProject->images ? json_decode($relatedProject->images, true) : [];
+                                            $featuredImage = $relatedProject->featured_image ?? ($images[0] ?? null);
+                                        @endphp
+                                        
+                                        @if ($featuredImage)
+                                            <img src="{{ asset('images/projects/' . $featuredImage) }}" 
+                                                 alt="{{ $relatedProject->project_name }}"
+                                                 class="w-full h-32 object-cover rounded-lg mb-3">
+                                        @endif
+                                        
+                                        <h4 class="text-white text-sm font-semibold mb-2 line-clamp-2">{{ $relatedProject->project_name }}</h4>
+                                        <p class="text-zinc-400 text-xs mb-2">{{ $relatedProject->client_name }}</p>
+                                        <span class="inline-block bg-yellow-400/20 text-yellow-400 text-xs px-2 py-1 rounded">
+                                            {{ $relatedProject->project_category }}
+                                        </span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
             @endif
         </div>
     </section>

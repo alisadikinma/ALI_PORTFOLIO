@@ -71,20 +71,25 @@
                     </div>
 
                     <div class="form-group mb-3">
+                        <label for="slug_project">Slug Project <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="slug_project" name="slug_project" placeholder="auto-generated-slug" value="{{ old('slug_project', $project->slug_project) }}" readonly>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle"></i> Slug akan otomatis dihasilkan dari Nama Project + Kategori. 
+                            <button type="button" id="editSlugBtn" class="btn btn-link btn-sm p-0 ml-2">
+                                <i class="fas fa-edit"></i> Edit Manual
+                            </button>
+                            <button type="button" id="autoSlugBtn" class="btn btn-link btn-sm p-0 ml-2" style="display: none;">
+                                <i class="fas fa-sync"></i> Auto Generate
+                            </button>
+                        </small>
+                    </div>
+
+                    <div class="form-group mb-3">
                         <label for="sequence">Urutan Tampilan</label>
                         <input type="number" class="form-control" id="sequence" name="sequence" value="{{ old('sequence', $project->sequence) }}" min="0">
                     </div>
 
                     <div class="form-group mb-3">
-<<<<<<< HEAD
-                        <label for="summary_description">Ringkasan Project</label>
-                        <textarea name="summary_description" id="summary_description" cols="30" rows="3" class="form-control">{{ old('summary_description', $project->summary_description ?? '') }}</textarea>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label for="description">Deskripsi Project <span class="text-danger">*</span></label>
-                        <textarea name="description" id="editor" cols="30" rows="10" class="form-control">{{ old('description', $project->description) }}</textarea>
-=======
                         <label for="summary_description">Summary Description <span class="text-danger">*</span></label>
                         <textarea name="summary_description" id="summary_description" cols="30" rows="3" class="form-control" placeholder="Masukkan deskripsi singkat untuk tampilan portfolio...">{{ old('summary_description', $project->summary_description) }}</textarea>
                         <small class="form-text text-muted">Deskripsi singkat ini akan tampil di portfolio slider</small>
@@ -96,7 +101,7 @@
                         <!-- Loading indicator for editor -->
                         <div id="editor-loading" class="editor-loading mb-3">
                             <i class="fas fa-spinner fa-spin"></i>
-                            <span>Loading Advanced Editor...</span>
+                            <span>Loading CKEditor 5...</span>
                         </div>
                         
                         <textarea name="description" id="editor" cols="30" rows="10" class="form-control">{{ old('description', $project->description) }}</textarea>
@@ -108,7 +113,6 @@
                             <strong>code blocks</strong>, 
                             <strong>templates project</strong>, dan banyak lagi!
                         </small>
->>>>>>> 63027871ae323267b47379017adb239bab443d93
                     </div>
 
                     <!-- Existing Images Section -->
@@ -169,6 +173,18 @@
                         </div>
                     </div>
 
+                    <!-- Other Projects Section -->
+                    <div class="form-group mb-3">
+                        <label for="other_projects">Other Projects</label>
+                        <div class="position-relative">
+                            <input type="text" class="form-control" id="other_projects" name="other_projects" 
+                                   placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
+                                   value="{{ old('other_projects', $project->other_projects ?? '') }}" autocomplete="off">
+                            <div id="other_projects_dropdown" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                        </div>
+                        <small class="form-text text-muted">Pilih project lain yang terkait dengan project ini</small>
+                    </div>
+
                     <div class="form-group">
                         <div class="text-right">
                             <a href="{{ route('project.index') }}" class="btn btn-secondary">
@@ -185,13 +201,8 @@
     </div>
 </div>
 
-<<<<<<< HEAD
-<!-- CKEditor 5 with Full Features & Image Upload -->
-<script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
-=======
-<!-- TinyMCE Editor -->
-<script src="https://cdn.tiny.cloud/1/yoy173va5xd7hrzyaps0saw7mtvc1kqzsvlb1hbidqjda0wj/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
->>>>>>> 63027871ae323267b47379017adb239bab443d93
+<!-- CKEditor 5 -->
+<script src="https://cdn.ckeditor.com/ckeditor5/40.2.0/classic/ckeditor.js"></script>
 
 <style>
 .image-upload-item {
@@ -215,10 +226,9 @@
     color: #007bff;
 }
 
-<<<<<<< HEAD
 /* CKEditor 5 Custom Styles */
 .ck-editor__editable {
-    min-height: 300px;
+    min-height: 400px;
 }
 
 .ck.ck-editor {
@@ -234,10 +244,6 @@
 .ck.ck-editor__main>.ck-editor__editable:focus {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-=======
-/* TinyMCE Custom Styles */
-.tox-editor-container {
-    border-radius: 0.375rem;
 }
 
 .editor-loading {
@@ -256,14 +262,63 @@
     color: #6c757d;
 }
 
-/* Editor content styling */
-.tox-tinymce {
-    border-radius: 0.375rem !important;
+/* Other Projects Autocomplete Styles */
+.other-projects-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
-.tox-toolbar {
-    background: #f8f9fa !important;
->>>>>>> 63027871ae323267b47379017adb239bab443d93
+.other-projects-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.other-projects-item:last-child {
+    border-bottom: none;
+}
+
+.other-projects-item:hover {
+    background-color: #f8f9fa;
+}
+
+.other-projects-item.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.other-projects-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.other-projects-subtitle {
+    font-size: 0.875em;
+    color: #666;
+    margin-bottom: 0;
+}
+
+.other-projects-item.active .other-projects-title,
+.other-projects-item.active .other-projects-subtitle {
+    color: white;
+}
+
+.loading-indicator {
+    padding: 12px 16px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
 }
 </style>
 
@@ -271,26 +326,29 @@
 document.addEventListener('DOMContentLoaded', function() {
     let imageIndex = 0;
 
-<<<<<<< HEAD
-    // Initialize CKEditor 5 with Full Features
+    // Initialize CKEditor 5 with advanced features
     ClassicEditor
         .create(document.querySelector('#editor'), {
-            toolbar: [
-                'heading', '|',
-                'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                'bold', 'italic', 'underline', 'strikethrough', '|',
-                'link', '|',
-                'bulletedList', 'numberedList', '|',
-                'outdent', 'indent', '|',
-                'alignment', '|',
-                'insertImage', 'insertTable', '|',
-                'blockQuote', 'codeBlock', 'horizontalLine', '|',
-                'undo', 'redo'
-            ],
+            toolbar: {
+                items: [
+                    'heading', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'bold', 'italic', 'underline', 'strikethrough', '|',
+                    'link', 'uploadImage', 'insertTable', 'mediaEmbed', '|',
+                    'bulletedList', 'numberedList', '|',
+                    'outdent', 'indent', '|',
+                    'alignment', '|',
+                    'blockQuote', 'codeBlock', 'horizontalLine', '|',
+                    'undo', 'redo', '|',
+                    'sourceEditing'
+                ]
+            },
+            language: 'en',
             fontSize: {
                 options: [
-                    9, 11, 13, 'default', 17, 19, 21
-                ]
+                    9, 11, 13, 'default', 17, 19, 21, 27, 35
+                ],
+                supportAllValues: true
             },
             fontFamily: {
                 options: [
@@ -302,30 +360,108 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Tahoma, Geneva, sans-serif',
                     'Times New Roman, Times, serif',
                     'Trebuchet MS, Helvetica, sans-serif',
-                    'Verdana, Geneva, sans-serif'
+                    'Verdana, Geneva, sans-serif',
+                    'Segoe UI, system-ui, sans-serif'
+                ],
+                supportAllValues: true
+            },
+            fontColor: {
+                columns: 5,
+                documentColors: 10
+            },
+            fontBackgroundColor: {
+                columns: 5,
+                documentColors: 10
+            },
+            heading: {
+                options: [
+                    { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                    { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                    { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                    { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' },
+                    { model: 'heading4', view: 'h4', title: 'Heading 4', class: 'ck-heading_heading4' },
+                    { model: 'heading5', view: 'h5', title: 'Heading 5', class: 'ck-heading_heading5' },
+                    { model: 'heading6', view: 'h6', title: 'Heading 6', class: 'ck-heading_heading6' }
                 ]
             },
             image: {
                 toolbar: [
-                    'imageTextAlternative',
-                    'imageStyle:inline',
-                    'imageStyle:block',
-                    'imageStyle:side'
+                    'imageTextAlternative', 'toggleImageCaption', '|',
+                    'imageStyle:inline', 'imageStyle:wrapText', 'imageStyle:breakText', '|',
+                    'resizeImage'
+                ],
+                resizeOptions: [
+                    {
+                        name: 'resizeImage:original',
+                        label: 'Original size',
+                        value: null
+                    },
+                    {
+                        name: 'resizeImage:50',
+                        label: '50%',
+                        value: '50'
+                    },
+                    {
+                        name: 'resizeImage:75',
+                        label: '75%',
+                        value: '75'
+                    }
                 ]
             },
             table: {
                 contentToolbar: [
-                    'tableColumn',
-                    'tableRow',
-                    'mergeTableCells'
+                    'tableColumn', 'tableRow', 'mergeTableCells',
+                    'tableCellProperties', 'tableProperties'
                 ]
+            },
+            link: {
+                decorators: {
+                    toggleDownloadable: {
+                        mode: 'manual',
+                        label: 'Downloadable',
+                        attributes: {
+                            download: 'file'
+                        }
+                    },
+                    openInNewTab: {
+                        mode: 'manual',
+                        label: 'Open in a new tab',
+                        defaultValue: true,
+                        attributes: {
+                            target: '_blank',
+                            rel: 'noopener noreferrer'
+                        }
+                    }
+                }
+            },
+            codeBlock: {
+                languages: [
+                    { language: 'css', label: 'CSS' },
+                    { language: 'html', label: 'HTML' },
+                    { language: 'javascript', label: 'JavaScript' },
+                    { language: 'php', label: 'PHP' },
+                    { language: 'python', label: 'Python' },
+                    { language: 'sql', label: 'SQL' },
+                    { language: 'xml', label: 'XML' },
+                    { language: 'json', label: 'JSON' }
+                ]
+            },
+            mediaEmbed: {
+                previewsInData: true
             }
         })
         .then(editor => {
-            window.editor = editor;
-            console.log('CKEditor 5 initialized successfully!');
+            window.editorInstance = editor;
             
-            // Custom image upload adapter for copy-paste functionality
+            // Remove loading indicator
+            const loadingElement = document.getElementById('editor-loading');
+            if (loadingElement) {
+                loadingElement.remove();
+            }
+            
+            console.log('CKEditor 5 initialized successfully for edit form!');
+            
+            // Custom image upload adapter
             class MyUploadAdapter {
                 constructor(loader) {
                     this.loader = loader;
@@ -337,19 +473,22 @@ document.addEventListener('DOMContentLoaded', function() {
                             console.log('Starting image upload...', file.name);
                             
                             const data = new FormData();
-                            data.append('upload', file);
+                            data.append('file', file);
                             data.append('_token', '{{ csrf_token() }}');
                             
-                            fetch('{{ route("image.upload") }}', {
+                            fetch('/project/upload-editor-image', {
                                 method: 'POST',
                                 body: data,
                                 headers: {
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                    'X-Requested-With': 'XMLHttpRequest',
                                     'Accept': 'application/json'
                                 }
                             })
                             .then(response => {
                                 console.log('Upload response status:', response.status);
+                                if (!response.ok) {
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
                                 return response.json();
                             })
                             .then(result => {
@@ -374,249 +513,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // Enable image upload on paste/drop
-            try {
-                if (editor.plugins.has('FileRepository')) {
-                    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                        return new MyUploadAdapter(loader);
-                    };
-                    console.log('Image upload adapter registered successfully');
-                } else {
-                    console.warn('FileRepository plugin not available');
-                }
-            } catch (error) {
-                console.error('Error setting up image upload:', error);
+            // Set up file repository for image uploads
+            if (editor.plugins.has('FileRepository')) {
+                editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                    return new MyUploadAdapter(loader);
+                };
+                console.log('Image upload adapter registered successfully');
+            }
+            
+            // Auto-save functionality
+            let autoSaveTimer;
+            editor.model.document.on('change:data', () => {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(() => {
+                    const content = editor.getData();
+                    localStorage.setItem('project_detail_edit_draft', content);
+                    console.log('Content auto-saved to localStorage');
+                }, 2000);
+            });
+            
+            // Restore draft on load
+            const draft = localStorage.getItem('project_detail_edit_draft');
+            if (draft && confirm('Found unsaved draft. Do you want to restore it?')) {
+                editor.setData(draft);
             }
         })
         .catch(error => {
             console.error('CKEditor initialization failed:', error);
-            // Fallback to simple textarea if CKEditor fails
+            
+            // Remove loading indicator and show error
+            const loadingElement = document.getElementById('editor-loading');
+            if (loadingElement) {
+                loadingElement.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i> <span class="text-danger">Editor failed to load. Using fallback textarea.</span>';
+            }
+            
+            // Show the textarea as fallback
             const editorElement = document.querySelector('#editor');
             if (editorElement) {
                 editorElement.style.display = 'block';
-                editorElement.style.minHeight = '200px';
+                editorElement.style.minHeight = '300px';
+                editorElement.style.resize = 'vertical';
                 console.log('Fallback: Using simple textarea');
             }
         });
-=======
-    // Initialize TinyMCE with advanced features (same config as create.blade.php)
-    tinymce.init({
-        selector: '#editor',
-        height: 500,
-        menubar: 'file edit view insert format tools table help',
-        branding: false,
-        
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
-            'textcolor', 'colorpicker', 'hr', 'pagebreak', 'nonbreaking',
-            'save', 'directionality', 'emoticons', 'template', 'codesample',
-            'quickbars', 'accordion'
-        ],
-        
-        toolbar1: 'undo redo | formatselect fontselect fontsizeselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | lineheight',
-        toolbar2: 'bullist numlist outdent indent | blockquote hr pagebreak | link unlink anchor | image media table accordion | code codesample | fullscreen preview help',
-        toolbar3: 'searchreplace | visualblocks | insertdatetime charmap emoticons | template | ltr rtl | wordcount',
-        
-        content_style: `
-            body { 
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                font-size: 14px; 
-                line-height: 1.6; 
-                margin: 1rem;
-                color: #333;
-                background: #fff;
-            }
-            img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                margin: 0.5rem 0;
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                margin: 1rem 0;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            }
-            th, td {
-                border: 1px solid #ddd;
-                padding: 12px;
-                text-align: left;
-            }
-            th {
-                background-color: #f8f9fa;
-                font-weight: bold;
-                color: #495057;
-            }
-            tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-            blockquote {
-                border-left: 4px solid #007bff;
-                margin: 1rem 0;
-                padding-left: 1rem;
-                color: #6c757d;
-                font-style: italic;
-                background-color: #f8f9fa;
-                border-radius: 0 4px 4px 0;
-                padding: 1rem 1rem 1rem 1.5rem;
-            }
-            code {
-                background-color: #f8f9fa;
-                padding: 2px 6px;
-                border-radius: 4px;
-                font-family: 'Courier New', monospace;
-                color: #d63384;
-                font-size: 0.875em;
-            }
-            pre {
-                background-color: #f8f9fa;
-                padding: 1rem;
-                border-radius: 8px;
-                overflow-x: auto;
-                border: 1px solid #e9ecef;
-                position: relative;
-            }
-            h1, h2, h3, h4, h5, h6 {
-                color: #2c3e50;
-                margin-top: 1.5rem;
-                margin-bottom: 1rem;
-            }
-            h1 { font-size: 2rem; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem; }
-            h2 { font-size: 1.5rem; color: #007bff; }
-            h3 { font-size: 1.25rem; }
-            a { color: #007bff; text-decoration: none; }
-            a:hover { text-decoration: underline; }
-            ul, ol { padding-left: 2rem; }
-            li { margin-bottom: 0.5rem; }
-            hr { 
-                border: none; 
-                height: 2px; 
-                background: linear-gradient(to right, #007bff, #6c757d);
-                margin: 2rem 0;
-                border-radius: 1px;
-            }
-        `,
-        
-        font_family_formats: 'Arial=arial,helvetica,sans-serif; Courier New=courier new,courier,monospace; Georgia=georgia,serif; Helvetica=helvetica; Impact=impact,chicago; Tahoma=tahoma,arial,helvetica,sans-serif; Times New Roman=times new roman,times,serif; Verdana=verdana,geneva; Segoe UI=segoe ui,arial,sans-serif;',
-        font_size_formats: '8pt 9pt 10pt 11pt 12pt 14pt 16pt 18pt 24pt 30pt 36pt 48pt 60pt 72pt',
-        lineheight_formats: '1 1.1 1.2 1.3 1.4 1.5 1.6 1.8 2.0 2.5 3.0',
-        
-        images_upload_handler: function (blobInfo, success, failure, progress) {
-            const formData = new FormData();
-            formData.append('file', blobInfo.blob(), blobInfo.filename());
-            formData.append('_token', '{{ csrf_token() }}');
-            
-            if (progress) progress(0);
-            
-            fetch('/project/upload-editor-image', {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            }).then(response => {
-                if (progress) progress(100);
-                if (!response.ok) throw new Error('HTTP Error: ' + response.status);
-                return response.json();
-            }).then(result => {
-                if (result.success && result.url) {
-                    success(result.url);
-                } else {
-                    failure(result.message || 'Upload failed');
-                }
-            }).catch(error => {
-                console.error('Upload error:', error);
-                const reader = new FileReader();
-                reader.onload = function(e) { success(e.target.result); };
-                reader.readAsDataURL(blobInfo.blob());
-            });
-        },
-        
-        images_reuse_filename: true,
-        images_upload_credentials: true,
-        automatic_uploads: true,
-        images_file_types: 'jpg,svg,webp,png,gif',
-        paste_data_images: true,
-        paste_as_text: false,
-        paste_auto_cleanup_on_paste: true,
-        paste_remove_styles_if_webkit: false,
-        paste_merge_formats: true,
-        paste_webkit_styles: 'color font-size font-family background-color',
-        paste_retain_style_properties: 'color font-size font-family background-color',
-        
-        table_toolbar: 'tableprops tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
-        table_appearance_options: false,
-        table_grid: false,
-        table_class_list: [
-            {title: 'Default', value: ''},
-            {title: 'Bordered Table', value: 'table-bordered'},
-            {title: 'Striped Table', value: 'table-striped'},
-            {title: 'Hover Effect', value: 'table-hover'},
-            {title: 'Responsive Table', value: 'table-responsive'}
-        ],
-        
-        link_assume_external_targets: true,
-        target_list: [
-            {title: 'Same window', value: '_self'},
-            {title: 'New window', value: '_blank'}
-        ],
-        
-        codesample_languages: [
-            {text: 'HTML/XML', value: 'markup'},
-            {text: 'JavaScript', value: 'javascript'},
-            {text: 'CSS', value: 'css'},
-            {text: 'PHP', value: 'php'},
-            {text: 'Python', value: 'python'},
-            {text: 'Java', value: 'java'},
-            {text: 'C', value: 'c'},
-            {text: 'C++', value: 'cpp'},
-            {text: 'C#', value: 'csharp'},
-            {text: 'SQL', value: 'sql'},
-            {text: 'JSON', value: 'json'},
-            {text: 'Bash', value: 'bash'}
-        ],
-        codesample_global_prismjs: true,
-        
-        browser_spellcheck: true,
-        contextmenu: 'link image editimage table',
-        object_resizing: true,
-        resize: 'both',
-        elementpath: true,
-        statusbar: true,
-        
-        quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
-        quickbars_insert_toolbar: 'quickimage quicktable',
-        
-        setup: function (editor) {
-            editor.on('init', function () {
-                document.getElementById('editor-loading')?.remove();
-                console.log('Advanced TinyMCE Editor initialized for edit form!');
-            });
-            
-            let autoSaveTimer;
-            editor.on('input change', function () {
-                clearTimeout(autoSaveTimer);
-                autoSaveTimer = setTimeout(function() {
-                    const content = editor.getContent();
-                    localStorage.setItem('project_detail_edit_draft', content);
-                }, 2000);
-            });
-            
-            editor.on('init', function() {
-                const draft = localStorage.getItem('project_detail_edit_draft');
-                if (draft && confirm('Found unsaved draft. Do you want to restore it?')) {
-                    editor.setContent(draft);
-                }
-            });
-        },
-        
-        init_instance_callback: function(editor) {
-            console.log('TinyMCE initialized for edit form: ' + editor.id);
-        }
-    });
->>>>>>> 63027871ae323267b47379017adb239bab443d93
 
     // Delete existing image functionality
     document.querySelectorAll('.delete-existing-image').forEach(button => {
@@ -774,9 +713,222 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.removeItem('project_detail_edit_draft');
     });
 
+    // Other Projects Autocomplete functionality
+    let searchTimeout;
+    let selectedIndex = -1;
+    let searchResults = [];
+    
+    const otherProjectsInput = document.getElementById('other_projects');
+    const dropdown = document.getElementById('other_projects_dropdown');
+    
+    if (otherProjectsInput && dropdown) {
+        otherProjectsInput.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 3) {
+                hideDropdown();
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                searchProjects(query);
+            }, 300);
+        });
+        
+        otherProjectsInput.addEventListener('keydown', function(e) {
+            if (dropdown.style.display === 'none') return;
+            
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    selectedIndex = Math.min(selectedIndex + 1, searchResults.length - 1);
+                    updateSelection();
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    selectedIndex = Math.max(selectedIndex - 1, -1);
+                    updateSelection();
+                    break;
+                case 'Enter':
+                    e.preventDefault();
+                    if (selectedIndex >= 0 && searchResults[selectedIndex]) {
+                        selectProject(searchResults[selectedIndex]);
+                    }
+                    break;
+                case 'Escape':
+                    hideDropdown();
+                    break;
+            }
+        });
+        
+        otherProjectsInput.addEventListener('blur', function() {
+            // Delay hiding to allow click on dropdown items
+            setTimeout(() => {
+                hideDropdown();
+            }, 200);
+        });
+    }
+    
+    function searchProjects(query) {
+        showLoading();
+        
+        const currentId = '{{ $project->id_project ?? "" }}';
+        
+        fetch(`{{ route('project.search') }}?query=${encodeURIComponent(query)}&current_id=${currentId}`, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                searchResults = data.data;
+                displayResults(searchResults);
+            } else {
+                console.error('Search failed:', data.message);
+                hideDropdown();
+            }
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            hideDropdown();
+        });
+    }
+    
+    function showLoading() {
+        dropdown.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
+        dropdown.style.display = 'block';
+        selectedIndex = -1;
+    }
+    
+    function displayResults(results) {
+        if (results.length === 0) {
+            dropdown.innerHTML = '<div class="loading-indicator">No projects found</div>';
+        } else {
+            const html = results.map((project, index) => `
+                <div class="other-projects-item" data-index="${index}" onclick="selectProjectByIndex(${index})">
+                    <div class="other-projects-title">${escapeHtml(project.text)}</div>
+                    <div class="other-projects-subtitle">${escapeHtml(project.subtitle)}</div>
+                </div>
+            `).join('');
+            dropdown.innerHTML = html;
+        }
+        dropdown.style.display = 'block';
+        selectedIndex = -1;
+    }
+    
+    function updateSelection() {
+        const items = dropdown.querySelectorAll('.other-projects-item');
+        items.forEach((item, index) => {
+            item.classList.toggle('active', index === selectedIndex);
+        });
+    }
+    
+    function selectProject(project) {
+        otherProjectsInput.value = project.text;
+        hideDropdown();
+    }
+    
+    function selectProjectByIndex(index) {
+        if (searchResults[index]) {
+            selectProject(searchResults[index]);
+        }
+    }
+    
+    // Make selectProjectByIndex available globally for onclick
+    window.selectProjectByIndex = selectProjectByIndex;
+    
+    function hideDropdown() {
+        dropdown.style.display = 'none';
+        selectedIndex = -1;
+        searchResults = [];
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!otherProjectsInput.contains(e.target) && !dropdown.contains(e.target)) {
+            hideDropdown();
+        }
+    });
+
     // Initialize
     attachRemoveListeners();
     attachImagePreview();
+    
+    // === SLUG FUNCTIONALITY ===
+    let isSlugManual = false;
+    const originalSlug = document.getElementById('slug_project').value;
+    
+    // Function to generate slug from project name and category
+    function generateSlug() {
+        const projectName = document.getElementById('project_name').value.trim();
+        const category = document.getElementById('project_category').value;
+        
+        if (!projectName) return '';
+        
+        let baseSlug = projectName.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+            .replace(/\s+/g, '-') // Replace spaces with hyphens
+            .replace(/-+/g, '-') // Replace multiple hyphens with single
+            .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+        
+        if (category) {
+            const categorySlug = category.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            baseSlug = baseSlug + '-' + categorySlug;
+        }
+        
+        return baseSlug;
+    }
+    
+    // Auto-generate slug when project name or category changes
+    function updateSlugIfAuto() {
+        if (!isSlugManual) {
+            const slug = generateSlug();
+            document.getElementById('slug_project').value = slug;
+        }
+    }
+    
+    // Event listeners for auto-generation
+    document.getElementById('project_name').addEventListener('input', updateSlugIfAuto);
+    document.getElementById('project_category').addEventListener('change', updateSlugIfAuto);
+    
+    // Toggle between manual and auto mode
+    document.getElementById('editSlugBtn').addEventListener('click', function() {
+        isSlugManual = true;
+        document.getElementById('slug_project').removeAttribute('readonly');
+        document.getElementById('slug_project').focus();
+        this.style.display = 'none';
+        document.getElementById('autoSlugBtn').style.display = 'inline-block';
+    });
+    
+    document.getElementById('autoSlugBtn').addEventListener('click', function() {
+        isSlugManual = false;
+        document.getElementById('slug_project').setAttribute('readonly', true);
+        updateSlugIfAuto();
+        this.style.display = 'none';
+        document.getElementById('editSlugBtn').style.display = 'inline-block';
+    });
+    
+    // Check if current slug matches auto-generated to determine initial state
+    const currentAutoSlug = generateSlug();
+    if (originalSlug && originalSlug !== currentAutoSlug && originalSlug.trim() !== '') {
+        // Current slug was manually edited, keep manual mode available
+        isSlugManual = false; // Start in auto mode but user can switch
+    }
 });
 </script>
 @endsection

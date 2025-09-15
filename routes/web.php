@@ -89,9 +89,6 @@ Route::get('/portfolio/all', [HomeWebController::class, 'portfolioAll'])->name('
 Route::get('/portfolio/{slug}', [HomeWebController::class, 'portfolioDetail'])->name('portfolio.detail');
 Route::get('/project/{slug}', [ProjectController::class, 'show'])->name('project.public.show');
 
-// Add public project route
-Route::get('/project/{slug}', [ProjectController::class, 'show'])->name('project.public.show');
-
 // AUTH ROUTES - Simple version
 Route::get('/login', function () {
    return view('auth.login');

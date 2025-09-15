@@ -59,7 +59,6 @@
     <!-- Project Detail Section -->
     @if(isset($portfolio))
     <section id="project" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-12">
-<<<<<<< HEAD
         @php
             $images = [];
             // Parse images field if it contains multiple images (JSON or comma-separated)
@@ -70,7 +69,7 @@
                     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
                         foreach ($decoded as $image) {
                             if (!empty($image)) {
-                                $images[] = asset('file/project/' . $image);
+                                $images[] = asset('images/projects/' . $image);
                             }
                         }
                     } else {
@@ -79,7 +78,7 @@
                         foreach ($imageArray as $image) {
                             $image = trim($image);
                             if (!empty($image)) {
-                                $images[] = asset('file/project/' . $image);
+                                $images[] = asset('images/projects/' . $image);
                             }
                         }
                     }
@@ -88,7 +87,7 @@
             
             // If images field is empty or has no valid images, use featured_image
             if (empty($images) && !empty($portfolio->featured_image)) {
-                $images[] = asset('file/project/' . $portfolio->featured_image);
+                $images[] = asset('images/projects/' . $portfolio->featured_image);
             }
         @endphp
         
@@ -104,13 +103,11 @@
                 </div>
             </div>
         @else
-            <img src="{{ asset('file/project/placeholder.png') }}"
+            <img src="{{ asset('images/placeholder/project-placeholder.jpg') }}"
                  alt="{{ $portfolio->project_name ?? 'Portfolio' }} - Placeholder"
                  class="w-full max-w-4xl h-auto rounded-3xl" />
         @endif
         
-=======
->>>>>>> 63027871ae323267b47379017adb239bab443d93
         <div class="w-full max-w-4xl flex flex-col gap-8">
             <div class="flex flex-col gap-3">
                 <h1 class="text-white text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]">{{ $portfolio->project_name ?? 'Portfolio Project' }}</h1>
@@ -130,18 +127,16 @@
                 @endif
             </div>
             <div class="w-full h-px bg-slate-800"></div>
-<<<<<<< HEAD
             
             @if (!empty($portfolio->description))
                 <div class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->description !!}</div>
-=======
-            <div class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->keterangan_project !!}</div>
-            @if ($portfolio->info_project)
+            @endif
+            
+            @if (!empty($portfolio->summary_description))
                 <div class="flex flex-col gap-3">
-                    <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Additional Information</h2>
-                    <p class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->info_project !!}</p>
+                    <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Summary</h2>
+                    <p class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->summary_description !!}</p>
                 </div>
->>>>>>> 63027871ae323267b47379017adb239bab443d93
             @endif
             
             @if (!empty($portfolio->url_project))

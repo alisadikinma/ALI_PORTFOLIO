@@ -82,13 +82,8 @@ class ProjectController extends Controller
                 'project_name' => 'required|string|max:255',
                 'client_name' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
-<<<<<<< HEAD
                 'description' => 'required|string',
                 'summary_description' => 'nullable|string|max:500',
-=======
-                'summary_description' => 'required|string|max:500',
-                'description' => 'required|string',
->>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => 'required',
                 'images' => 'required|array|min:1',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
@@ -157,12 +152,8 @@ class ProjectController extends Controller
                 'project_name' => trim($request->project_name),
                 'client_name' => trim($request->client_name),
                 'location' => trim($request->location),
-                'summary_description' => trim($request->summary_description),
                 'description' => trim($request->description),
-<<<<<<< HEAD
                 'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
-=======
->>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => $request->project_category,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,
@@ -228,15 +219,11 @@ class ProjectController extends Controller
                 abort(404, 'Project not found');
             }
             
-<<<<<<< HEAD
             $konf = DB::table('setting')->first();
             
             return view('portfolio_detail', compact('portfolio', 'konf'));
-=======
-            return view('project-detail', compact('project'));
->>>>>>> 63027871ae323267b47379017adb239bab443d93
         } catch (Exception $e) {
-            \Log::error('Project Show Error: ' . $e->getMessage());
+            Log::error('Project Show Error: ' . $e->getMessage());
             abort(404, 'Project not found');
         }
     }
@@ -291,13 +278,8 @@ class ProjectController extends Controller
                 'project_name' => 'required|string|max:255',
                 'client_name' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
-<<<<<<< HEAD
                 'description' => 'required|string',
                 'summary_description' => 'nullable|string|max:500',
-=======
-                'summary_description' => 'required|string|max:500',
-                'description' => 'required|string',
->>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => 'required',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
             ];
@@ -384,12 +366,8 @@ class ProjectController extends Controller
                 'project_name' => trim($request->project_name),
                 'client_name' => trim($request->client_name),
                 'location' => trim($request->location),
-                'summary_description' => trim($request->summary_description),
                 'description' => trim($request->description),
-<<<<<<< HEAD
                 'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
-=======
->>>>>>> 63027871ae323267b47379017adb239bab443d93
                 'project_category' => $request->project_category,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,

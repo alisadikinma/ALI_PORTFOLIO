@@ -84,7 +84,10 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::get('/gallery', [HomeWebController::class, 'gallery'])->name('gallery');
 Route::get('/articles', [HomeWebController::class, 'articles'])->name('articles');
 Route::get('/article/{slug}', [HomeWebController::class, 'articleDetail'])->name('article.detail');
+Route::get('/portfolio', [HomeWebController::class, 'portfolio'])->name('portfolio');
+Route::get('/portfolio/all', [HomeWebController::class, 'portfolioAll'])->name('portfolio.all');
 Route::get('/portfolio/{slug}', [HomeWebController::class, 'portfolioDetail'])->name('portfolio.detail');
+Route::get('/project/{slug}', [ProjectController::class, 'show'])->name('project.public.show');
 
 // AUTH ROUTES - Simple version
 Route::get('/login', function () {
@@ -140,7 +143,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('berita', BeritaController::class);
     Route::resource('layanan', LayananController::class);
     Route::resource('galeri', GaleriController::class);
+    
+    // Project routes with additional showAdmin route and editor image upload
     Route::resource('project', ProjectController::class);
+    Route::get('project/{id}/admin', [ProjectController::class, 'showAdmin'])->name('project.showAdmin');
+    Route::delete('project/{id}/image', [ProjectController::class, 'deleteImage'])->name('project.deleteImage');
+    Route::post('project/upload-editor-image', [ProjectController::class, 'uploadEditorImage'])->name('project.upload-editor-image');
+    
     Route::resource('testimonial', TestimonialController::class);
     Route::resource('award', AwardController::class);
     Route::resource('contacts', ContactController::class);

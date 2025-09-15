@@ -45,33 +45,6 @@
 
     <!-- Project Detail Section -->
     <section id="project" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-12">
-        @php
-            $images = [];
-            if (!empty($portfolio->gambar_project)) {
-                $images[] = asset('file/project/' . $portfolio->gambar_project);
-            }
-            if (!empty($portfolio->gambar_project1)) {
-                $images[] = asset('file/project1/' . $portfolio->gambar_project1);
-            }
-            if (!empty($portfolio->gambar_project2)) {
-                $images[] = asset('file/project2/' . $portfolio->gambar_project2);
-            }
-        @endphp
-        @if (!empty($images))
-            <div class="w-full max-w-4xl overflow-x-auto snap-x snap-mandatory scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-slate-900">
-                <div class="flex flex-row gap-4 min-w-max">
-                    @foreach ($images as $index => $image)
-                        <img src="{{ $image }}"
-                             alt="{{ $portfolio->nama_project }} - Image {{ $index + 1 }}"
-                             class="w-full max-w-4xl h-auto rounded-3xl snap-center shrink-0 object-cover" />
-                    @endforeach
-                </div>
-            </div>
-        @else
-            <img src="{{ asset('file/project/placeholder.png') }}"
-                 alt="{{ $portfolio->nama_project }} - Placeholder"
-                 class="w-full max-w-4xl h-auto rounded-3xl" />
-        @endif
         <div class="w-full max-w-4xl flex flex-col gap-8">
             <div class="flex flex-col gap-3">
                 <h1 class="text-white text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]">{{ $portfolio->nama_project }}</h1>
@@ -87,11 +60,11 @@
                 @endif
             </div>
             <div class="w-full h-px bg-slate-800"></div>
-            <div class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->keterangan_project !!}</div>
+            <div class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->keterangan_project !!}</div>
             @if ($portfolio->info_project)
                 <div class="flex flex-col gap-3">
                     <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Additional Information</h2>
-                    <p class="text-zinc-400 text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->info_project !!}</p>
+                    <p class="text-white text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->info_project !!}</p>
                 </div>
             @endif
             @if ($portfolio->url_project)

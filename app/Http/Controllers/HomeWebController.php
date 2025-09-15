@@ -94,6 +94,22 @@ class HomeWebController extends Controller
         return view('portfolio', compact('konf', 'projects','jenis_projects'));
     }
 
+    public function portfolioAll()
+    {
+        $konf = Cache::remember('site_config', 300, function() {
+            return DB::table('setting')->first();
+        });
+        
+        $projects = DB::table('project')
+            ->select('id_project', 'project_name', 'client_name', 'location', 'slug_project', 'featured_image', 'images', 'summary_description', 'project_category', 'created_at')
+            ->where('status', 'Active')
+            ->orderBy('sequence', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+        
+        return view('portfolio-all', compact('konf', 'projects'));
+    }
+
     public function gallery()
     {
         $konf = Cache::remember('site_config', 300, function() {

@@ -39,7 +39,7 @@
 
         <!-- View All Projects Button -->
         <div class="text-center mt-12">
-            <a href="{{ url('portfolio') }}" class="inline-flex items-center bg-yellow-400 hover:bg-yellow-300 text-gray-900 px-8 py-3 rounded-lg font-semibold transition-colors">
+            <a href="<?php echo e(url('portfolio')); ?>" class="inline-flex items-center bg-yellow-400 hover:bg-yellow-300 text-gray-900 px-8 py-3 rounded-lg font-semibold transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0l-4-4m4 4l-4 4"></path>
                 </svg>
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let portfolioData = [];
     
     try {
-        @php
+        <?php
             $projects = \App\Models\Project::active()->ordered()->get();
             $portfolioDataArray = $projects->map(function($project) {
                 return [
@@ -159,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     'link' => $project->slug_project ? route('project.public.show', $project->slug_project) : '#'
                 ];
             });
-        @endphp
-        portfolioData = @json($portfolioDataArray);
+        ?>
+        portfolioData = <?php echo json_encode($portfolioDataArray, 15, 512) ?>;
     } catch (error) {
         console.log('Loading sample data...');
         portfolioData = [];
@@ -362,4 +362,4 @@ document.addEventListener('DOMContentLoaded', function() {
         updateSlider();
     });
 });
-</script>
+</script><?php /**PATH C:\xampp\htdocs\ALI_PORTFOLIO\resources\views/partials/portfolio.blade.php ENDPATH**/ ?>

@@ -824,6 +824,9 @@ Route::delete('/project/{id}', [ProjectController::class, 'destroy'])->name('pro
 Route::get('/project/{id}/admin', [ProjectController::class, 'showAdmin'])->name('project.showAdmin');
 Route::delete('/project/{id}/image', [ProjectController::class, 'deleteImage'])->name('project.deleteImage');
 Route::get('/api/projects/search', [ProjectController::class, 'searchProjects'])->name('project.search');
+
+// ADDITIONAL SEARCH ROUTE FOR OTHER PROJECTS AUTOCOMPLETE
+Route::get('/projects/search', [ProjectController::class, 'searchProjects'])->name('projects.search.autocomplete');
 // === END PROJECT ROUTES ===
 
 // === DEBUGGING ROUTES - REMOVE AFTER TESTING ===

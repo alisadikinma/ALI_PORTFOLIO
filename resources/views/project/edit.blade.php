@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadingElement.remove();
             }
             
-            console.log('🎉 CKEditor 5 FIXED VERSION initialized successfully!');
+            console.log('🎉 CKEditor 5 EDIT VERSION initialized successfully!');
             
             // FIXED: Multiple fallback upload adapter
             class FixedUploadAdapter {
@@ -570,10 +570,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 upload() {
                     return this.loader.file
                         .then(file => new Promise(async (resolve, reject) => {
-                            console.log('=== FIXED UPLOAD SYSTEM ===');
-                            console.log('File to upload:', {
+                            console.log('🚀 FIXED EDIT UPLOAD ADAPTER - Starting upload...');
+                            console.log('File details:', {
                                 name: file.name,
-                                size: file.size,
+                                size: file.size + ' bytes (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)',
                                 type: file.type
                             });
                             
@@ -581,20 +581,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             data.append('file', file);
                             data.append('_token', '{{ csrf_token() }}');
                             
-                            // Multiple upload URLs to try in order
+                            // Prioritized upload URLs - working ones first
                             const uploadUrls = [
-                                '{{ url("/debug-simple-upload") }}',      // Debug route 
-                                '{{ url("/upload-image") }}',             // Simple route
-                                '{{ url("/upload-editor-image-controller") }}', // Controller
-                                '/project/upload-editor-image'             // Main route
+                                '{{ url("/debug-simple-upload") }}',
+                                '{{ url("/project/upload-editor-image") }}',
+                                '{{ url("/upload-image") }}',
+                                '{{ url("/test-upload.php") }}'
                             ];
                             
-                            console.log('Will try these URLs:', uploadUrls);
+                            console.log('🎯 Will try these upload URLs in order:', uploadUrls);
                             
                             // Try each URL until one works
                             for (let i = 0; i < uploadUrls.length; i++) {
                                 try {
-                                    console.log(`🔄 Trying URL ${i + 1}/${uploadUrls.length}: ${uploadUrls[i]}`);
+                                    console.log(`⏳ Attempt ${i + 1}/${uploadUrls.length}: ${uploadUrls[i]}`);
                                     
                                     const response = await fetch(uploadUrls[i], {
                                         method: 'POST',
@@ -605,37 +605,60 @@ document.addEventListener('DOMContentLoaded', function() {
                                         }
                                     });
                                     
-                                    console.log(`Response from ${uploadUrls[i]}:`, {
+                                    console.log(`📡 Response from ${uploadUrls[i]}:`, {
                                         status: response.status,
-                                        ok: response.ok
+                                        statusText: response.statusText,
+                                        ok: response.ok,
+                                        contentType: response.headers.get('content-type')
                                     });
                                     
                                     if (response.ok) {
-                                        const result = await response.json();
-                                        console.log('Upload result:', result);
+                                        let result;
+                                        const contentType = response.headers.get('content-type') || '';
+                                        
+                                        if (contentType.includes('application/json')) {
+                                            result = await response.json();
+                                        } else {
+                                            // Try to parse as JSON anyway
+                                            const text = await response.text();
+                                            try {
+                                                result = JSON.parse(text);
+                                            } catch (e) {
+                                                console.warn('⚠️ Response is not JSON:', text);
+                                                throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                                            }
+                                        }
+                                        
+                                        console.log('📋 Upload result:', result);
                                         
                                         if (result.success && result.url) {
-                                            console.log('✅ UPLOAD SUCCESS! URL:', result.url);
+                                            console.log('✅ SUCCESS! Image uploaded:', result.url);
                                             resolve({
                                                 default: result.url
                                             });
-                                            return; // Exit function on success
+                                            return; // Exit the function successfully
+                                        } else {
+                                            console.warn('⚠️ Upload successful but invalid result format:', result);
+                                            // Continue to next URL
                                         }
+                                    } else {
+                                        console.warn(`⚠️ HTTP ${response.status}: ${response.statusText}`);
+                                        // Continue to next URL
                                     }
                                 } catch (error) {
-                                    console.log(`❌ Error with ${uploadUrls[i]}:`, error.message);
+                                    console.warn(`⚠️ Error with ${uploadUrls[i]}:`, error.message);
                                     // Continue to next URL
                                 }
                             }
                             
                             // If we get here, all URLs failed
                             console.error('❌ ALL UPLOAD URLs FAILED');
-                            reject('Upload failed. All routes unavailable. Check console for details.');
+                            reject('Upload failed: All available upload methods failed. Please check network connection and server configuration.');
                         }));
                 }
                 
                 abort() {
-                    console.log('Upload aborted by user');
+                    console.log('🛑 Upload aborted by user');
                 }
             }
             
@@ -644,9 +667,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
                     return new FixedUploadAdapter(loader);
                 };
-                console.log('✅ FIXED upload adapter registered');
+                console.log('✅ FIXED upload adapter registered successfully');
             } else {
-                console.error('❌ FileRepository plugin not found');
+                console.warn('⚠️ FileRepository plugin not available - image upload disabled');
             }
             
             // Auto-save functionality
@@ -834,70 +857,177 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Form validation
+    // Enhanced form validation
     document.getElementById('projectForm').addEventListener('submit', function(e) {
+        // Validate other projects - ensure no empty values are submitted
+        const otherProjectInputs = document.querySelectorAll('input[name="other_projects[]"]');
+        otherProjectInputs.forEach(input => {
+            if (!input.value || input.value.trim() === '') {
+                input.disabled = true; // Disable empty inputs so they won't be submitted
+            }
+        });
+        
         // Clear edit draft when submitting
         localStorage.removeItem('project_detail_edit_draft');
-    });   // Other Projects Autocomplete functionality
-    let searchTimeout;
-    let selectedIndex = -1;
-    let searchResults = [];
-    
-    const otherProjectsInput = document.getElementById('other_projects');
-    const dropdown = document.getElementById('other_projects_dropdown');
-    
-    if (otherProjectsInput && dropdown) {
-        otherProjectsInput.addEventListener('input', function() {
-            const query = this.value.trim();
-            
-            clearTimeout(searchTimeout);
-            
-            if (query.length < 3) {
-                hideDropdown();
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => {
-                searchProjects(query);
-            }, 300);
-        });
         
-        otherProjectsInput.addEventListener('keydown', function(e) {
-            if (dropdown.style.display === 'none') return;
-            
-            switch(e.key) {
-                case 'ArrowDown':
-                    e.preventDefault();
-                    selectedIndex = Math.min(selectedIndex + 1, searchResults.length - 1);
-                    updateSelection();
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    selectedIndex = Math.max(selectedIndex - 1, -1);
-                    updateSelection();
-                    break;
-                case 'Enter':
-                    e.preventDefault();
-                    if (selectedIndex >= 0 && searchResults[selectedIndex]) {
-                        selectProject(searchResults[selectedIndex]);
-                    }
-                    break;
-                case 'Escape':
-                    hideDropdown();
-                    break;
-            }
-        });
+        console.log('🚀 Edit form submitted - validations passed!');
+    });
+    
+    // ===== MULTIPLE OTHER PROJECTS FUNCTIONALITY FOR EDIT FORM =====
+    let otherProjectIndex = document.querySelectorAll('.other-project-item').length;
+    let selectedOtherProjects = new Set(); // Track selected projects to avoid duplicates
+    
+    // Initialize with existing other projects
+    document.querySelectorAll('.other-project-input').forEach(input => {
+        if (input.value && input.value.trim()) {
+            selectedOtherProjects.add(input.value.trim());
+        }
+    });
+    
+    // Add new other project input
+    document.getElementById('addOtherProjectBtn').addEventListener('click', function() {
+        const container = document.getElementById('otherProjectsContainer');
+        const newItem = document.createElement('div');
+        newItem.className = 'other-project-item mb-3';
+        newItem.setAttribute('data-index', otherProjectIndex);
         
-        otherProjectsInput.addEventListener('blur', function() {
-            // Delay hiding to allow click on dropdown items
-            setTimeout(() => {
-                hideDropdown();
-            }, 200);
+        newItem.innerHTML = `
+            <div class="row align-items-center">
+                <div class="col-md-10">
+                    <div class="position-relative">
+                        <input type="text" class="form-control other-project-input" 
+                               name="other_projects[]" 
+                               placeholder="Ketik minimal 3 karakter untuk mencari project lain..." 
+                               value="" 
+                               data-index="${otherProjectIndex}"
+                               autocomplete="off">
+                        <div class="other-projects-dropdown dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-danger btn-sm remove-other-project">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(newItem);
+        otherProjectIndex++;
+        updateOtherProjectButtons();
+        attachOtherProjectsListeners();
+    });
+
+    // Remove other project input
+    function attachOtherProjectRemoveListeners() {
+        document.querySelectorAll('.remove-other-project').forEach(button => {
+            button.removeEventListener('click', handleRemoveOtherProject);
+            button.addEventListener('click', handleRemoveOtherProject);
         });
     }
-    
-    function searchProjects(query) {
-        showLoading();
+
+    function handleRemoveOtherProject() {
+        const item = this.closest('.other-project-item');
+        const input = item.querySelector('.other-project-input');
+        
+        // Remove from selected set if it was selected
+        if (input.value) {
+            selectedOtherProjects.delete(input.value);
+        }
+        
+        item.remove();
+        updateOtherProjectButtons();
+        updateSelectedProjectsDisplay();
+    }
+
+    // Update remove button visibility
+    function updateOtherProjectButtons() {
+        const items = document.querySelectorAll('.other-project-item');
+        items.forEach((item, index) => {
+            const removeBtn = item.querySelector('.remove-other-project');
+            removeBtn.style.display = items.length > 1 ? 'inline-block' : 'none';
+        });
+        attachOtherProjectRemoveListeners();
+    }
+
+    // Attach all other projects event listeners
+    function attachOtherProjectsListeners() {
+        document.querySelectorAll('.other-project-input').forEach(input => {
+            // Remove existing listeners to avoid duplicates
+            input.removeEventListener('input', handleOtherProjectInput);
+            input.removeEventListener('keydown', handleOtherProjectKeydown);
+            input.removeEventListener('blur', handleOtherProjectBlur);
+            
+            // Add fresh listeners
+            input.addEventListener('input', handleOtherProjectInput);
+            input.addEventListener('keydown', handleOtherProjectKeydown);
+            input.addEventListener('blur', handleOtherProjectBlur);
+        });
+    }
+
+    // Handle input for other projects search
+    function handleOtherProjectInput(e) {
+        const input = e.target;
+        const dropdown = input.parentElement.querySelector('.other-projects-dropdown');
+        const query = input.value.trim();
+        
+        clearTimeout(input.searchTimeout);
+        
+        if (query.length < 3) {
+            hideOtherProjectDropdown(dropdown);
+            return;
+        }
+        
+        input.searchTimeout = setTimeout(() => {
+            searchOtherProjects(query, input, dropdown);
+        }, 300);
+    }
+
+    // Handle keyboard navigation
+    function handleOtherProjectKeydown(e) {
+        const input = e.target;
+        const dropdown = input.parentElement.querySelector('.other-projects-dropdown');
+        
+        if (dropdown.style.display === 'none') return;
+        
+        const items = dropdown.querySelectorAll('.other-projects-item');
+        let selectedIndex = Array.from(items).findIndex(item => item.classList.contains('active'));
+        
+        switch(e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                updateOtherProjectSelection(dropdown, selectedIndex);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateOtherProjectSelection(dropdown, selectedIndex);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                if (selectedIndex >= 0 && items[selectedIndex]) {
+                    selectOtherProject(input, dropdown, items[selectedIndex]);
+                }
+                break;
+            case 'Escape':
+                hideOtherProjectDropdown(dropdown);
+                break;
+        }
+    }
+
+    // Handle blur event
+    function handleOtherProjectBlur(e) {
+        const dropdown = e.target.parentElement.querySelector('.other-projects-dropdown');
+        // Delay hiding to allow click on dropdown items
+        setTimeout(() => {
+            hideOtherProjectDropdown(dropdown);
+        }, 200);
+    }
+
+    // Search for other projects
+    function searchOtherProjects(query, input, dropdown) {
+        showOtherProjectLoading(dropdown);
         
         const currentId = '{{ $project->id_project ?? "" }}';
         
@@ -911,80 +1041,125 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                searchResults = data.data;
-                displayResults(searchResults);
+                // Filter out already selected projects
+                const availableProjects = data.data.filter(project => 
+                    !selectedOtherProjects.has(project.text)
+                );
+                displayOtherProjectResults(availableProjects, input, dropdown);
             } else {
                 console.error('Search failed:', data.message);
-                hideDropdown();
+                hideOtherProjectDropdown(dropdown);
             }
         })
         .catch(error => {
             console.error('Search error:', error);
-            hideDropdown();
+            hideOtherProjectDropdown(dropdown);
         });
     }
-    
-    function showLoading() {
+
+    // Show loading indicator
+    function showOtherProjectLoading(dropdown) {
         dropdown.innerHTML = '<div class="loading-indicator"><i class="fas fa-spinner fa-spin"></i> Searching...</div>';
         dropdown.style.display = 'block';
-        selectedIndex = -1;
     }
-    
-    function displayResults(results) {
+
+    // Display search results
+    function displayOtherProjectResults(results, input, dropdown) {
         if (results.length === 0) {
-            dropdown.innerHTML = '<div class="loading-indicator">No projects found</div>';
+            dropdown.innerHTML = '<div class="loading-indicator">No available projects found</div>';
         } else {
             const html = results.map((project, index) => `
-                <div class="other-projects-item" data-index="${index}" onclick="selectProjectByIndex(${index})">
+                <div class="other-projects-item" data-project-text="${escapeHtml(project.text)}" data-project-subtitle="${escapeHtml(project.subtitle)}">
                     <div class="other-projects-title">${escapeHtml(project.text)}</div>
                     <div class="other-projects-subtitle">${escapeHtml(project.subtitle)}</div>
                 </div>
             `).join('');
             dropdown.innerHTML = html;
+            
+            // Add click listeners to dropdown items
+            dropdown.querySelectorAll('.other-projects-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    selectOtherProject(input, dropdown, item);
+                });
+            });
         }
         dropdown.style.display = 'block';
-        selectedIndex = -1;
     }
-    
-    function updateSelection() {
+
+    // Update selection highlighting
+    function updateOtherProjectSelection(dropdown, selectedIndex) {
         const items = dropdown.querySelectorAll('.other-projects-item');
         items.forEach((item, index) => {
             item.classList.toggle('active', index === selectedIndex);
         });
     }
-    
-    function selectProject(project) {
-        otherProjectsInput.value = project.text;
-        hideDropdown();
+
+    // Select a project
+    function selectOtherProject(input, dropdown, item) {
+        const projectText = item.dataset.projectText;
+        const projectSubtitle = item.dataset.projectSubtitle;
+        
+        input.value = projectText;
+        selectedOtherProjects.add(projectText);
+        hideOtherProjectDropdown(dropdown);
+        updateSelectedProjectsDisplay();
+        
+        // Add visual feedback
+        input.classList.add('is-valid');
+        setTimeout(() => {
+            input.classList.remove('is-valid');
+        }, 2000);
     }
-    
-    function selectProjectByIndex(index) {
-        if (searchResults[index]) {
-            selectProject(searchResults[index]);
+
+    // Hide dropdown
+    function hideOtherProjectDropdown(dropdown) {
+        dropdown.style.display = 'none';
+    }
+
+    // Update the selected projects display
+    function updateSelectedProjectsDisplay() {
+        const selectedProjects = Array.from(selectedOtherProjects);
+        const displayDiv = document.getElementById('selectedProjectsDisplay');
+        const listDiv = document.getElementById('selectedProjectsList');
+        
+        if (selectedProjects.length > 0) {
+            displayDiv.style.display = 'block';
+            listDiv.innerHTML = selectedProjects.map(project => `
+                <span class="selected-project-badge">
+                    ${escapeHtml(project)}
+                    <button type="button" class="remove-selected" onclick="removeSelectedProject('${escapeHtml(project)}')" title="Remove project">
+                        ×
+                    </button>
+                </span>
+            `).join('');
+        } else {
+            displayDiv.style.display = 'none';
         }
     }
-    
-    // Make selectProjectByIndex available globally for onclick
-    window.selectProjectByIndex = selectProjectByIndex;
-    
-    function hideDropdown() {
-        dropdown.style.display = 'none';
-        selectedIndex = -1;
-        searchResults = [];
-    }
-    
+
+    // Remove selected project (global function)
+    window.removeSelectedProject = function(projectText) {
+        selectedOtherProjects.delete(projectText);
+        
+        // Clear the input that contains this project
+        document.querySelectorAll('.other-project-input').forEach(input => {
+            if (input.value === projectText) {
+                input.value = '';
+            }
+        });
+        
+        updateSelectedProjectsDisplay();
+    };
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!otherProjectsInput.contains(e.target) && !dropdown.contains(e.target)) {
-            hideDropdown();
-        }
-    });
+
+    // Initialize other projects functionality
+    updateOtherProjectButtons();
+    attachOtherProjectsListeners();
     
     // Initialize
     attachRemoveListeners();
@@ -1055,7 +1230,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isSlugManual = false; // Start in auto mode but user can switch
     }
 
-    console.log('🎯 EDIT FORM FIXED VERSION LOADED - Upload should work now!');
+    console.log('🎯 EDIT FORM LOADED - Upload system ready with multiple fallback URLs!');
 });
 </script>
 @endsection

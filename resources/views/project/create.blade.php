@@ -514,21 +514,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadingElement.remove();
             }
             
-            console.log('CKEditor 5 initialized successfully!');
+            console.log('✨ CKEditor 5 CREATE VERSION initialized successfully!');
             
-            // Custom image upload adapter
-            class MyUploadAdapter {
+            // FIXED: Robust image upload adapter with better error handling
+            class FixedUploadAdapter {
                 constructor(loader) {
                     this.loader = loader;
                 }
                 
                 upload() {
                     return this.loader.file
-                        .then(file => new Promise((resolve, reject) => {
-                            console.log('=== CKEditor Upload Debug ===');
-                            console.log('Starting image upload...', {
-                                filename: file.name,
-                                size: file.size,
+                        .then(file => new Promise(async (resolve, reject) => {
+                            console.log('🚀 FIXED UPLOAD ADAPTER - Starting upload...');
+                            console.log('File details:', {
+                                name: file.name,
+                                size: file.size + ' bytes (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)',
                                 type: file.type
                             });
                             
@@ -536,95 +536,95 @@ document.addEventListener('DOMContentLoaded', function() {
                             data.append('file', file);
                             data.append('_token', '{{ csrf_token() }}');
                             
-                            // Try multiple upload URLs
+                            // Prioritized upload URLs - working ones first
                             const uploadUrls = [
-                                '{{ url("/debug-simple-upload") }}',      // Debug route with logging
+                                '{{ url("/debug-simple-upload") }}',
                                 '{{ url("/project/upload-editor-image") }}',
-                                '{{ url("/upload-editor-image-controller") }}',
                                 '{{ url("/upload-image") }}',
-                                '{{ url("/test-upload.php") }}'  // Simple PHP fallback
+                                '{{ url("/test-upload.php") }}'
                             ];
                             
-                            console.log('Available upload URLs:', uploadUrls);
+                            console.log('🎯 Will try these upload URLs in order:', uploadUrls);
                             
-                            // Function to try upload with a specific URL
-                            const tryUpload = (url, index = 0) => {
-                                console.log(`Trying upload URL ${index + 1}/${uploadUrls.length}: ${url}`);
-                                
-                                return fetch(url, {
-                                    method: 'POST',
-                                    body: data,
-                                    headers: {
-                                        'X-Requested-With': 'XMLHttpRequest',
-                                        'Accept': 'application/json'
-                                    }
-                                })
-                                .then(response => {
-                                    console.log(`Response from ${url}:`, {
+                            // Try each URL until one works
+                            for (let i = 0; i < uploadUrls.length; i++) {
+                                try {
+                                    console.log(`⏳ Attempt ${i + 1}/${uploadUrls.length}: ${uploadUrls[i]}`);
+                                    
+                                    const response = await fetch(uploadUrls[i], {
+                                        method: 'POST',
+                                        body: data,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json'
+                                        }
+                                    });
+                                    
+                                    console.log(`📡 Response from ${uploadUrls[i]}:`, {
                                         status: response.status,
                                         statusText: response.statusText,
-                                        ok: response.ok
+                                        ok: response.ok,
+                                        contentType: response.headers.get('content-type')
                                     });
                                     
-                                    if (!response.ok) {
-                                        // Try next URL if available
-                                        if (index < uploadUrls.length - 1) {
-                                            console.log(`Trying next URL...`);
-                                            return tryUpload(uploadUrls[index + 1], index + 1);
+                                    if (response.ok) {
+                                        let result;
+                                        const contentType = response.headers.get('content-type') || '';
+                                        
+                                        if (contentType.includes('application/json')) {
+                                            result = await response.json();
                                         } else {
-                                            throw new Error(`All upload URLs failed. Last status: ${response.status}`);
+                                            // Try to parse as JSON anyway
+                                            const text = await response.text();
+                                            try {
+                                                result = JSON.parse(text);
+                                            } catch (e) {
+                                                console.warn('⚠️ Response is not JSON:', text);
+                                                throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                                            }
                                         }
-                                    }
-                                    return response.json();
-                                })
-                                .then(result => {
-                                    console.log('Upload result:', result);
-                                    if (result.success && result.url) {
-                                        console.log('✅ Upload successful! Image URL:', result.url);
-                                        resolve({
-                                            default: result.url
-                                        });
+                                        
+                                        console.log('📋 Upload result:', result);
+                                        
+                                        if (result.success && result.url) {
+                                            console.log('✅ SUCCESS! Image uploaded:', result.url);
+                                            resolve({
+                                                default: result.url
+                                            });
+                                            return; // Exit the function successfully
+                                        } else {
+                                            console.warn('⚠️ Upload successful but invalid result format:', result);
+                                            // Continue to next URL
+                                        }
                                     } else {
-                                        console.error('❌ Upload failed - Invalid response format:', result);
-                                        reject(result.message || 'Upload failed - Invalid response format');
+                                        console.warn(`⚠️ HTTP ${response.status}: ${response.statusText}`);
+                                        // Continue to next URL
                                     }
-                                })
-                                .catch(error => {
-                                    console.error(`❌ Upload error with ${url}:`, error);
-                                    console.error('Error details:', {
-                                        message: error.message,
-                                        stack: error.stack,
-                                        name: error.name,
-                                        cause: error.cause
-                                    });
-                                    
-                                    // Try next URL if available
-                                    if (index < uploadUrls.length - 1) {
-                                        console.log(`Trying next URL after error...`);
-                                        return tryUpload(uploadUrls[index + 1], index + 1);
-                                    } else {
-                                        console.error('All upload URLs failed. Final error:', error);
-                                        reject('All upload URLs failed. Last error: ' + error.message + '. Please check browser console for details.');
-                                    }
-                                });
-                            };
+                                } catch (error) {
+                                    console.warn(`⚠️ Error with ${uploadUrls[i]}:`, error.message);
+                                    // Continue to next URL
+                                }
+                            }
                             
-                            // Start with first URL
-                            tryUpload(uploadUrls[0], 0);
+                            // If we get here, all URLs failed
+                            console.error('❌ ALL UPLOAD URLs FAILED');
+                            reject('Upload failed: All available upload methods failed. Please check network connection and server configuration.');
                         }));
                 }
                 
                 abort() {
-                    console.log('Upload aborted');
+                    console.log('🛑 Upload aborted by user');
                 }
             }
             
             // Set up file repository for image uploads
             if (editor.plugins.has('FileRepository')) {
                 editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                    return new MyUploadAdapter(loader);
+                    return new FixedUploadAdapter(loader);
                 };
-                console.log('Image upload adapter registered successfully');
+                console.log('✅ FIXED upload adapter registered successfully');
+            } else {
+                console.warn('⚠️ FileRepository plugin not available - image upload disabled');
             }
             
             // Auto-save functionality
@@ -786,14 +786,31 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Minimal harus mengunggah satu gambar project!');
             return;
         }
+        
+        // Validate other projects - ensure no empty values are submitted
+        const otherProjectInputs = document.querySelectorAll('input[name="other_projects[]"]');
+        otherProjectInputs.forEach(input => {
+            if (!input.value || input.value.trim() === '') {
+                input.disabled = true; // Disable empty inputs so they won't be submitted
+            }
+        });
 
         // Clear draft when successfully submitting
         localStorage.removeItem('project_detail_draft');
+        
+        console.log('🚀 Form submitted - validations passed!');
     });
 
     // Multiple Other Projects functionality
     let otherProjectIndex = 1;
     let selectedOtherProjects = new Set(); // Track selected projects to avoid duplicates
+    
+    // Initialize with existing other projects for create mode (should be empty)
+    document.querySelectorAll('.other-project-input').forEach(input => {
+        if (input.value && input.value.trim()) {
+            selectedOtherProjects.add(input.value.trim());
+        }
+    });
     
     // Add new other project input
     document.getElementById('addOtherProjectBtn').addEventListener('click', function() {
@@ -1129,6 +1146,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Generate initial slug
     updateSlugIfAuto();
+    
+    console.log('🎯 CREATE FORM LOADED - Upload system ready with multiple fallback URLs!');
 });
 </script>
 @endsection

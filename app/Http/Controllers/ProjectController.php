@@ -157,19 +157,26 @@ class ProjectController extends Controller
                 $slug = Str::slug($slug);
             }
 
-            // Handle other projects - now expecting an array
+            // Handle other projects - enhanced validation and sanitization
             $otherProjectsArray = $request->input('other_projects', []);
             $otherProjectsData = null;
             
             if (!empty($otherProjectsArray) && is_array($otherProjectsArray)) {
-                // Filter out empty values and trim each item
-                $cleanedProjects = array_filter(array_map('trim', $otherProjectsArray), function($item) {
-                    return !empty($item);
-                });
+                // Filter out empty values, trim each item, and remove duplicates
+                $cleanedProjects = array_unique(
+                    array_filter(
+                        array_map(function($item) {
+                            return trim(strip_tags($item)); // Also remove HTML tags for security
+                        }, $otherProjectsArray), 
+                        function($item) {
+                            return !empty($item) && strlen($item) > 0;
+                        }
+                    )
+                );
                 
                 if (!empty($cleanedProjects)) {
                     // Store as JSON array for multiple projects
-                    $otherProjectsData = json_encode($cleanedProjects);
+                    $otherProjectsData = json_encode(array_values($cleanedProjects)); // Re-index array
                 }
             }
 
@@ -394,19 +401,26 @@ class ProjectController extends Controller
                 $slug = Str::slug($slug);
             }
 
-            // Handle other projects - now expecting an array
+            // Handle other projects - enhanced validation and sanitization
             $otherProjectsArray = $request->input('other_projects', []);
             $otherProjectsData = null;
             
             if (!empty($otherProjectsArray) && is_array($otherProjectsArray)) {
-                // Filter out empty values and trim each item
-                $cleanedProjects = array_filter(array_map('trim', $otherProjectsArray), function($item) {
-                    return !empty($item);
-                });
+                // Filter out empty values, trim each item, and remove duplicates
+                $cleanedProjects = array_unique(
+                    array_filter(
+                        array_map(function($item) {
+                            return trim(strip_tags($item)); // Also remove HTML tags for security
+                        }, $otherProjectsArray), 
+                        function($item) {
+                            return !empty($item) && strlen($item) > 0;
+                        }
+                    )
+                );
                 
                 if (!empty($cleanedProjects)) {
                     // Store as JSON array for multiple projects
-                    $otherProjectsData = json_encode($cleanedProjects);
+                    $otherProjectsData = json_encode(array_values($cleanedProjects)); // Re-index array
                 }
             }
 

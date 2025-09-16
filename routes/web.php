@@ -765,6 +765,57 @@ Route::get('/create-test-project', function () {
     }
 });
 
+// MAIN PROJECT UPLOAD ROUTE
+Route::post('/project/upload-editor-image', function (\Illuminate\Http\Request $request) {
+    try {
+        Log::info('Upload route accessed via /project/upload-editor-image');
+        
+        // Validate the uploaded file
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048'
+        ]);
+
+        // Create editor directory if it doesn't exist
+        $editorDir = public_path('images/editor');
+        if (!File::exists($editorDir)) {
+            File::makeDirectory($editorDir, 0755, true);
+        }
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+            $filename = 'editor_' . time() . '_' . uniqid() . '.' . $extension;
+            
+            // Move file to editor directory
+            if ($file->move($editorDir, $filename)) {
+                $imageUrl = asset('images/editor/' . $filename);
+                
+                return response()->json([
+                    'success' => true,
+                    'url' => $imageUrl,
+                    'message' => 'Image uploaded successfully',
+                    'filename' => $filename,
+                    'route' => 'main upload route'
+                ]);
+            }
+        }
+
+        throw new Exception('Upload failed');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed: ' . implode(', ', $e->errors()['file'] ?? ['Invalid file']),
+            'errors' => $e->errors()
+        ], 422);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Upload failed: ' . $e->getMessage()
+        ], 500);
+    }
+})->name('project.upload-editor-image');
+
 Route::get('/project', [ProjectController::class, 'index'])->name('project.index');
 Route::get('/project/{id}/edit', [ProjectController::class, 'edit'])->name('project.edit');
 Route::post('/project', [ProjectController::class, 'store'])->name('project.store');

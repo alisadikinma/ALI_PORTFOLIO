@@ -426,7 +426,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     let imageIndex = 0;
 
-    // Initialize CKEditor 5 with advanced features
+    // FIXED: Initialize CKEditor 5 with MULTIPLE FALLBACK UPLOAD URLs
     ClassicEditor
         .create(document.querySelector('#editor'), {
             toolbar: {
@@ -559,66 +559,94 @@ document.addEventListener('DOMContentLoaded', function() {
                 loadingElement.remove();
             }
             
-            console.log('CKEditor 5 initialized successfully for edit form!');
+            console.log('🎉 CKEditor 5 FIXED VERSION initialized successfully!');
             
-            // Custom image upload adapter
-            class MyUploadAdapter {
+            // FIXED: Multiple fallback upload adapter
+            class FixedUploadAdapter {
                 constructor(loader) {
                     this.loader = loader;
                 }
                 
                 upload() {
                     return this.loader.file
-                        .then(file => new Promise((resolve, reject) => {
-                            console.log('Starting image upload...', file.name);
+                        .then(file => new Promise(async (resolve, reject) => {
+                            console.log('=== FIXED UPLOAD SYSTEM ===');
+                            console.log('File to upload:', {
+                                name: file.name,
+                                size: file.size,
+                                type: file.type
+                            });
                             
                             const data = new FormData();
                             data.append('file', file);
                             data.append('_token', '{{ csrf_token() }}');
                             
-                            fetch('/project/upload-editor-image', {
-                                method: 'POST',
-                                body: data,
-                                headers: {
-                                    'X-Requested-With': 'XMLHttpRequest',
-                                    'Accept': 'application/json'
-                                }
-                            })
-                            .then(response => {
-                                console.log('Upload response status:', response.status);
-                                if (!response.ok) {
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                return response.json();
-                            })
-                            .then(result => {
-                                console.log('Upload result:', result);
-                                if (result.success && result.url) {
-                                    resolve({
-                                        default: result.url
+                            // Multiple upload URLs to try in order
+                            const uploadUrls = [
+                                '{{ url("/debug-simple-upload") }}',      // Debug route 
+                                '{{ url("/upload-image") }}',             // Simple route
+                                '{{ url("/upload-editor-image-controller") }}', // Controller
+                                '/project/upload-editor-image'             // Main route
+                            ];
+                            
+                            console.log('Will try these URLs:', uploadUrls);
+                            
+                            // Try each URL until one works
+                            for (let i = 0; i < uploadUrls.length; i++) {
+                                try {
+                                    console.log(`🔄 Trying URL ${i + 1}/${uploadUrls.length}: ${uploadUrls[i]}`);
+                                    
+                                    const response = await fetch(uploadUrls[i], {
+                                        method: 'POST',
+                                        body: data,
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest',
+                                            'Accept': 'application/json'
+                                        }
                                     });
-                                } else {
-                                    reject(result.message || 'Upload failed');
+                                    
+                                    console.log(`Response from ${uploadUrls[i]}:`, {
+                                        status: response.status,
+                                        ok: response.ok
+                                    });
+                                    
+                                    if (response.ok) {
+                                        const result = await response.json();
+                                        console.log('Upload result:', result);
+                                        
+                                        if (result.success && result.url) {
+                                            console.log('✅ UPLOAD SUCCESS! URL:', result.url);
+                                            resolve({
+                                                default: result.url
+                                            });
+                                            return; // Exit function on success
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.log(`❌ Error with ${uploadUrls[i]}:`, error.message);
+                                    // Continue to next URL
                                 }
-                            })
-                            .catch(error => {
-                                console.error('Upload error:', error);
-                                reject('Upload failed: ' + error.message);
-                            });
+                            }
+                            
+                            // If we get here, all URLs failed
+                            console.error('❌ ALL UPLOAD URLs FAILED');
+                            reject('Upload failed. All routes unavailable. Check console for details.');
                         }));
                 }
                 
                 abort() {
-                    console.log('Upload aborted');
+                    console.log('Upload aborted by user');
                 }
             }
             
-            // Set up file repository for image uploads
+            // Register the fixed upload adapter
             if (editor.plugins.has('FileRepository')) {
                 editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                    return new MyUploadAdapter(loader);
+                    return new FixedUploadAdapter(loader);
                 };
-                console.log('Image upload adapter registered successfully');
+                console.log('✅ FIXED upload adapter registered');
+            } else {
+                console.error('❌ FileRepository plugin not found');
             }
             
             // Auto-save functionality
@@ -628,32 +656,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 autoSaveTimer = setTimeout(() => {
                     const content = editor.getData();
                     localStorage.setItem('project_detail_edit_draft', content);
-                    console.log('Content auto-saved to localStorage');
+                    console.log('📄 Content auto-saved');
                 }, 2000);
             });
             
-            // Restore draft on load
+            // Restore draft
             const draft = localStorage.getItem('project_detail_edit_draft');
-            if (draft && confirm('Found unsaved draft. Do you want to restore it?')) {
+            if (draft && confirm('Found unsaved draft. Restore it?')) {
                 editor.setData(draft);
             }
         })
         .catch(error => {
-            console.error('CKEditor initialization failed:', error);
+            console.error('❌ CKEditor failed to initialize:', error);
             
-            // Remove loading indicator and show error
+            // Show error and fallback
             const loadingElement = document.getElementById('editor-loading');
             if (loadingElement) {
-                loadingElement.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i> <span class="text-danger">Editor failed to load. Using fallback textarea.</span>';
+                loadingElement.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i> <span class="text-danger">Editor failed. Using textarea fallback.</span>';
             }
             
-            // Show the textarea as fallback
+            // Fallback to textarea
             const editorElement = document.querySelector('#editor');
             if (editorElement) {
                 editorElement.style.display = 'block';
                 editorElement.style.minHeight = '300px';
                 editorElement.style.resize = 'vertical';
-                console.log('Fallback: Using simple textarea');
             }
         });
 
@@ -811,9 +838,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('projectForm').addEventListener('submit', function(e) {
         // Clear edit draft when submitting
         localStorage.removeItem('project_detail_edit_draft');
-    });
-
-    // Other Projects Autocomplete functionality
+    });   // Other Projects Autocomplete functionality
     let searchTimeout;
     let selectedIndex = -1;
     let searchResults = [];
@@ -960,7 +985,7 @@ document.addEventListener('DOMContentLoaded', function() {
             hideDropdown();
         }
     });
-
+    
     // Initialize
     attachRemoveListeners();
     attachImagePreview();
@@ -1029,6 +1054,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Current slug was manually edited, keep manual mode available
         isSlugManual = false; // Start in auto mode but user can switch
     }
+
+    console.log('🎯 EDIT FORM FIXED VERSION LOADED - Upload should work now!');
 });
 </script>
 @endsection

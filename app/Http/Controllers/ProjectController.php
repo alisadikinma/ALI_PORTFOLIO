@@ -13,13 +13,36 @@ use Exception;
 class ProjectController extends Controller
 {
     /**
+     * Get project categories from lookup_data table
+     */
+    private function getProjectCategories()
+    {
+        try {
+            return DB::table('lookup_data')
+                    ->where('lookup_type', 'project_category')
+                    ->where('is_active', 1)
+                    ->orderBy('sort_order')
+                    ->orderBy('lookup_name')
+                    ->get();
+        } catch (Exception $e) {
+            Log::error('Error loading project categories: ' . $e->getMessage());
+            return collect([]);
+        }
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
         try {
             $title = 'Data Portfolio';
-            $project = DB::table('project')->orderBy('id_project', 'desc')->get();
+            $project = DB::table('project as p')
+                        ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                        ->select('p.*', 'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 'ld.lookup_color as category_color')
+                        ->orderBy('p.sequence', 'asc')
+                        ->orderBy('p.id_project', 'desc')
+                        ->get();
             return view('project.index', compact('project', 'title'));
         } catch (Exception $e) {
             Log::error('Project Index Error: ' . $e->getMessage());
@@ -37,6 +60,7 @@ class ProjectController extends Controller
     {
         try {
             $title = 'Tambah Portfolio';
+            $projectCategories = $this->getProjectCategories();
             
             // Ensure images directory exists
             $imageDir = public_path('images/projects');
@@ -53,7 +77,7 @@ class ProjectController extends Controller
             // Verify database connection
             DB::connection()->getPdo();
             
-            return view('project.create', compact('title'));
+            return view('project.create', compact('title', 'projectCategories'));
         } catch (Exception $e) {
             Log::error('Project Create Error: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
@@ -85,7 +109,7 @@ class ProjectController extends Controller
                 'location' => 'required|string|max:255',
                 'description' => 'required|string',
                 'summary_description' => 'nullable|string|max:500',
-                'project_category' => 'required',
+                'category_lookup_id' => 'required|exists:lookup_data,id',
                 'slug_project' => 'required|string|max:255|unique:project,slug_project',
                 'images' => 'required|array|min:1',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
@@ -95,6 +119,8 @@ class ProjectController extends Controller
                 'required' => ':attribute wajib diisi!',
                 'string' => ':attribute harus berupa teks!',
                 'max' => ':attribute maksimal :max karakter!',
+                'category_lookup_id.required' => 'Kategori project wajib dipilih!',
+                'category_lookup_id.exists' => 'Kategori project tidak valid!',
                 'slug_project.unique' => 'Slug project sudah digunakan, silakan gunakan slug yang lain!',
                 'images.required' => 'Minimal harus mengunggah satu gambar project!',
                 'images.array' => 'Format gambar tidak valid!',
@@ -187,7 +213,7 @@ class ProjectController extends Controller
                 'location' => trim($request->location),
                 'description' => trim($request->description),
                 'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
-                'project_category' => $request->project_category,
+                'category_lookup_id' => $request->category_lookup_id,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,
                 'images' => json_encode($uploadedImages),
@@ -244,9 +270,12 @@ class ProjectController extends Controller
     public function show($slug)
     {
         try {
-            $portfolio = DB::table('project')
-                        ->where('slug_project', $slug)
-                        ->where('status', 'Active')
+            $portfolio = DB::table('project as p')
+                        ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                        ->select('p.*', 'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 
+                               'ld.lookup_color as category_color', 'ld.lookup_description as category_description')
+                        ->where('p.slug_project', $slug)
+                        ->where('p.status', 'Active')
                         ->first();
             
             if (!$portfolio) {
@@ -268,7 +297,12 @@ class ProjectController extends Controller
     public function showAdmin($id)
     {
         try {
-            $project = DB::table('project')->where('id_project', $id)->first();
+            $project = DB::table('project as p')
+                      ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                      ->select('p.*', 'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 
+                             'ld.lookup_color as category_color', 'ld.lookup_description as category_description')
+                      ->where('p.id_project', $id)
+                      ->first();
             
             if (!$project) {
                 return redirect()->route('project.index')->with('error', 'Project not found');
@@ -288,14 +322,32 @@ class ProjectController extends Controller
     public function edit($id)
     {
         try {
-            $project = DB::table('project')->where('id_project', $id)->first();
+            $project = DB::table('project as p')
+                      ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                      ->select('p.*', 'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 
+                             'ld.lookup_color as category_color', 'ld.lookup_description as category_description')
+                      ->where('p.id_project', $id)
+                      ->first();
             
             if (!$project) {
                 return redirect()->route('project.index')->with('error', 'Project not found');
             }
 
+            // Create relationship object for easier access in view
+            $project->categoryLookup = null;
+            if ($project->category_lookup_id) {
+                $project->categoryLookup = (object) [
+                    'id' => $project->category_lookup_id,
+                    'lookup_name' => $project->category_name,
+                    'lookup_icon' => $project->category_icon,
+                    'lookup_color' => $project->category_color,
+                    'lookup_description' => $project->category_description
+                ];
+            }
+
             $title = 'Edit Portfolio';
-            return view('project.edit', compact('project', 'title'));
+            $projectCategories = $this->getProjectCategories();
+            return view('project.edit', compact('project', 'title', 'projectCategories'));
         } catch (Exception $e) {
             Log::error('Project Edit Error: ' . $e->getMessage());
             return redirect()->route('project.index')->with('error', 'Error loading edit form: ' . $e->getMessage());
@@ -314,7 +366,7 @@ class ProjectController extends Controller
                 'location' => 'required|string|max:255',
                 'description' => 'required|string',
                 'summary_description' => 'nullable|string|max:500',
-                'project_category' => 'required',
+                'category_lookup_id' => 'required|exists:lookup_data,id',
                 'slug_project' => 'required|string|max:255|unique:project,slug_project,' . $id . ',id_project',
                 'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
             ];
@@ -323,6 +375,8 @@ class ProjectController extends Controller
                 'required' => ':attribute wajib diisi!',
                 'string' => ':attribute harus berupa teks!',
                 'max' => ':attribute maksimal :max karakter!',
+                'category_lookup_id.required' => 'Kategori project wajib dipilih!',
+                'category_lookup_id.exists' => 'Kategori project tidak valid!',
                 'slug_project.unique' => 'Slug project sudah digunakan, silakan gunakan slug yang lain!',
                 'images.*.image' => 'File harus berupa gambar!',
                 'images.*.mimes' => 'Format gambar harus: jpeg, jpg, png, gif, atau webp!',
@@ -431,7 +485,7 @@ class ProjectController extends Controller
                 'location' => trim($request->location),
                 'description' => trim($request->description),
                 'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
-                'project_category' => $request->project_category,
+                'category_lookup_id' => $request->category_lookup_id,
                 'url_project' => $request->url_project ? trim($request->url_project) : null,
                 'slug_project' => $slug,
                 'images' => json_encode($uploadedImages),
@@ -647,21 +701,22 @@ class ProjectController extends Controller
                 ]);
             }
 
-            $projects = DB::table('project')
-                ->select('id_project', 'project_name', 'client_name', 'project_category', 'slug_project')
-                ->where('status', 'Active')
+            $projects = DB::table('project as p')
+                ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                ->select('p.id_project', 'p.project_name', 'p.client_name', 'p.slug_project', 'ld.lookup_name as category_name')
+                ->where('p.status', 'Active')
                 ->where(function($q) use ($query) {
-                    $q->where('project_name', 'LIKE', '%' . $query . '%')
-                      ->orWhere('client_name', 'LIKE', '%' . $query . '%')
-                      ->orWhere('project_category', 'LIKE', '%' . $query . '%');
+                    $q->where('p.project_name', 'LIKE', '%' . $query . '%')
+                      ->orWhere('p.client_name', 'LIKE', '%' . $query . '%')
+                      ->orWhere('ld.lookup_name', 'LIKE', '%' . $query . '%');
                 });
 
             // Exclude current project if editing
             if ($currentId) {
-                $projects->where('id_project', '!=', $currentId);
+                $projects->where('p.id_project', '!=', $currentId);
             }
 
-            $results = $projects->orderBy('project_name')
+            $results = $projects->orderBy('p.project_name')
                               ->limit(10)
                               ->get();
 
@@ -669,7 +724,7 @@ class ProjectController extends Controller
                 return [
                     'id' => $project->id_project,
                     'text' => $project->project_name,
-                    'subtitle' => $project->client_name . ' - ' . $project->project_category,
+                    'subtitle' => $project->client_name . ' - ' . ($project->category_name ?? 'No Category'),
                     'slug' => $project->slug_project
                 ];
             });
@@ -685,6 +740,37 @@ class ProjectController extends Controller
                 'success' => false,
                 'message' => 'Search failed: ' . $e->getMessage(),
                 'data' => []
+            ], 500);
+        }
+    }
+
+    /**
+     * API: Get projects for frontend (AJAX)
+     */
+    public function getProjects(Request $request)
+    {
+        try {
+            $projects = DB::table('project as p')
+                       ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                       ->select('p.*', 'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 
+                              'ld.lookup_color as category_color', 'ld.lookup_code as category_code',
+                              'ld.lookup_description as category_description')
+                       ->where('p.status', 'Active')
+                       ->orderBy('p.sequence', 'asc')
+                       ->orderBy('p.created_at', 'desc')
+                       ->get();
+
+            return response()->json([
+                'success' => true,
+                'projects' => $projects
+            ]);
+
+        } catch (Exception $e) {
+            Log::error('Get Projects API Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading projects: ' . $e->getMessage(),
+                'projects' => []
             ], 500);
         }
     }

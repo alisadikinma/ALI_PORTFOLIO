@@ -56,7 +56,7 @@
                             @endif
                             
                             <p class="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">
-                                {!! Str::limit(strip_tags($project->description), 120) !!}
+                                {!! Str::limit(strip_tags($project->summary_description ?? ''), 120) !!}
                             </p>
                             
                             <a href="{{ route('portfolio.detail', $project->slug_project) }}" 

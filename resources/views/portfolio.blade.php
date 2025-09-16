@@ -1,169 +1,93 @@
 @extends('layouts.web')
 
 @section('isi')
-<!-- Responsive Sliding Cards Portfolio Section - EXACT MATCH TO ATTACHMENT -->.
-<section class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-20 px-4">
-    <div class="max-w-7xl mx-auto">
+<!-- Enhanced Portfolio Page with Cards Design using Lookup Data -->
+<section class="min-h-screen bg-gradient-footer py-20 px-4">
+    <div class="container mx-auto" style="max-width: 1200px;">
+        
+        <!-- Page Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl sm:text-6xl font-bold text-white mb-4">My Portfolio</h1>
+            <p class="text-gray-400 text-lg">Explore my latest projects and innovations</p>
+        </div>
 
-        <!-- Navigation Controls -->
-        <div class="flex justify-between items-center mb-12">
-            <!-- Filter Buttons -->
-            <div class="flex flex-wrap gap-3">
+        <!-- Controls Section -->
+        <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-12">
+            <!-- Category Filter Buttons - Using Lookup Data -->
+            <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
                 <button class="filter-btn active px-6 py-3 rounded-full font-semibold transition-all duration-300" data-filter="all">
                     All Projects
                 </button>
-                @if(isset($jenis_projects) && count($jenis_projects) > 0)
-                    @foreach ($jenis_projects as $jenis)
-                    <button class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300" data-filter="{{ $jenis }}">
-                        {{ $jenis }}
+                @if(isset($projectCategories) && count($projectCategories) > 0)
+                    @foreach ($projectCategories as $category)
+                    <button class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300" 
+                            data-filter="{{ $category->lookup_code }}"
+                            data-category-id="{{ $category->id }}"
+                            title="{{ $category->lookup_description }}">
+                        {{ $category->lookup_icon }} {{ $category->lookup_name }}
                     </button>
                     @endforeach
-                @endif
-            </div>
-        </div>
-
-        <!-- Sliding Cards Container - MATCHES ATTACHMENT EXACTLY -->
-        <div class="relative overflow-hidden rounded-3xl">
-            <div id="slider-container" class="flex transition-all duration-700 ease-out" style="transform: translateX(0%)">
-                @if(isset($projects) && count($projects) > 0)
-                    @foreach ($projects as $index => $project)
-                    <div class="portfolio-card flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4" data-category="{{ $project->project_category ?? 'uncategorized' }}">
-                        <div class="card-inner bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 h-full shadow-2xl border border-blue-400/30 hover:border-yellow-400/50 transition-all duration-300">
-                            <!-- Profile Image Circle - Like David Dell, Rose Bush, Jones Gail -->
-                            <div class="flex justify-center mb-6">
-                                <div class="relative">
-                                    <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-                                        <img src="{{ asset('file/project/' . ($project->featured_image ?? 'default.jpg')) }}" 
-                                             alt="{{ $project->project_name }}" 
-                                             class="w-full h-full object-cover"
-                                             onerror="this.src='https://ui-avatars.com/api/?name={{ urlencode($project->project_name) }}&background=3b82f6&color=fff&size=96'">
-                                    </div>
-                                    <!-- Online Status Dot -->
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>
-                                </div>
-                            </div>
-
-                            <!-- Name & Title -->
-                            <div class="text-center mb-6">
-                                <h3 class="text-2xl font-bold text-white mb-2">{{ $project->project_name }}</h3>
-                                <p class="text-blue-200 text-sm font-medium">{{ $project->project_category ?? 'Project Specialist' }}</p>
-                            </div>
-
-                            <!-- Description -->
-                            <div class="text-center mb-8">
-                                <p class="text-blue-100 text-sm leading-relaxed">
-                                    {{ Str::limit(strip_tags($project->description), 120) }}
-                                </p>
-                            </div>
-
-                            <!-- View More Button -->
-                            <div class="text-center">
-                                <button class="view-more-btn w-full py-3 bg-white/20 hover:bg-white hover:text-blue-800 text-white font-semibold rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/30 hover:border-white">
-                                    View More
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
                 @else
-                    <!-- Sample Cards for Demo - Exactly like attachment -->
-                    <div class="portfolio-card flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4" data-category="ai">
-                        <div class="card-inner bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 h-full shadow-2xl border border-blue-400/30">
-                            <div class="flex justify-center mb-6">
-                                <div class="relative">
-                                    <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-                                        <img src="https://ui-avatars.com/api/?name=David+Dell&background=3b82f6&color=fff&size=96" alt="David Dell" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>
-                                </div>
-                            </div>
-                            <div class="text-center mb-6">
-                                <h3 class="text-2xl font-bold text-white mb-2">David Dell</h3>
-                                <p class="text-blue-200 text-sm font-medium">AI Development Specialist</p>
-                            </div>
-                            <div class="text-center mb-8">
-                                <p class="text-blue-100 text-sm leading-relaxed">
-                                    The lorem text this section contain contains header having open endpoints functionality.
-                                </p>
-                            </div>
-                            <div class="text-center">
-                                <button class="view-more-btn w-full py-3 bg-white/20 hover:bg-white hover:text-blue-800 text-white font-semibold rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/30 hover:border-white">
-                                    View More
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="portfolio-card flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4" data-category="web">
-                        <div class="card-inner bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 h-full shadow-2xl border border-blue-400/30">
-                            <div class="flex justify-center mb-6">
-                                <div class="relative">
-                                    <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-                                        <img src="https://ui-avatars.com/api/?name=Rose+Bush&background=ec4899&color=fff&size=96" alt="Rose Bush" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>
-                                </div>
-                            </div>
-                            <div class="text-center mb-6">
-                                <h3 class="text-2xl font-bold text-white mb-2">Rose Bush</h3>
-                                <p class="text-blue-200 text-sm font-medium">Web Development Expert</p>
-                            </div>
-                            <div class="text-center mb-8">
-                                <p class="text-blue-100 text-sm leading-relaxed">
-                                    The lorem text this section contain contains header having open endpoints functionality.
-                                </p>
-                            </div>
-                            <div class="text-center">
-                                <button class="view-more-btn w-full py-3 bg-white/20 hover:bg-white hover:text-blue-800 text-white font-semibold rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/30 hover:border-white">
-                                    View More
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="portfolio-card flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4" data-category="design">
-                        <div class="card-inner bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-8 h-full shadow-2xl border border-blue-400/30">
-                            <div class="flex justify-center mb-6">
-                                <div class="relative">
-                                    <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl overflow-hidden bg-white">
-                                        <img src="https://ui-avatars.com/api/?name=Jones+Gail&background=10b981&color=fff&size=96" alt="Jones Gail" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-2 border-white"></div>
-                                </div>
-                            </div>
-                            <div class="text-center mb-6">
-                                <h3 class="text-2xl font-bold text-white mb-2">Jones Gail</h3>
-                                <p class="text-blue-200 text-sm font-medium">Digital Innovation Lead</p>
-                            </div>
-                            <div class="text-center mb-8">
-                                <p class="text-blue-100 text-sm leading-relaxed">
-                                    The lorem text this section contain contains header having open endpoints functionality.
-                                </p>
-                            </div>
-                            <div class="text-center">
-                                <button class="view-more-btn w-full py-3 bg-white/20 hover:bg-white hover:text-blue-800 text-white font-semibold rounded-xl transition-all duration-300 backdrop-blur-sm border border-white/30 hover:border-white">
-                                    View More
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Fallback buttons if lookup data is not available -->
+                    <button class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300" data-filter="mobile-app">
+                        📱 Mobile Apps
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300" data-filter="web-app">
+                        💻 Web Apps
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300" data-filter="ai-ml">
+                        🤖 AI/ML
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-full font-semibold transition-all duration-300" data-filter="iot">
+                        🌐 IoT
+                    </button>
                 @endif
+            </div>
+            
+            <!-- Sort Dropdown -->
+            <div class="flex items-center gap-4">
+                <label class="text-white font-medium">Sort By:</label>
+                <select id="sortSelect" class="px-4 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-yellow-400 focus:outline-none">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="name-asc">Name A-Z</option>
+                    <option value="name-desc">Name Z-A</option>
+                    <option value="sequence">Display Order</option>
+                </select>
             </div>
         </div>
 
-        <!-- Slide Indicators -->
-        <div class="flex justify-center gap-3 mt-12" id="indicators">
-            <!-- Generated by JavaScript -->
+        <!-- Projects Grid -->
+        <div id="portfolioGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Projects will be loaded here via JavaScript -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden text-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mx-auto mb-4"></div>
+            <p class="text-white">Loading projects...</p>
+        </div>
+
+        <!-- No Results State -->
+        <div id="noResults" class="hidden text-center py-12">
+            <div class="text-6xl mb-4">🔍</div>
+            <h3 class="text-2xl font-bold text-white mb-2">No Projects Found</h3>
+            <p class="text-gray-400">Try adjusting your filters or search criteria.</p>
+        </div>
+
+        <!-- Pagination -->
+        <div id="paginationContainer" class="flex justify-center items-center gap-4 mt-12">
+            <!-- Pagination will be generated here -->
         </div>
     </div>
 </section>
 
 <style>
-/* Portfolio Specific Styles - EXACTLY MATCHING ATTACHMENT */
+/* Enhanced Portfolio Styles */
 .filter-btn {
-    background: rgba(59, 130, 246, 0.2);
-    color: #93c5fd;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    background: rgba(71, 85, 105, 0.5);
+    color: #cbd5e1;
+    border: 1px solid rgba(71, 85, 105, 0.3);
     backdrop-filter: blur(10px);
 }
 
@@ -176,101 +100,155 @@
     box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
 }
 
-.nav-btn {
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
+/* Dynamic category colors from lookup data */
+@if(isset($projectCategories) && count($projectCategories) > 0)
+    @foreach ($projectCategories as $category)
+    .category-{{ $category->lookup_code }} {
+        background: {{ $category->lookup_color ?? '#6b7280' }};
+    }
+    @endforeach
+@endif
+
+/* Card Styles - Enhanced with Lookup Integration */
+.project-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+    border-color: rgba(251, 191, 36, 0.5);
+}
+
+.card-image-section {
+    height: 240px;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.project-card:hover .card-image {
+    transform: scale(1.05);
+}
+
+.card-content {
+    padding: 24px;
+}
+
+.project-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.project-category {
+    color: #fbbf24;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.project-description {
+    color: #cbd5e1;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.view-project-btn {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #1f2937;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+}
+
+.view-project-btn:hover {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
+}
+
+/* Client info styles */
+.project-client {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-style: italic;
+    margin-bottom: 8px;
+}
+
+/* Pagination Styles */
+.pagination-btn {
+    background: rgba(71, 85, 105, 0.5);
+    color: #cbd5e1;
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
     backdrop-filter: blur(10px);
 }
 
-.nav-btn:hover {
-    background: #fbbf24;
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(251, 191, 36, 0.2);
+    border-color: #fbbf24;
+    color: #fbbf24;
+}
+
+.pagination-btn.active {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
     color: #1f2937;
     border-color: #fbbf24;
-    transform: scale(1.1);
 }
 
-.nav-btn:disabled {
+.pagination-btn:disabled {
     opacity: 0.4;
     cursor: not-allowed;
-    transform: none;
 }
 
-.portfolio-card {
-    min-height: 400px;
-}
-
-.card-inner {
-    backdrop-filter: blur(20px);
-    transform: translateY(0);
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.card-inner:hover {
-    transform: translateY(-10px) rotateX(5deg);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 50px rgba(59, 130, 246, 0.2);
-}
-
-.view-more-btn:hover {
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-}
-
-.slide-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.slide-indicator.active {
-    background: #fbbf24;
-    border-color: #fbbf24;
-    transform: scale(1.3);
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
-}
-
-/* Responsive Adjustments */
-@media (max-width: 640px) {
-    .portfolio-card {
-        width: 100%;
-        min-width: 100%;
-    }
-    
-    .card-inner {
-        margin: 0 10px;
-    }
-}
-
-@media (min-width: 641px) and (max-width: 1024px) {
-    .portfolio-card {
-        width: 50%;
-        min-width: 50%;
-    }
-}
-
-@media (min-width: 1025px) {
-    .portfolio-card {
-        width: 33.333%;
-        min-width: 33.333%;
-    }
-}
-
-/* Animation for cards entering viewport */
-@keyframes slideInUp {
+/* Animation Classes */
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
@@ -278,298 +256,433 @@
     }
 }
 
-.portfolio-card {
-    animation: slideInUp 0.6s ease-out;
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
 }
 
-.portfolio-card:nth-child(2) {
-    animation-delay: 0.1s;
-}
+.fade-in-up:nth-child(2) { animation-delay: 0.1s; }
+.fade-in-up:nth-child(3) { animation-delay: 0.2s; }
+.fade-in-up:nth-child(4) { animation-delay: 0.3s; }
+.fade-in-up:nth-child(5) { animation-delay: 0.4s; }
+.fade-in-up:nth-child(6) { animation-delay: 0.5s; }
 
-.portfolio-card:nth-child(3) {
-    animation-delay: 0.2s;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .project-card {
+        margin-bottom: 20px;
+    }
+    
+    .card-image-section {
+        height: 200px;
+    }
+    
+    .card-content {
+        padding: 20px;
+    }
+    
+    .project-title {
+        font-size: 1.25rem;
+    }
+    
+    .filter-btn {
+        padding: 8px 16px;
+        font-size: 0.875rem;
+    }
 }
 </style>
 
 <script>
-// Enhanced Portfolio Slider with Touch Support - PERFECT MATCH
-document.addEventListener('DOMContentLoaded', function() {
-    const sliderContainer = document.getElementById('slider-container');
-    const cards = document.querySelectorAll('.portfolio-card');
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const indicatorsContainer = document.getElementById('indicators');
-    
-    let currentIndex = 0;
-    let visibleCards = getVisibleCards();
-    let filteredCards = Array.from(cards);
-    let autoSlideInterval;
-    let isTransitioning = false;
-    
-    function getVisibleCards() {
-        if (window.innerWidth < 641) return 1;
-        if (window.innerWidth < 1025) return 2;
-        return 3;
+// Enhanced Portfolio Management System with Lookup Data Integration
+class PortfolioManager {
+    constructor() {
+        this.projects = [];
+        this.filteredProjects = [];
+        this.currentPage = 1;
+        this.projectsPerPage = 9;
+        this.currentFilter = 'all';
+        this.currentSort = 'newest';
+        this.categoryLookup = {};
+        
+        this.init();
     }
     
-    function updateVisibleCards() {
-        visibleCards = getVisibleCards();
-        updateSlider();
-        generateIndicators();
+    async init() {
+        await this.loadProjectCategories();
+        await this.loadProjects();
+        this.bindEvents();
+        this.renderProjects();
     }
     
-    function generateIndicators() {
-        if (!indicatorsContainer || filteredCards.length === 0) return;
-        
-        const totalSlides = Math.max(1, Math.ceil(filteredCards.length / visibleCards));
-        indicatorsContainer.innerHTML = '';
-        
-        for (let i = 0; i < totalSlides; i++) {
-            const indicator = document.createElement('div');
-            indicator.className = `slide-indicator ${i === Math.floor(currentIndex / visibleCards) ? 'active' : ''}`;
-            indicator.addEventListener('click', () => goToSlide(i * visibleCards));
-            indicatorsContainer.appendChild(indicator);
-        }
+    async loadProjectCategories() {
+        // Load category lookup data from server
+        this.categoryLookup = @json($projectCategories ?? []).reduce((acc, cat) => {
+            acc[cat.id] = {
+                name: cat.lookup_name,
+                code: cat.lookup_code,
+                icon: cat.lookup_icon,
+                color: cat.lookup_color,
+                description: cat.lookup_description
+            };
+            return acc;
+        }, {});
     }
     
-    function updateSlider() {
-        if (!sliderContainer || filteredCards.length === 0 || isTransitioning) return;
+    async loadProjects() {
+        // Show loading state
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('portfolioGrid').innerHTML = '';
         
-        const cardWidth = 100 / visibleCards;
-        const maxIndex = Math.max(0, filteredCards.length - visibleCards);
-        currentIndex = Math.min(currentIndex, maxIndex);
-        
-        const translateX = -(currentIndex * cardWidth);
-        sliderContainer.style.transform = `translateX(${translateX}%)`;
-        
-        // Update indicators
-        const indicators = indicatorsContainer.querySelectorAll('.slide-indicator');
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === Math.floor(currentIndex / visibleCards));
-        });
-        
-        // Update navigation buttons
-        if (prevBtn) {
-            prevBtn.disabled = currentIndex === 0;
-            prevBtn.style.opacity = currentIndex === 0 ? '0.4' : '1';
-        }
-        if (nextBtn) {
-            nextBtn.disabled = currentIndex >= maxIndex;
-            nextBtn.style.opacity = currentIndex >= maxIndex ? '0.4' : '1';
-        }
-    }
-    
-    function goToSlide(index) {
-        if (isTransitioning) return;
-        
-        const maxIndex = Math.max(0, filteredCards.length - visibleCards);
-        currentIndex = Math.max(0, Math.min(index, maxIndex));
-        
-        isTransitioning = true;
-        updateSlider();
-        
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 700);
-        
-        resetAutoSlide();
-    }
-    
-    function nextSlide() {
-        if (isTransitioning) return;
-        
-        const maxIndex = Math.max(0, filteredCards.length - visibleCards);
-        if (currentIndex < maxIndex) {
-            currentIndex++;
-        } else {
-            currentIndex = 0; // Loop back to start
-        }
-        
-        isTransitioning = true;
-        updateSlider();
-        
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 700);
-        
-        resetAutoSlide();
-    }
-    
-    function prevSlide() {
-        if (isTransitioning) return;
-        
-        if (currentIndex > 0) {
-            currentIndex--;
-        } else {
-            currentIndex = Math.max(0, filteredCards.length - visibleCards); // Loop to end
-        }
-        
-        isTransitioning = true;
-        updateSlider();
-        
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 700);
-        
-        resetAutoSlide();
-    }
-    
-    function filterCards(category) {
-        // Hide all cards first
-        cards.forEach(card => {
-            card.style.display = 'none';
-            card.style.opacity = '0';
-        });
-        
-        // Show filtered cards with animation
-        if (category === 'all') {
-            filteredCards = Array.from(cards);
-        } else {
-            filteredCards = Array.from(cards).filter(card => 
-                card.dataset.category === category
-            );
-        }
-        
-        // Animate in filtered cards
-        filteredCards.forEach((card, index) => {
-            card.style.display = 'block';
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.animation = `slideInUp 0.6s ease-out ${index * 0.1}s both`;
-            }, 50);
-        });
-        
-        // Reset slider position and update
-        currentIndex = 0;
-        setTimeout(() => {
-            updateSlider();
-            generateIndicators();
-        }, 100);
-        
-        resetAutoSlide();
-    }
-    
-    function startAutoSlide() {
-        if (filteredCards.length > visibleCards) {
-            autoSlideInterval = setInterval(() => {
-                nextSlide();
-            }, 5000);
-        }
-    }
-    
-    function stopAutoSlide() {
-        if (autoSlideInterval) {
-            clearInterval(autoSlideInterval);
-            autoSlideInterval = null;
-        }
-    }
-    
-    function resetAutoSlide() {
-        stopAutoSlide();
-        startAutoSlide();
-    }
-    
-    // Event Listeners
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-    
-    // Filter buttons
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Update active button
-            filterBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
+        try {
+            const response = await fetch('/api/projects', {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             
-            // Filter cards
-            const filter = this.dataset.filter;
-            filterCards(filter);
+            if (response.ok) {
+                const data = await response.json();
+                this.projects = data.projects || [];
+            } else {
+                // Fallback to sample data if API fails
+                await this.loadSampleData();
+            }
+            
+            this.filteredProjects = [...this.projects];
+            
+        } catch (error) {
+            console.error('Error loading projects:', error);
+            // Fallback to sample data
+            await this.loadSampleData();
+        } finally {
+            document.getElementById('loadingState').classList.add('hidden');
+        }
+    }
+    
+    async loadSampleData() {
+        // Simulate API delay
+        await this.simulateDelay(500);
+        
+        // Sample projects data using lookup categories
+        this.projects = [
+            {
+                id: 1,
+                project_name: 'BUS Request MYSATNUSA',
+                category_lookup_id: 1, // Mobile App
+                summary_description: 'Bus Request System is a web and mobile-based solution that simplifies transportation requests for company activities such as outings, site visits, or official events.',
+                featured_image: 'bus-request.png',
+                slug_project: 'bus-request-mysatnusa',
+                created_at: '2024-01-15',
+                client_name: 'PT. Sat Nusapersada Tbk',
+                location: 'Jakarta, Indonesia',
+                sequence: 1
+            },
+            {
+                id: 2,
+                project_name: 'E-Commerce Platform',
+                category_lookup_id: 2, // Web App
+                summary_description: 'Modern e-commerce platform with advanced features including AI-powered recommendations, real-time inventory management, and seamless payment integration.',
+                featured_image: 'ecommerce.png',
+                slug_project: 'ecommerce-platform',
+                created_at: '2024-02-20',
+                client_name: 'Tech Innovators Inc',
+                location: 'Singapore',
+                sequence: 2
+            },
+            {
+                id: 3,
+                project_name: 'AI Assistant ChatBot',
+                category_lookup_id: 3, // AI/ML
+                summary_description: 'Intelligent chatbot powered by natural language processing and machine learning algorithms to provide customer support and automate business processes.',
+                featured_image: 'ai-chatbot.png',
+                slug_project: 'ai-assistant-chatbot',
+                created_at: '2024-03-10',
+                client_name: 'Digital Solutions Ltd',
+                location: 'Kuala Lumpur, Malaysia',
+                sequence: 3
+            },
+            {
+                id: 4,
+                project_name: 'IoT Monitoring System',
+                category_lookup_id: 4, // IoT
+                summary_description: 'Internet of Things monitoring system for smart buildings with sensor data collection, real-time alerts, and energy optimization features.',
+                featured_image: 'iot-system.png',
+                slug_project: 'iot-monitoring-system',
+                created_at: '2024-01-30',
+                client_name: 'Smart Buildings Corp',
+                location: 'Bangkok, Thailand',
+                sequence: 4
+            },
+            {
+                id: 5,
+                project_name: 'Learning Management System',
+                category_lookup_id: 2, // Web App
+                summary_description: 'Comprehensive LMS platform with interactive courses, progress tracking, assessment tools, and collaborative learning features for educational institutions.',
+                featured_image: 'lms.png',
+                slug_project: 'learning-management-system',
+                created_at: '2024-04-05',
+                client_name: 'Education Plus',
+                location: 'Manila, Philippines',
+                sequence: 5
+            },
+            {
+                id: 6,
+                project_name: 'AI Process Automation',
+                category_lookup_id: 5, // AI Automation
+                summary_description: 'Intelligent automation systems that streamline business processes using artificial intelligence, reducing manual work and improving efficiency across organizations.',
+                featured_image: 'ai-automation.png',
+                slug_project: 'ai-process-automation',
+                created_at: '2024-02-14',
+                client_name: 'HealthTech Solutions',
+                location: 'Ho Chi Minh City, Vietnam',
+                sequence: 6
+            }
+        ];
+        
+        this.filteredProjects = [...this.projects];
+    }
+    
+    simulateDelay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
+    bindEvents() {
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                // Apply filter
+                this.currentFilter = e.target.dataset.filter;
+                this.currentPage = 1;
+                this.applyFiltersAndSort();
+            });
         });
-    });
-    
-    // Window resize handler
-    window.addEventListener('resize', debounce(updateVisibleCards, 100));
-    
-    // Touch/swipe support
-    let startX = 0;
-    let startY = 0;
-    let isScrolling = false;
-    
-    sliderContainer.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-        isScrolling = false;
-        stopAutoSlide();
-    });
-    
-    sliderContainer.addEventListener('touchmove', (e) => {
-        if (!startX || !startY) return;
         
-        const diffX = startX - e.touches[0].clientX;
-        const diffY = startY - e.touches[0].clientY;
-        
-        if (!isScrolling) {
-            isScrolling = Math.abs(diffX) < Math.abs(diffY);
+        // Sort dropdown
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+            this.currentSort = e.target.value;
+            this.currentPage = 1;
+            this.applyFiltersAndSort();
+        });
+    }
+    
+    applyFiltersAndSort() {
+        // Apply filters
+        if (this.currentFilter === 'all') {
+            this.filteredProjects = [...this.projects];
+        } else {
+            // Filter by category code or category ID
+            this.filteredProjects = this.projects.filter(project => {
+                const categoryData = this.categoryLookup[project.category_lookup_id];
+                return categoryData && categoryData.code === this.currentFilter;
+            });
         }
         
-        if (!isScrolling && Math.abs(diffX) > 10) {
-            e.preventDefault();
-        }
-    });
+        // Apply sorting
+        this.filteredProjects.sort((a, b) => {
+            switch (this.currentSort) {
+                case 'newest':
+                    return new Date(b.created_at) - new Date(a.created_at);
+                case 'oldest':
+                    return new Date(a.created_at) - new Date(b.created_at);
+                case 'name-asc':
+                    return a.project_name.localeCompare(b.project_name);
+                case 'name-desc':
+                    return b.project_name.localeCompare(a.project_name);
+                case 'sequence':
+                    return (a.sequence || 999) - (b.sequence || 999);
+                default:
+                    return 0;
+            }
+        });
+        
+        this.renderProjects();
+    }
     
-    sliderContainer.addEventListener('touchend', (e) => {
-        if (!startX || !startY || isScrolling) {
-            startAutoSlide();
+    renderProjects() {
+        const grid = document.getElementById('portfolioGrid');
+        const noResults = document.getElementById('noResults');
+        
+        if (this.filteredProjects.length === 0) {
+            grid.innerHTML = '';
+            noResults.classList.remove('hidden');
+            document.getElementById('paginationContainer').innerHTML = '';
             return;
         }
         
-        const diffX = startX - e.changedTouches[0].clientX;
-        const diffY = startY - e.touches[0].clientY;
+        noResults.classList.add('hidden');
         
-        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-            if (diffX > 0) {
-                nextSlide();
-            } else {
-                prevSlide();
+        // Calculate pagination
+        const totalPages = Math.ceil(this.filteredProjects.length / this.projectsPerPage);
+        const startIndex = (this.currentPage - 1) * this.projectsPerPage;
+        const endIndex = startIndex + this.projectsPerPage;
+        const projectsToShow = this.filteredProjects.slice(startIndex, endIndex);
+        
+        // Render projects
+        grid.innerHTML = projectsToShow.map((project, index) => this.createProjectCard(project, index)).join('');
+        
+        // Render pagination
+        this.renderPagination(totalPages);
+        
+        // Add animation classes
+        setTimeout(() => {
+            grid.querySelectorAll('.project-card').forEach((card, index) => {
+                card.classList.add('fade-in-up');
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        }, 50);
+    }
+    
+    createProjectCard(project, index) {
+        // Get category data from lookup
+        const categoryData = this.categoryLookup[project.category_lookup_id];
+        const categoryName = categoryData ? categoryData.name : 'Unknown';
+        const categoryIcon = categoryData ? categoryData.icon : '🚀';
+        const categoryColor = categoryData ? categoryData.color : '#6b7280';
+        
+        // Create gradient background using category color
+        const bgGradient = `linear-gradient(135deg, ${categoryColor}, ${this.darkenColor(categoryColor, 20)})`;
+        
+        return `
+            <div class="project-card">
+                <div class="card-image-section" style="background: ${bgGradient}">
+                    ${project.featured_image ? 
+                        `<img src="${this.getImageUrl(project.featured_image)}" alt="${project.project_name}" class="card-image">` :
+                        `<div class="flex items-center justify-center w-full h-full">
+                            <div class="text-center text-white p-6">
+                                <div class="text-4xl mb-4">${categoryIcon}</div>
+                                <h3 class="text-xl font-bold mb-2">${project.project_name}</h3>
+                                <p class="text-sm opacity-90">${categoryName}</p>
+                            </div>
+                        </div>`
+                    }
+                </div>
+                <div class="card-content">
+                    <div class="project-category">
+                        ${categoryIcon} ${categoryName}
+                    </div>
+                    <h3 class="project-title">${project.project_name}</h3>
+                    <div class="project-client">${project.client_name} • ${project.location}</div>
+                    <p class="project-description">${project.summary_description}</p>
+                    <button class="view-project-btn" onclick="portfolioManager.viewProject('${project.slug_project}')">
+                        View Project
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    getImageUrl(imageName) {
+        return `/images/projects/${imageName}`;
+    }
+    
+    darkenColor(color, percent) {
+        // Simple color darkening function
+        if (color.startsWith('#')) {
+            const num = parseInt(color.slice(1), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return `#${(0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1)}`;
+        }
+        return color;
+    }
+    
+    renderPagination(totalPages) {
+        const container = document.getElementById('paginationContainer');
+        
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Previous button
+        paginationHTML += `
+            <button class="pagination-btn ${this.currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}" 
+                    onclick="portfolioManager.goToPage(${this.currentPage - 1})" 
+                    ${this.currentPage === 1 ? 'disabled' : ''}>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+        `;
+        
+        // Page numbers
+        const startPage = Math.max(1, this.currentPage - 2);
+        const endPage = Math.min(totalPages, this.currentPage + 2);
+        
+        if (startPage > 1) {
+            paginationHTML += `<button class="pagination-btn" onclick="portfolioManager.goToPage(1)">1</button>`;
+            if (startPage > 2) {
+                paginationHTML += `<span class="text-gray-400 px-2">...</span>`;
             }
         }
         
-        startX = 0;
-        startY = 0;
-        resetAutoSlide();
-    });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
-            e.preventDefault();
-            prevSlide();
-        } else if (e.key === 'ArrowRight') {
-            e.preventDefault();
-            nextSlide();
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+                <button class="pagination-btn ${i === this.currentPage ? 'active' : ''}" 
+                        onclick="portfolioManager.goToPage(${i})">
+                    ${i}
+                </button>
+            `;
         }
-    });
-    
-    // Initialize
-    updateVisibleCards();
-    startAutoSlide();
-    
-    // Pause auto-slide on hover
-    sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-    sliderContainer.addEventListener('mouseleave', startAutoSlide);
-    
-    // Utility function
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
+        
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHTML += `<span class="text-gray-400 px-2">...</span>`;
+            }
+            paginationHTML += `<button class="pagination-btn" onclick="portfolioManager.goToPage(${totalPages})">${totalPages}</button>`;
+        }
+        
+        // Next button
+        paginationHTML += `
+            <button class="pagination-btn ${this.currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}" 
+                    onclick="portfolioManager.goToPage(${this.currentPage + 1})" 
+                    ${this.currentPage === totalPages ? 'disabled' : ''}>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        `;
+        
+        container.innerHTML = paginationHTML;
     }
+    
+    goToPage(page) {
+        const totalPages = Math.ceil(this.filteredProjects.length / this.projectsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            this.currentPage = page;
+            this.renderProjects();
+            
+            // Smooth scroll to top of grid
+            document.getElementById('portfolioGrid').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+    }
+    
+    viewProject(slug) {
+        // Redirect to project detail page
+        window.location.href = `/portfolio/${slug}`;
+    }
+}
+
+// Initialize Portfolio Manager
+let portfolioManager;
+document.addEventListener('DOMContentLoaded', () => {
+    portfolioManager = new PortfolioManager();
 });
 </script>
 @endsection

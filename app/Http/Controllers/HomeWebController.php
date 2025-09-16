@@ -45,7 +45,15 @@ class HomeWebController extends Controller
                     'award' => Award::where('status', 'Active')
                         ->orderBy('sequence', 'asc')
                         ->get(),
-                    'projects' => DB::table('project')->select('project_name', 'slug_project', 'featured_image', 'description', 'project_category')->orderBy('created_at', 'desc')->limit(9)->get(),
+                    // FIXED: Use simple query that works with existing data structure
+                    'projects' => DB::table('project')
+                        ->select('project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 
+                               'location', 'project_category', 'created_at', 'sequence')
+                        ->where('status', 'Active')
+                        ->orderBy('sequence', 'asc')
+                        ->orderBy('created_at', 'desc')
+                        ->limit(9)
+                        ->get(),
                 ];
             } catch (\Exception $e) {
                 \Log::error('Database error in homepage: ' . $e->getMessage());
@@ -61,9 +69,19 @@ class HomeWebController extends Controller
             }
         });
         
-        // Cache project types
-        $jenis_projects = Cache::remember('project_types', 3600, function() {
-            return DB::table('project')->distinct()->pluck('project_category')->filter()->values()->toArray();
+        // Cache project categories - keep this for new features but don't break homepage
+        $projectCategories = Cache::remember('project_categories_homepage', 3600, function() {
+            try {
+                return DB::table('lookup_data')
+                        ->where('lookup_type', 'project_category')
+                        ->where('is_active', 1)
+                        ->orderBy('sort_order')
+                        ->orderBy('lookup_name')
+                        ->get();
+            } catch (\Exception $e) {
+                // Return empty collection if lookup_data doesn't exist yet
+                return collect();
+            }
         });
         
         // Extract cached data
@@ -74,7 +92,7 @@ class HomeWebController extends Controller
         $award = $data['award'];
         $projects = $data['projects'];
         
-        return view('welcome', compact('konf', 'layanan', 'testimonial', 'galeri', 'article', 'award', 'projects', 'jenis_projects'));
+        return view('welcome', compact('konf', 'layanan', 'testimonial', 'galeri', 'article', 'award', 'projects', 'projectCategories'));
     }
 
     public function portfolio()
@@ -83,15 +101,22 @@ class HomeWebController extends Controller
             return DB::table('setting')->first();
         });
         
-        $projects = Cache::remember('all_projects', 1800, function() {
-            return DB::table('project')->select('project_name', 'slug_project', 'featured_image', 'description', 'project_category')->get();
+        // Get project categories from lookup_data table
+        $projectCategories = Cache::remember('project_categories_frontend', 1800, function() {
+            try {
+                return DB::table('lookup_data')
+                        ->where('lookup_type', 'project_category')
+                        ->where('is_active', 1)
+                        ->orderBy('sort_order')
+                        ->orderBy('lookup_name')
+                        ->get();
+            } catch (\Exception $e) {
+                // Return empty collection if lookup_data doesn't exist yet
+                return collect();
+            }
         });
         
-        $jenis_projects = Cache::remember('project_types', 3600, function() {
-            return DB::table('project')->distinct()->pluck('project_category')->filter()->values()->toArray();
-        });
-        
-        return view('portfolio', compact('konf', 'projects','jenis_projects'));
+        return view('portfolio', compact('konf', 'projectCategories'));
     }
 
     public function portfolioAll()
@@ -100,12 +125,28 @@ class HomeWebController extends Controller
             return DB::table('setting')->first();
         });
         
-        $projects = DB::table('project')
-            ->select('id_project', 'project_name', 'client_name', 'location', 'slug_project', 'featured_image', 'images', 'summary_description', 'project_category', 'created_at')
-            ->where('status', 'Active')
-            ->orderBy('sequence', 'asc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
+        // Use hybrid approach - try lookup first, fallback to old structure
+        try {
+            $projects = DB::table('project as p')
+                ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                ->select('p.id_project', 'p.project_name', 'p.client_name', 'p.location', 'p.slug_project', 
+                       'p.featured_image', 'p.images', 'p.summary_description', 'p.created_at', 'p.sequence',
+                       'p.project_category', // Keep old column for fallback
+                       'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 'ld.lookup_color as category_color')
+                ->where('p.status', 'Active')
+                ->orderBy('p.sequence', 'asc')
+                ->orderBy('p.created_at', 'desc')
+                ->paginate(12);
+        } catch (\Exception $e) {
+            // Fallback to simple query if lookup fails
+            $projects = DB::table('project')
+                ->select('id_project', 'project_name', 'client_name', 'location', 'slug_project', 
+                       'featured_image', 'images', 'summary_description', 'created_at', 'sequence', 'project_category')
+                ->where('status', 'Active')
+                ->orderBy('sequence', 'asc')
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
+        }
         
         return view('portfolio-all', compact('konf', 'projects'));
     }
@@ -131,8 +172,25 @@ class HomeWebController extends Controller
     public function portfolioDetail($slug)
     {
         try {
-            // Simple query without cache for debugging
-            $portfolio = DB::table('project')->where('slug_project', $slug)->first();
+            // Try enhanced query with lookup data first
+            try {
+                $portfolio = DB::table('project as p')
+                            ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
+                            ->select('p.*', 
+                                   'ld.lookup_name as category_name', 
+                                   'ld.lookup_icon as category_icon', 
+                                   'ld.lookup_color as category_color', 
+                                   'ld.lookup_description as category_description')
+                            ->where('p.slug_project', $slug)
+                            ->where('p.status', 'Active')
+                            ->first();
+            } catch (\Exception $e) {
+                // Fallback to simple query if lookup fails
+                $portfolio = DB::table('project')
+                            ->where('slug_project', $slug)
+                            ->where('status', 'Active')
+                            ->first();
+            }
             
             if (!$portfolio) {
                 abort(404, 'Portfolio not found');

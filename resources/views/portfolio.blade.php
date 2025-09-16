@@ -4,17 +4,6 @@
 <!-- Responsive Sliding Cards Portfolio Section - EXACT MATCH TO ATTACHMENT -->.
 <section class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 py-20 px-4">
     <div class="max-w-7xl mx-auto">
-        <!-- Header with Exact Title from Image -->
-        <div class="text-center mb-16">
-            <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
-                <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                    Responsive Sliding Cards in HTML CSS JS
-                </span>
-            </h1>
-            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                Discover my latest projects and achievements in AI, web development, and digital innovation
-            </p>
-        </div>
 
         <!-- Navigation Controls -->
         <div class="flex justify-between items-center mb-12">
@@ -30,20 +19,6 @@
                     </button>
                     @endforeach
                 @endif
-            </div>
-
-            <!-- Slider Navigation -->
-            <div class="flex items-center gap-4">
-                <button id="prevBtn" class="nav-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button id="nextBtn" class="nav-btn">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
             </div>
         </div>
 

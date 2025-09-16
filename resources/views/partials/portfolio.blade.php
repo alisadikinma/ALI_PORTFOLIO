@@ -93,10 +93,7 @@
     <div class="text-center">
         <a href="{{ url('portfolio') }}" 
            class="inline-flex items-center bg-transparent border-2 border-yellow-400 hover:bg-yellow-400 hover:text-black text-yellow-400 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0l-4-4m4 4l-4 4"></path>
-            </svg>
-            VIEW ALL PROJECTS
+           &nbsp;&nbsp;VIEW ALL PROJECTS&nbsp;&nbsp;
         </a>
     </div>
 </section>

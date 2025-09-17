@@ -4,7 +4,7 @@
 
 @section('isi')
 <!-- Enhanced Portfolio Page with Cards Design using Lookup Data -->
-<section class="min-h-screen bg-gradient-footer py-20 px-4">
+<section class="min-h-screen bg-gradient-footer py-20 px-4" style="padding-top: 120px;">
     <div class="container mx-auto" style="max-width: 1200px;">
         
         <!-- Page Header -->
@@ -330,118 +330,21 @@ class PortfolioManager {
     }
     
     async loadProjects() {
-        // Show loading state
-        document.getElementById('loadingState').classList.remove('hidden');
-        document.getElementById('portfolioGrid').innerHTML = '';
+        // Use projects data from controller instead of AJAX
+        this.projects = @json($projects ?? []);
+        this.filteredProjects = [...this.projects];
         
-        try {
-            const response = await fetch('/api/projects', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                this.projects = data.projects || [];
-            } else {
-                // Fallback to sample data if API fails
-                await this.loadSampleData();
-            }
-            
-            this.filteredProjects = [...this.projects];
-            
-        } catch (error) {
-            console.error('Error loading projects:', error);
-            // Fallback to sample data
-            await this.loadSampleData();
-        } finally {
-            document.getElementById('loadingState').classList.add('hidden');
-        }
+        console.log('Projects loaded from controller:', this.projects.length);
     }
     
     async loadSampleData() {
+        // Fallback: Use real sample data from database structure
         // Simulate API delay
         await this.simulateDelay(500);
         
-        // Sample projects data using lookup categories
-        this.projects = [
-            {
-                id: 1,
-                project_name: 'BUS Request MYSATNUSA',
-                category_lookup_id: 1, // Mobile App
-                summary_description: 'Bus Request System is a web and mobile-based solution that simplifies transportation requests for company activities such as outings, site visits, or official events.',
-                featured_image: 'bus-request.png',
-                slug_project: 'bus-request-mysatnusa',
-                created_at: '2024-01-15',
-                client_name: 'PT. Sat Nusapersada Tbk',
-                location: 'Jakarta, Indonesia',
-                sequence: 1
-            },
-            {
-                id: 2,
-                project_name: 'E-Commerce Platform',
-                category_lookup_id: 2, // Web App
-                summary_description: 'Modern e-commerce platform with advanced features including AI-powered recommendations, real-time inventory management, and seamless payment integration.',
-                featured_image: 'ecommerce.png',
-                slug_project: 'ecommerce-platform',
-                created_at: '2024-02-20',
-                client_name: 'Tech Innovators Inc',
-                location: 'Singapore',
-                sequence: 2
-            },
-            {
-                id: 3,
-                project_name: 'AI Assistant ChatBot',
-                category_lookup_id: 3, // AI/ML
-                summary_description: 'Intelligent chatbot powered by natural language processing and machine learning algorithms to provide customer support and automate business processes.',
-                featured_image: 'ai-chatbot.png',
-                slug_project: 'ai-assistant-chatbot',
-                created_at: '2024-03-10',
-                client_name: 'Digital Solutions Ltd',
-                location: 'Kuala Lumpur, Malaysia',
-                sequence: 3
-            },
-            {
-                id: 4,
-                project_name: 'IoT Monitoring System',
-                category_lookup_id: 4, // IoT
-                summary_description: 'Internet of Things monitoring system for smart buildings with sensor data collection, real-time alerts, and energy optimization features.',
-                featured_image: 'iot-system.png',
-                slug_project: 'iot-monitoring-system',
-                created_at: '2024-01-30',
-                client_name: 'Smart Buildings Corp',
-                location: 'Bangkok, Thailand',
-                sequence: 4
-            },
-            {
-                id: 5,
-                project_name: 'Learning Management System',
-                category_lookup_id: 2, // Web App
-                summary_description: 'Comprehensive LMS platform with interactive courses, progress tracking, assessment tools, and collaborative learning features for educational institutions.',
-                featured_image: 'lms.png',
-                slug_project: 'learning-management-system',
-                created_at: '2024-04-05',
-                client_name: 'Education Plus',
-                location: 'Manila, Philippines',
-                sequence: 5
-            },
-            {
-                id: 6,
-                project_name: 'AI Process Automation',
-                category_lookup_id: 5, // AI Automation
-                summary_description: 'Intelligent automation systems that streamline business processes using artificial intelligence, reducing manual work and improving efficiency across organizations.',
-                featured_image: 'ai-automation.png',
-                slug_project: 'ai-process-automation',
-                created_at: '2024-02-14',
-                client_name: 'HealthTech Solutions',
-                location: 'Ho Chi Minh City, Vietnam',
-                sequence: 6
-            }
-        ];
-        
-        this.filteredProjects = [...this.projects];
+        // No sample data - let API handle this
+        this.projects = [];
+        this.filteredProjects = [];
     }
     
     simulateDelay(ms) {
@@ -476,10 +379,10 @@ class PortfolioManager {
         if (this.currentFilter === 'all') {
             this.filteredProjects = [...this.projects];
         } else {
-            // Filter by category code or category ID
+            // Filter by project_category (since we don't have lookup table integration)
             this.filteredProjects = this.projects.filter(project => {
-                const categoryData = this.categoryLookup[project.category_lookup_id];
-                return categoryData && categoryData.code === this.currentFilter;
+                return project.project_category && 
+                       project.project_category.toLowerCase().includes(this.currentFilter.toLowerCase());
             });
         }
         
@@ -539,28 +442,48 @@ class PortfolioManager {
     }
     
     createProjectCard(project, index) {
-        // Get category data from lookup
-        const categoryData = this.categoryLookup[project.category_lookup_id];
-        const categoryName = categoryData ? categoryData.name : 'Unknown';
-        const categoryIcon = categoryData ? categoryData.icon : '🚀';
-        const categoryColor = categoryData ? categoryData.color : '#6b7280';
+        // Use project_category directly (not lookup table)
+        const categoryName = project.project_category || project.category_name || 'General';
+        const categoryIcon = this.getCategoryIcon(categoryName);
+        const categoryColor = this.getCategoryColor(categoryName);
         
         // Create gradient background using category color
         const bgGradient = `linear-gradient(135deg, ${categoryColor}, ${this.darkenColor(categoryColor, 20)})`;
         
+        // Perbaikan logika gambar - gunakan asset() helper seperti portfolio.blade.php
+        let imageSection = '';
+        if (project.featured_image) {
+            const imageUrl = `{{ asset('images/projects') }}/${project.featured_image}`;
+            imageSection = `
+                <img src="${imageUrl}" 
+                     alt="${project.project_name}" 
+                     class="card-image" 
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                     onload="this.nextElementSibling.style.display='none';">
+                <div class="flex items-center justify-center w-full h-full" style="display: flex;">
+                    <div class="text-center text-white p-6">
+                        <div class="text-4xl mb-4">${categoryIcon}</div>
+                        <h3 class="text-xl font-bold mb-2">${project.project_name}</h3>
+                        <p class="text-sm opacity-90">${categoryName}</p>
+                    </div>
+                </div>
+            `;
+        } else {
+            imageSection = `
+                <div class="flex items-center justify-center w-full h-full">
+                    <div class="text-center text-white p-6">
+                        <div class="text-4xl mb-4">${categoryIcon}</div>
+                        <h3 class="text-xl font-bold mb-2">${project.project_name}</h3>
+                        <p class="text-sm opacity-90">${categoryName}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
         return `
             <div class="project-card">
                 <div class="card-image-section" style="background: ${bgGradient}">
-                    ${project.featured_image ? 
-                        `<img src="${this.getImageUrl(project.featured_image)}" alt="${project.project_name}" class="card-image">` :
-                        `<div class="flex items-center justify-center w-full h-full">
-                            <div class="text-center text-white p-6">
-                                <div class="text-4xl mb-4">${categoryIcon}</div>
-                                <h3 class="text-xl font-bold mb-2">${project.project_name}</h3>
-                                <p class="text-sm opacity-90">${categoryName}</p>
-                            </div>
-                        </div>`
-                    }
+                    ${imageSection}
                 </div>
                 <div class="card-content">
                     <div class="project-category">
@@ -568,7 +491,7 @@ class PortfolioManager {
                     </div>
                     <h3 class="project-title">${project.project_name}</h3>
                     <div class="project-client">${project.client_name} • ${project.location}</div>
-                    <p class="project-description">${project.summary_description}</p>
+                    <p class="project-description">${project.summary_description || project.description || 'No description available.'}</p>
                     <button class="view-project-btn" onclick="portfolioManager.viewProject('${project.slug_project}')">
                         View Project
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -580,8 +503,24 @@ class PortfolioManager {
         `;
     }
     
-    getImageUrl(imageName) {
-        return `/images/projects/${imageName}`;
+    getCategoryIcon(categoryName) {
+        const categoryLower = categoryName.toLowerCase();
+        if (categoryLower.includes('mobile') || categoryLower.includes('app')) return '📱';
+        if (categoryLower.includes('web')) return '💻';
+        if (categoryLower.includes('ai') || categoryLower.includes('ml')) return '🤖';
+        if (categoryLower.includes('iot')) return '🌐';
+        if (categoryLower.includes('automation')) return '⚙️';
+        return '🚀'; // default
+    }
+    
+    getCategoryColor(categoryName) {
+        const categoryLower = categoryName.toLowerCase();
+        if (categoryLower.includes('mobile') || categoryLower.includes('app')) return '#3b82f6';
+        if (categoryLower.includes('web')) return '#10b981';
+        if (categoryLower.includes('ai') || categoryLower.includes('ml')) return '#8b5cf6';
+        if (categoryLower.includes('iot')) return '#f59e0b';
+        if (categoryLower.includes('automation')) return '#ef4444';
+        return '#6b7280'; // default gray
     }
     
     darkenColor(color, percent) {

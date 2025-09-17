@@ -116,7 +116,23 @@ class HomeWebController extends Controller
             }
         });
         
-        return view('portfolio_all', compact('konf', 'projectCategories'));
+        // Get projects data - same way as homepage
+        $projects = Cache::remember('portfolio_all_projects', 900, function() {
+            try {
+                return DB::table('project')
+                    ->select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 
+                           'client_name', 'location', 'project_category', 'created_at', 'sequence', 'description')
+                    ->where('status', 'Active')
+                    ->orderBy('sequence', 'asc')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+            } catch (\Exception $e) {
+                \Log::error('Portfolio all projects error: ' . $e->getMessage());
+                return collect();
+            }
+        });
+        
+        return view('portfolio_all', compact('konf', 'projectCategories', 'projects'));
     }
 
     public function portfolioAll()

@@ -55,6 +55,13 @@
                             </div>
                             @endif
                             
+                            <!-- Client and Location Info -->
+                            @if($project->client_name || $project->location)
+                            <div class="project-client mb-3">
+                                {{ $project->client_name ?? 'Unknown Client' }} • {{ $project->location ?? 'Unknown Location' }}
+                            </div>
+                            @endif
+                            
                             <p class="text-gray-400 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">
                                 {!! Str::limit(strip_tags($project->summary_description ?? ''), 120) !!}
                             </p>
@@ -134,6 +141,13 @@
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+/* Client info styles */
+.project-client {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-style: italic;
 }
 
 @media (max-width: 1024px) {

@@ -290,6 +290,202 @@ Route::get('/manual-fix-other-projects', function () {
     }
 });
 
+// DEBUG ROUTE - CEK DATABASE VS API
+Route::get('/debug-project-images', function () {
+    try {
+        $results = [];
+        
+        // 1. Raw database query
+        $rawProjects = DB::select("SELECT id_project, project_name, featured_image, images FROM project WHERE status = 'Active'");
+        $results['raw_database'] = [];
+        foreach ($rawProjects as $project) {
+            $results['raw_database'][] = [
+                'id' => $project->id_project,
+                'name' => $project->project_name,
+                'featured_image' => $project->featured_image,
+                'images' => $project->images
+            ];
+        }
+        
+        // 2. Laravel Query Builder
+        $builderProjects = DB::table('project')->where('status', 'Active')->get();
+        $results['query_builder'] = [];
+        foreach ($builderProjects as $project) {
+            $results['query_builder'][] = [
+                'id' => $project->id_project,
+                'name' => $project->project_name,
+                'featured_image' => $project->featured_image,
+                'images' => $project->images
+            ];
+        }
+        
+        // 3. Project Controller getProjects method
+        $controller = new \App\Http\Controllers\ProjectController();
+        $apiResponse = $controller->getProjects(new \Illuminate\Http\Request());
+        $apiData = $apiResponse->getData(true);
+        $results['api_response'] = [];
+        if (isset($apiData['projects'])) {
+            foreach ($apiData['projects'] as $project) {
+                $results['api_response'][] = [
+                    'id' => $project['id_project'],
+                    'name' => $project['project_name'],
+                    'featured_image' => $project['featured_image'],
+                    'images' => $project['images']
+                ];
+            }
+        }
+        
+        // 4. Check actual files
+        $projectDir = public_path('images/projects');
+        $actualFiles = [];
+        if (is_dir($projectDir)) {
+            $files = scandir($projectDir);
+            foreach ($files as $file) {
+                if ($file != '.' && $file != '..' && str_ends_with(strtolower($file), '.png')) {
+                    $actualFiles[] = $file;
+                }
+            }
+        }
+        $results['actual_files'] = $actualFiles;
+        
+        // 5. Test image URLs
+        $results['test_urls'] = [];
+        foreach ($builderProjects as $project) {
+            if ($project->featured_image) {
+                $imageUrl = url('/file/project/' . $project->featured_image);
+                $filePath = $projectDir . '/' . $project->featured_image;
+                $fileExists = file_exists($filePath);
+                
+                $results['test_urls'][] = [
+                    'project_name' => $project->project_name,
+                    'featured_image' => $project->featured_image,
+                    'url' => $imageUrl,
+                    'file_exists' => $fileExists,
+                    'file_path' => $filePath
+                ];
+            }
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Debug completed - compare all results',
+            'results' => $results
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Debug failed: ' . $e->getMessage(),
+            'error_details' => [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]
+        ], 500);
+    }
+});
+
+// SIMPLE DEBUG - RAW DATABASE CHECK
+Route::get('/check-raw-db', function () {
+    try {
+        // 1. Direct MySQL query
+        $rawQuery = "SELECT id_project, project_name, featured_image FROM project WHERE status = 'Active' LIMIT 5";
+        $rawResults = DB::select($rawQuery);
+        
+        echo "<h1>RAW DATABASE CHECK</h1>";
+        echo "<h2>1. Direct MySQL Query Results:</h2>";
+        echo "<table border='1' cellpadding='5'>";
+        echo "<tr><th>ID</th><th>Project Name</th><th>Featured Image</th></tr>";
+        foreach ($rawResults as $row) {
+            echo "<tr>";
+            echo "<td>{$row->id_project}</td>";
+            echo "<td>{$row->project_name}</td>";
+            echo "<td><strong>{$row->featured_image}</strong></td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+        
+        // 2. Laravel Query Builder
+        echo "<h2>2. Laravel Query Builder Results:</h2>";
+        $builderResults = DB::table('project')->where('status', 'Active')->limit(5)->get();
+        echo "<table border='1' cellpadding='5'>";
+        echo "<tr><th>ID</th><th>Project Name</th><th>Featured Image</th></tr>";
+        foreach ($builderResults as $row) {
+            echo "<tr>";
+            echo "<td>{$row->id_project}</td>";
+            echo "<td>{$row->project_name}</td>";
+            echo "<td><strong>{$row->featured_image}</strong></td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+        
+        // 3. Check JSON encoding/decoding
+        echo "<h2>3. Check JSON Processing:</h2>";
+        foreach ($builderResults as $row) {
+            echo "<p><strong>Project:</strong> {$row->project_name}</p>";
+            echo "<p><strong>Original featured_image:</strong> {$row->featured_image}</p>";
+            
+            // Test JSON encode/decode
+            $encoded = json_encode($row->featured_image);
+            $decoded = json_decode($encoded);
+            echo "<p><strong>After JSON encode/decode:</strong> {$decoded}</p>";
+            
+            // Test Laravel collection transformation
+            $collection = collect([$row]);
+            $mapped = $collection->map(function($item) {
+                return $item->featured_image;
+            });
+            echo "<p><strong>After Collection map:</strong> {$mapped->first()}</p>";
+            echo "<hr>";
+        }
+        
+        // 4. Test actual file existence
+        echo "<h2>4. File Existence Check:</h2>";
+        $projectDir = public_path('images/projects');
+        echo "<p><strong>Project Directory:</strong> {$projectDir}</p>";
+        
+        if (is_dir($projectDir)) {
+            $files = scandir($projectDir);
+            echo "<p><strong>Actual Files in Directory:</strong></p>";
+            echo "<ul>";
+            foreach ($files as $file) {
+                if ($file != '.' && $file != '..' && str_ends_with(strtolower($file), '.png')) {
+                    echo "<li>{$file}</li>";
+                }
+            }
+            echo "</ul>";
+        }
+        
+        echo "<h2>5. API Controller Test:</h2>";
+        try {
+            $controller = new \App\Http\Controllers\ProjectController();
+            $request = new \Illuminate\Http\Request();
+            $apiResponse = $controller->getProjects($request);
+            $responseData = $apiResponse->getData(true);
+            
+            if (isset($responseData['projects'])) {
+                echo "<table border='1' cellpadding='5'>";
+                echo "<tr><th>ID</th><th>Project Name</th><th>Featured Image</th></tr>";
+                foreach ($responseData['projects'] as $project) {
+                    echo "<tr>";
+                    echo "<td>{$project['id_project']}</td>";
+                    echo "<td>{$project['project_name']}</td>";
+                    echo "<td><strong>{$project['featured_image']}</strong></td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+            }
+        } catch (Exception $e) {
+            echo "<p><strong>API Error:</strong> {$e->getMessage()}</p>";
+        }
+        
+    } catch (Exception $e) {
+        echo "<h1>ERROR</h1>";
+        echo "<p>{$e->getMessage()}</p>";
+        echo "<p>File: {$e->getFile()}</p>";
+        echo "<p>Line: {$e->getLine()}</p>";
+    }
+});
+
 // FIX OTHER_PROJECTS CONSTRAINT ROUTE
 Route::get('/fix-other-projects-constraint', function () {
     try {
@@ -674,6 +870,216 @@ Route::get('/create-admin', function () {
         ], 500);
     }
 })->name('create.admin');
+
+// TEST PORTFOLIO FIX ROUTE
+Route::get('/test-portfolio-fix', function () {
+    try {
+        $results = [];
+        
+        // 1. Check if project table exists
+        $tableExists = Schema::hasTable('project');
+        $results['table_exists'] = $tableExists;
+        
+        if (!$tableExists) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Project table does not exist. Run /setup first.',
+                'results' => $results
+            ]);
+        }
+        
+        // 2. Check existing projects
+        $existingProjects = DB::table('project')->count();
+        $results['existing_projects'] = $existingProjects;
+        
+        // 3. Add sample project if none exists
+        if ($existingProjects == 0) {
+            $sampleProject = [
+                'project_name' => 'Bus Request System MYSATNUSA',
+                'client_name' => 'PT. Sat Nusapersada Tbk',
+                'location' => 'Batam, Indonesia',
+                'description' => 'Bus Request System is a comprehensive web and mobile-based solution that revolutionizes transportation requests for company activities. This system streamlines the process of requesting transportation for various purposes including team outings, site visits, official events, and business meetings.',
+                'summary_description' => 'Bus Request System is a web and mobile-based solution that simplifies transportation requests for company activities such as outings, site visits, or official events.',
+                'project_category' => 'Mobile Application',
+                'url_project' => 'https://portfolio.alisadikin.com/projects/bus-request-mysatnusa',
+                'slug_project' => 'bus-request-system-mysatnusa',
+                'images' => json_encode(['sample-bus-app.jpg', 'sample-bus-app-2.jpg']),
+                'featured_image' => 'sample-bus-app.jpg',
+                'sequence' => 1,
+                'status' => 'Active',
+                'other_projects' => json_encode(['Employee Management System', 'Inventory Tracking System']),
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+            
+            $inserted = DB::table('project')->insert($sampleProject);
+            $results['sample_project_inserted'] = $inserted;
+        }
+        
+        // 4. Check current projects 
+        $projects = DB::table('project')->get();
+        $results['total_projects'] = $projects->count();
+        $results['projects'] = $projects->toArray();
+        
+        // 5. Test API endpoint
+        try {
+            $controller = new \App\Http\Controllers\ProjectController();
+            $apiResponse = $controller->getProjects(new \Illuminate\Http\Request());
+            $apiData = $apiResponse->getData(true);
+            $results['api_test'] = [
+                'success' => $apiData['success'] ?? false,
+                'project_count' => count($apiData['projects'] ?? [])
+            ];
+        } catch (Exception $e) {
+            $results['api_test'] = [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+        }
+        
+        // 6. Check directories
+        $directories = [
+            'images/projects' => public_path('images/projects'),
+            'images/galeri' => public_path('images/galeri'),
+            'images/editor' => public_path('images/editor'),
+            'images/placeholder' => public_path('images/placeholder')
+        ];
+        
+        foreach ($directories as $name => $path) {
+            $results['directories'][$name] = [
+                'exists' => file_exists($path),
+                'writable' => is_writable($path),
+                'path' => $path
+            ];
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Portfolio fix test completed successfully!',
+            'results' => $results,
+            'test_urls' => [
+                'portfolio_page' => url('/portfolio/all'),
+                'api_projects' => url('/api/projects'),
+                'sample_image' => url('/file/project/sample-bus-app.jpg')
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Test failed: ' . $e->getMessage(),
+            'error_details' => [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]
+        ], 500);
+    }
+})->name('test.portfolio.fix');
+
+// ROUTE UNTUK FIX MASALAH GAMBAR
+Route::get('/fix-missing-images', function () {
+    try {
+        $results = [];
+        
+        // 1. Cek database projects
+        $projects = DB::table('project')->get();
+        $results['total_projects'] = $projects->count();
+        
+        // 2. Cek file gambar yang ada
+        $projectDir = public_path('images/projects');
+        $existingFiles = [];
+        if (is_dir($projectDir)) {
+            $files = scandir($projectDir);
+            foreach ($files as $file) {
+                if ($file != '.' && $file != '..') {
+                    $existingFiles[] = $file;
+                }
+            }
+        }
+        $results['existing_files'] = $existingFiles;
+        
+        // 3. Cek project yang punya featured_image tapi file tidak ada
+        $missingImages = [];
+        foreach ($projects as $project) {
+            if ($project->featured_image) {
+                $filePath = $projectDir . '/' . $project->featured_image;
+                if (!file_exists($filePath)) {
+                    $missingImages[] = [
+                        'project_name' => $project->project_name,
+                        'featured_image' => $project->featured_image,
+                        'file_path' => $filePath
+                    ];
+                }
+            }
+        }
+        $results['missing_images'] = $missingImages;
+        
+        // 4. Test route gambar
+        $testImageUrl = url('/file/project/project_175791801_0_68c7b33bd4c6c.png');
+        $results['test_image_url'] = $testImageUrl;
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Image diagnosis completed',
+            'results' => $results,
+            'action_needed' => count($missingImages) > 0 ? 'Copy images from Windows to container' : 'Images are OK',
+            'instructions' => [
+                '1. Test image URL: ' . $testImageUrl,
+                '2. Check portfolio page: ' . url('/portfolio/all'),
+                '3. If images still not showing, copy files from Windows directory to container'
+            ]
+        ]);
+        
+    } catch (Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Fix failed: ' . $e->getMessage()
+        ], 500);
+    }
+});
+
+// Add API route for projects
+Route::get('/api/projects', [ProjectController::class, 'getProjects'])->name('api.projects');
+
+// Routes untuk menampilkan file gambar
+Route::get('/file/project/{filename}', function ($filename) {
+    $path = public_path('images/projects/' . $filename);
+    
+    if (!file_exists($path)) {
+        // Return placeholder image if file doesn't exist
+        $placeholderPath = public_path('images/placeholder/project-placeholder.jpg');
+        if (file_exists($placeholderPath)) {
+            return response()->file($placeholderPath);
+        }
+        abort(404);
+    }
+    
+    return response()->file($path);
+})->name('project.image');
+
+Route::get('/file/galeri/{filename}', function ($filename) {
+    $path = public_path('images/galeri/' . $filename);
+    
+    if (!file_exists($path)) {
+        $placeholderPath = public_path('images/placeholder/gallery-placeholder.jpg');
+        if (file_exists($placeholderPath)) {
+            return response()->file($placeholderPath);
+        }
+        abort(404);
+    }
+    
+    return response()->file($path);
+})->name('galeri.image');
+
+Route::get('/file/editor/{filename}', function ($filename) {
+    $path = public_path('images/editor/' . $filename);
+    
+    if (!file_exists($path)) {
+        abort(404);
+    }
+    
+    return response()->file($path);
+})->name('editor.image');
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 

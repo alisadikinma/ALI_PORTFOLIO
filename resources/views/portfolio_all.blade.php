@@ -675,7 +675,8 @@ class PortfolioManager {
     
     viewProject(slug) {
         // Redirect to project detail page
-        window.location.href = `/portfolio/${slug}`;
+        const publicPath = '{{ env("PUBLIC_PATH", "/") }}';
+        window.location.href = `${publicPath}portfolio/${slug}`;
     }
 }
 

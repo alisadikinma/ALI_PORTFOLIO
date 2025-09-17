@@ -91,7 +91,7 @@
 
     <!-- View All Projects Button -->
     <div class="text-center">
-        <a href="{{ url('portfolio') }}" 
+        <a href="{{ url('portfolio/all') }}" 
            class="inline-flex items-center bg-transparent border-2 border-yellow-400 hover:bg-yellow-400 hover:text-black text-yellow-400 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
            &nbsp;&nbsp;VIEW ALL PROJECTS&nbsp;&nbsp;
         </a>

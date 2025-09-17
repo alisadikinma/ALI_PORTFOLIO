@@ -116,7 +116,7 @@ class HomeWebController extends Controller
             }
         });
         
-        return view('portfolio', compact('konf', 'projectCategories'));
+        return view('portfolio_all', compact('konf', 'projectCategories'));
     }
 
     public function portfolioAll()
@@ -148,7 +148,7 @@ class HomeWebController extends Controller
                 ->paginate(12);
         }
         
-        return view('portfolio-all', compact('konf', 'projects'));
+        return view('portfolio_all', compact('konf', 'projects'));
     }
 
     public function gallery()
@@ -582,7 +582,7 @@ class HomeWebController extends Controller
     {
         $urls = collect([
             ['url' => url('/'), 'changefreq' => 'weekly', 'priority' => '1.0'],
-            ['url' => url('/portfolio'), 'changefreq' => 'weekly', 'priority' => '0.8'],
+            ['url' => url('/portfolio/all'), 'changefreq' => 'weekly', 'priority' => '0.8'],
             ['url' => url('/gallery'), 'changefreq' => 'monthly', 'priority' => '0.7'],
             ['url' => url('/articles'), 'changefreq' => 'weekly', 'priority' => '0.8'],
         ]);

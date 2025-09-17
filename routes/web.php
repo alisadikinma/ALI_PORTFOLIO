@@ -25,29 +25,6 @@ use App\Http\Controllers\AwardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ProfileController;
 
-// TEST ROUTE - Remove after confirming it works
-Route::get('/test', function () {
-    return 'Laravel is working! Route system is functional.';
-});
-
-// DEBUG ROUTE for testing categories
-Route::get('/debug-categories', [ProjectController::class, 'debugCategories']);
-
-// TEST HOMEPAGE WITHOUT LOADING ISSUES
-Route::get('/test-homepage', function () {
-    try {
-        $controller = new HomeWebController();
-        // Get all the same data as the main index
-        $data = $controller->index()->getData();
-        // But render with the test template
-        return view('welcome-test', $data);
-    } catch (Exception $e) {
-        return view('welcome-simple', [
-            'error' => $e->getMessage(),
-            'message' => 'Test homepage failed to load'
-        ]);
-    }
-});
 
 // MAIN HOME ROUTE - This MUST work
 Route::get('/', function () {
@@ -89,7 +66,7 @@ Route::get('/debug', function() {
 // === PROJECT ROUTES FOR TESTING (UNPROTECTED) ===
 Route::get('/project/create_project', function () {
     try {
-        $title = 'Tambah Portfolio (Working Route!)';
+        $title = 'Tambah Portfolio';
         
         // Ensure images directory exists
         $imageDir = public_path('images/projects');
@@ -210,272 +187,6 @@ Route::post('/upload-image', function (\Illuminate\Http\Request $request) {
         return response()->json([
             'success' => false,
             'message' => 'Upload failed: ' . $e->getMessage()
-        ], 500);
-    }
-});
-
-// COMPREHENSIVE UPLOAD DEBUGGING ROUTES
-Route::get('/debug-upload-system', function () {
-    try {
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Upload system debug information',
-            'system_info' => [
-                'php_version' => PHP_VERSION,
-                'laravel_version' => app()->version(),
-                'upload_max_filesize' => ini_get('upload_max_filesize'),
-                'post_max_size' => ini_get('post_max_size'),
-                'max_execution_time' => ini_get('max_execution_time'),
-                'memory_limit' => ini_get('memory_limit')
-            ],
-            'directories' => [
-                'public_exists' => File::exists(public_path()),
-                'images_exists' => File::exists(public_path('images')),
-                'editor_exists' => File::exists(public_path('images/editor')),
-                'projects_exists' => File::exists(public_path('images/projects')),
-                'editor_writable' => is_writable(public_path('images/editor')),
-                'projects_writable' => is_writable(public_path('images/projects'))
-            ],
-            'routes_available' => [
-                'upload_editor_image' => Route::has('project.upload-editor-image.direct'),
-                'upload_controller' => Route::has('project.upload-editor-image.controller'),
-                'simple_upload' => true, // This is a closure route
-            ],
-            'csrf_token' => csrf_token(),
-            'current_url' => url('/'),
-            'base_url' => config('app.url')
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Debug failed: ' . $e->getMessage()
-        ], 500);
-    }
-});
-
-// SIMPLE UPLOAD TEST ROUTE
-Route::post('/debug-simple-upload', function (\Illuminate\Http\Request $request) {
-    Log::info('=== DEBUG SIMPLE UPLOAD START ===');
-    Log::info('Request method: ' . $request->method());
-    Log::info('Content type: ' . $request->header('Content-Type'));
-    Log::info('Has file: ' . ($request->hasFile('file') ? 'YES' : 'NO'));
-    Log::info('All files: ' . json_encode(array_keys($request->allFiles())));
-    Log::info('File details: ' . json_encode($_FILES));
-    
-    try {
-        if (!$request->hasFile('file')) {
-            throw new Exception('No file in request');
-        }
-        
-        $file = $request->file('file');
-        Log::info('File object: ' . get_class($file));
-        Log::info('File valid: ' . ($file->isValid() ? 'YES' : 'NO'));
-        Log::info('File error: ' . $file->getError());
-        Log::info('File size: ' . $file->getSize());
-        Log::info('File type: ' . $file->getMimeType());
-        Log::info('File original name: ' . $file->getClientOriginalName());
-        
-        // Simple validation
-        if (!$file->isValid()) {
-            throw new Exception('File is not valid, error: ' . $file->getError());
-        }
-        
-        if ($file->getSize() > 2048000) {
-            throw new Exception('File too large: ' . $file->getSize() . ' bytes');
-        }
-        
-        $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!in_array($file->getMimeType(), $allowedMimes)) {
-            throw new Exception('Invalid file type: ' . $file->getMimeType());
-        }
-        
-        // Create directory
-        $uploadDir = public_path('images/editor');
-        if (!File::exists($uploadDir)) {
-            File::makeDirectory($uploadDir, 0755, true);
-            Log::info('Created directory: ' . $uploadDir);
-        }
-        
-        // Generate filename
-        $extension = $file->getClientOriginalExtension();
-        $filename = 'debug_' . time() . '_' . uniqid() . '.' . $extension;
-        
-        Log::info('Attempting to save file as: ' . $filename);
-        
-        // Save file
-        $result = $file->move($uploadDir, $filename);
-        
-        if ($result) {
-            $imageUrl = asset('images/editor/' . $filename);
-            Log::info('File saved successfully: ' . $imageUrl);
-            
-            return response()->json([
-                'success' => true,
-                'url' => $imageUrl,
-                'message' => 'Debug upload successful!',
-                'filename' => $filename,
-                'file_path' => $uploadDir . '/' . $filename,
-                'file_exists' => File::exists($uploadDir . '/' . $filename)
-            ]);
-        } else {
-            throw new Exception('Failed to move file');
-        }
-        
-    } catch (Exception $e) {
-        Log::error('Debug upload error: ' . $e->getMessage());
-        Log::error('Exception trace: ' . $e->getTraceAsString());
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Debug upload failed: ' . $e->getMessage(),
-            'debug_info' => [
-                'request_method' => $request->method(),
-                'content_type' => $request->header('Content-Type'),
-                'has_file' => $request->hasFile('file'),
-                'files_count' => count($request->allFiles()),
-                'post_data' => $request->except(['file', '_token']),
-                'server_info' => [
-                    'upload_max_filesize' => ini_get('upload_max_filesize'),
-                    'post_max_size' => ini_get('post_max_size'),
-                    'max_file_uploads' => ini_get('max_file_uploads')
-                ]
-            ]
-        ], 500);
-    }
-});
-
-// DEBUGGING DASHBOARD
-Route::get('/debug-dashboard', function () {
-    return response()->file(public_path('debug-upload.html'));
-});
-
-// VIEW LARAVEL LOGS FOR DEBUGGING
-Route::get('/debug-logs', function () {
-    try {
-        $logFile = storage_path('logs/laravel.log');
-        
-        if (!File::exists($logFile)) {
-            return response()->json([
-                'status' => 'info',
-                'message' => 'No log file found',
-                'log_path' => $logFile
-            ]);
-        }
-        
-        // Get last 50 lines of log
-        $command = 'tail -n 50 ' . escapeshellarg($logFile);
-        $output = shell_exec($command);
-        
-        if ($output === null) {
-            // Fallback: read file directly
-            $content = File::get($logFile);
-            $lines = explode("\n", $content);
-            $output = implode("\n", array_slice($lines, -50));
-        }
-        
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Last 50 lines of Laravel log',
-            'log_path' => $logFile,
-            'log_content' => $output,
-            'file_size' => File::size($logFile),
-            'last_modified' => date('Y-m-d H:i:s', File::lastModified($logFile))
-        ]);
-        
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to read logs: ' . $e->getMessage()
-        ], 500);
-    }
-});
-
-// CHECK ROUTES EXISTENCE
-Route::get('/debug-routes', function () {
-    $allRoutes = collect(Route::getRoutes())->map(function ($route) {
-        return [
-            'method' => implode('|', $route->methods()),
-            'uri' => $route->uri(),
-            'name' => $route->getName(),
-            'action' => $route->getActionName()
-        ];
-    });
-    
-    $uploadRoutes = $allRoutes->filter(function ($route) {
-        return str_contains($route['uri'], 'upload') || 
-               str_contains($route['name'] ?? '', 'upload') ||
-               str_contains($route['action'], 'upload');
-    });
-    
-    return response()->json([
-        'status' => 'success',
-        'upload_routes' => $uploadRoutes->values(),
-        'total_routes' => $allRoutes->count(),
-        'test_urls' => [
-            'debug_upload' => url('/debug-simple-upload'),
-            'simple_upload' => url('/upload-image'),
-            'editor_upload' => url('/project/upload-editor-image'),
-            'controller_upload' => url('/upload-editor-image-controller'),
-            'php_upload' => url('/test-upload.php')
-        ]
-    ]);
-});
-
-// TEST UPLOAD ROUTE AVAILABILITY
-Route::get('/test-upload-availability', function () {
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Upload test route is accessible!',
-        'available_routes' => [
-            'direct_upload' => url('/project/upload-editor-image'),
-            'controller_upload' => url('/upload-editor-image-controller'),
-            'simple_upload' => url('/upload-image')
-        ],
-        'directory_status' => [
-            'images_exists' => File::exists(public_path('images')),
-            'projects_exists' => File::exists(public_path('images/projects')),
-            'editor_exists' => File::exists(public_path('images/editor')),
-            'editor_writable' => is_writable(public_path('images/editor')) || !File::exists(public_path('images/editor'))
-        ],
-        'csrf_token' => csrf_token()
-    ]);
-});
-
-// TEST UPLOAD VERIFICATION ROUTE
-Route::get('/test-upload-route', function () {
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Upload route is accessible!',
-        'route_name' => 'project.upload-editor-image',
-        'route_url' => route('project.upload-editor-image'),
-        'csrf_token' => csrf_token(),
-        'directories' => [
-            'images_exists' => File::exists(public_path('images')),
-            'projects_exists' => File::exists(public_path('images/projects')),
-            'editor_exists' => File::exists(public_path('images/editor')),
-            'editor_writable' => is_writable(public_path('images/editor')) || !File::exists(public_path('images/editor'))
-        ]
-    ]);
-});
-
-// TEST UPLOAD ROUTE
-Route::post('/test-upload', function (\Illuminate\Http\Request $request) {
-    try {
-        return response()->json([
-            'success' => true,
-            'message' => 'Test upload route is working!',
-            'csrf_token' => csrf_token(),
-            'request_data' => [
-                'has_file' => $request->hasFile('file'),
-                'files_count' => count($request->allFiles()),
-                'method' => $request->method(),
-                'content_type' => $request->header('Content-Type')
-            ]
-        ]);
-    } catch (Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Test upload failed: ' . $e->getMessage()
         ], 500);
     }
 });
@@ -619,59 +330,6 @@ Route::get('/fix-other-projects-constraint', function () {
     }
 });
 
-// TEST SIMPLE INSERT ROUTE
-Route::get('/test-simple-insert', function () {
-    try {
-        // Try inserting a very simple project to isolate the issue
-        $testData = [
-            'project_name' => 'Simple Test Project',
-            'client_name' => 'Simple Test Client',
-            'location' => 'Test Location',
-            'description' => 'Simple test description',
-            'project_category' => 'Test',
-            'slug_project' => 'simple-test-' . time(),
-            'images' => json_encode(['test.jpg']),
-            'featured_image' => 'test.jpg',
-            'sequence' => 1,
-            'status' => 'Active',
-            'other_projects' => null, // Start with null
-            'created_at' => now(),
-            'updated_at' => now()
-        ];
-        
-        $result = DB::table('project')->insert($testData);
-        
-        if ($result) {
-            // Now try with the problematic value
-            $testData2 = $testData;
-            $testData2['project_name'] = 'Test with Other Projects';
-            $testData2['slug_project'] = 'test-other-projects-' . time();
-            $testData2['other_projects'] = 'BUS Request MYSATNUSA'; // The problematic value
-            
-            $result2 = DB::table('project')->insert($testData2);
-            
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Both test inserts successful!',
-                'results' => [
-                    'simple_insert' => $result,
-                    'with_other_projects' => $result2
-                ],
-                'next_step' => 'Try creating your project again: ' . url('/project/create_project')
-            ]);
-        }
-        
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Test insert failed: ' . $e->getMessage(),
-            'error_code' => $e->getCode(),
-            'sql_state' => method_exists($e, 'errorInfo') ? $e->errorInfo : 'N/A',
-            'suggestion' => 'Try the constraint fix: ' . url('/fix-other-projects-constraint')
-        ], 500);
-    }
-});
-
 // DATABASE SCHEMA CHECK ROUTE
 Route::get('/check-project-schema', function () {
     try {
@@ -719,51 +377,6 @@ Route::get('/check-project-schema', function () {
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]
-        ], 500);
-    }
-});
-
-// TEST ROUTE: Create sample project with test data
-Route::get('/create-test-project', function () {
-    try {
-        // Create a test project with all required fields including slug_project
-        $testData = [
-            'project_name' => 'Test Portfolio Project',
-            'client_name' => 'Test Client Company', 
-            'location' => 'Jakarta, Indonesia',
-            'description' => '<h2>Test Project Description</h2><p>This is a test project created to verify the system functionality. <strong>Features include:</strong></p><ul><li>Auto-generated slug functionality</li><li>Image upload capabilities</li><li>Rich text editor</li><li>Project categorization</li></ul>',
-            'summary_description' => 'A comprehensive test project to verify portfolio functionality',
-            'project_category' => 'Web Application',
-            'url_project' => 'https://example.com/test-project',
-            'slug_project' => 'test-portfolio-project-web-application',
-            'images' => json_encode(['default-project.jpg']),
-            'featured_image' => 'default-project.jpg',
-            'sequence' => 1,
-            'status' => 'Active',
-            'other_projects' => null,
-            'created_at' => now(),
-            'updated_at' => now()
-        ];
-        
-        $result = DB::table('project')->insert($testData);
-        
-        if ($result) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Test project created successfully!',
-                'data' => $testData,
-                'project_list_url' => url('/project'),
-                'project_detail_url' => url('/project/1/admin'),
-                'project_edit_url' => url('/project/1/edit')
-            ]);
-        } else {
-            throw new Exception('Failed to insert test project');
-        }
-        
-    } catch (Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Failed to create test project: ' . $e->getMessage()
         ], 500);
     }
 });
@@ -832,19 +445,6 @@ Route::get('/api/projects/search', [ProjectController::class, 'searchProjects'])
 Route::get('/projects/search', [ProjectController::class, 'searchProjects'])->name('projects.search.autocomplete');
 // === END PROJECT ROUTES ===
 
-// === DEBUGGING ROUTES - REMOVE AFTER TESTING ===
-Route::get('/test-simple', function () {
-    return 'Simple route works!';
-});
-
-Route::get('/test-project-direct', function () {
-    return 'Project route test works!';
-});
-
-Route::get('/project/test123', function () {
-    return 'Project namespace test works!';
-});
-// === END DEBUGGING ROUTES ===
 
 // CLEAR ROUTE CACHE - REMOVE AFTER TESTING
 Route::get('/clear-cache', function () {
@@ -876,16 +476,6 @@ Route::get('/clear-cache', function () {
             'message' => 'Failed to clear cache: ' . $e->getMessage()
         ], 500);
     }
-});
-
-// SIMPLE TEST ROUTE - REMOVE AFTER TESTING
-Route::get('/test-route-works', function () {
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Routes are working!',
-        'timestamp' => now(),
-        'test' => 'This route was added successfully'
-    ]);
 });
 
 Route::get('/auth-status', function () {
@@ -1095,32 +685,6 @@ Route::get('/portfolio', [HomeWebController::class, 'portfolio'])->name('portfol
 Route::get('/portfolio/all', [HomeWebController::class, 'portfolioAll'])->name('portfolio.all');
 Route::get('/portfolio/{slug}', [HomeWebController::class, 'portfolioDetail'])->name('portfolio.detail');
 Route::get('/project/{slug}', [ProjectController::class, 'show'])->name('project.public.show');
-
-// TEMPORARY: Unprotected project routes for testing - REMOVE IN PRODUCTION!
-Route::get('/project-test/create_project', function () {
-    try {
-        $title = 'Tambah Portfolio (Test Mode)';
-        
-        // Ensure images directory exists
-        $imageDir = public_path('images/projects');
-        if (!File::exists($imageDir)) {
-            File::makeDirectory($imageDir, 0755, true);
-        }
-        
-        // Ensure editor directory exists
-        $editorDir = public_path('images/editor');
-        if (!File::exists($editorDir)) {
-            File::makeDirectory($editorDir, 0755, true);
-        }
-        
-        return view('project.create', compact('title'));
-    } catch (Exception $e) {
-        return response()->json([
-            'error' => 'Failed to load create form: ' . $e->getMessage(),
-            'suggestion' => 'Please check if the view file exists and there are no syntax errors'
-        ], 500);
-    }
-})->name('project.test.create_project');
 
 // AUTH ROUTES - Simple version
 Route::get('/login', function () {

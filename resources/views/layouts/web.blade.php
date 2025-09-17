@@ -575,16 +575,31 @@ $konf = DB::table('setting')->first();
                 {{-- Portfolio --}}
                 @if($konf->portfolio_section_active ?? true)
                 @php
-                    // Check if current route is portfolio related
-                    $isPortfolioPage = request()->is('portfolio*') || 
-                                      request()->routeIs('portfolio.*') || 
-                                      str_contains(request()->path(), 'portfolio') ||
-                                      request()->routeIs('project.public.show') ||
-                                      str_contains(request()->url(), '/portfolio/') ||
-                                      (View::getSection('title') && str_contains(View::getSection('title'), 'Portfolio'));
+                    // More comprehensive portfolio page detection
+                    $currentPath = request()->path();
+                    $currentUrl = request()->url();
+                    $currentRoute = request()->route();
+                    $routeName = $currentRoute ? $currentRoute->getName() : '';
+                    
+                    $isCurrentlyPortfolioPage = 
+                        // Explicit variable from portfolio pages
+                        (isset($isPortfolioPage) && $isPortfolioPage) ||
+                        // URL path contains portfolio
+                        str_contains($currentPath, 'portfolio') ||
+                        // URL contains project detail
+                        str_contains($currentPath, 'project/') ||
+                        // Route names related to portfolio/project
+                        in_array($routeName, ['portfolio.detail', 'project.public.show', 'portfolio', 'portfolio.all']) ||
+                        // URL pattern matches
+                        preg_match('/\/(portfolio|project)\/[^\/]+$/', $currentPath) ||
+                        // Check if this is a project detail page by slug pattern
+                        preg_match('/\/portfolio\/[a-z0-9\-]+$/', $currentPath) ||
+                        preg_match('/\/project\/[a-z0-9\-]+$/', $currentPath) ||
+                        // Title contains Portfolio (fallback)
+                        (View::hasSection('title') && str_contains(View::getSection('title'), 'Portfolio'));
                 @endphp
                 <a href="{{ url('/#portfolio') }}"
-                    class="{{ $isPortfolioPage ? 'text-yellow-400 text-base font-semibold' : 'text-gray-400 text-base font-normal' }} hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="{{ $isCurrentlyPortfolioPage ? 'text-yellow-400 text-base font-semibold' : 'text-gray-400 text-base font-normal' }} hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
                     Portfolio
                 </a>
                 @endif

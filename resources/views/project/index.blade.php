@@ -40,7 +40,7 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $row->project_name ?? 'N/A' }}</td>
-                            <td>{{ $row->project_category ?? 'N/A' }}</td>
+                            <td>{{ $row->category_name ?? 'N/A' }}</td>
                             <td>
                                 <span class="badge badge-{{ $row->status == 'Active' ? 'success' : 'secondary' }}">
                                     {{ $row->status ?? 'N/A' }}

@@ -49,16 +49,30 @@
                                 <label for="project_category">Kategori Project <span class="text-danger">*</span></label>
                                 <select name="project_category" id="project_category" class="form-control">
                                     <option value="">Pilih Kategori Project</option>
-                                    <option value="Artificial Intelligence" {{ old('project_category', $project->project_category) == 'Artificial Intelligence' ? 'selected' : '' }}>Artificial Intelligence</option>
-                                    <option value="Web Application" {{ old('project_category', $project->project_category) == 'Web Application' ? 'selected' : '' }}>Web Application</option>
-                                    <option value="Mobile Application" {{ old('project_category', $project->project_category) == 'Mobile Application' ? 'selected' : '' }}>Mobile Application</option>
-                                    <option value="Data Visualization" {{ old('project_category', $project->project_category) == 'Data Visualization' ? 'selected' : '' }}>Data Visualization</option>
-                                    <option value="API Development" {{ old('project_category', $project->project_category) == 'API Development' ? 'selected' : '' }}>API Development</option>
-                                    <option value="Automation" {{ old('project_category', $project->project_category) == 'Automation' ? 'selected' : '' }}>Automation</option>
-                                    <option value="Internet of Things" {{ old('project_category', $project->project_category) == 'Internet of Things' ? 'selected' : '' }}>Internet of Things</option>
-                                    <option value="Blockchain" {{ old('project_category', $project->project_category) == 'Blockchain' ? 'selected' : '' }}>Blockchain</option>
-                                    <option value="Machine Learning" {{ old('project_category', $project->project_category) == 'Machine Learning' ? 'selected' : '' }}>Machine Learning</option>
-                                    <option value="System Integration" {{ old('project_category', $project->project_category) == 'System Integration' ? 'selected' : '' }}>System Integration</option>
+                                    @if(isset($projectCategories) && $projectCategories->count() > 0)
+                                        @foreach($projectCategories as $category)
+                                            <option value="{{ $category->lookup_name }}" {{ old('project_category', $project->project_category) == $category->lookup_name ? 'selected' : '' }}>
+                                                {{ $category->lookup_name }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <!-- Fallback static options if database is empty or variable not set -->
+                                        <option value="Mobile APP" {{ old('project_category', $project->project_category) == 'Mobile APP' ? 'selected' : '' }}>Mobile APP</option>
+                                        <option value="Web APP" {{ old('project_category', $project->project_category) == 'Web APP' ? 'selected' : '' }}>Web APP</option>
+                                        <option value="AI/ML" {{ old('project_category', $project->project_category) == 'AI/ML' ? 'selected' : '' }}>AI/ML</option>
+                                        <option value="Internet of Things" {{ old('project_category', $project->project_category) == 'Internet of Things' ? 'selected' : '' }}>Internet of Things</option>
+                                        <option value="AI Automation" {{ old('project_category', $project->project_category) == 'AI Automation' ? 'selected' : '' }}>AI Automation</option>
+                                        <option value="Custom GPT/GEM" {{ old('project_category', $project->project_category) == 'Custom GPT/GEM' ? 'selected' : '' }}>Custom GPT/GEM</option>
+                                        <option value="Artificial Intelligence" {{ old('project_category', $project->project_category) == 'Artificial Intelligence' ? 'selected' : '' }}>Artificial Intelligence</option>
+                                        <option value="Web Application" {{ old('project_category', $project->project_category) == 'Web Application' ? 'selected' : '' }}>Web Application</option>
+                                        <option value="Mobile Application" {{ old('project_category', $project->project_category) == 'Mobile Application' ? 'selected' : '' }}>Mobile Application</option>
+                                        <option value="Data Visualization" {{ old('project_category', $project->project_category) == 'Data Visualization' ? 'selected' : '' }}>Data Visualization</option>
+                                        <option value="API Development" {{ old('project_category', $project->project_category) == 'API Development' ? 'selected' : '' }}>API Development</option>
+                                        <option value="Automation" {{ old('project_category', $project->project_category) == 'Automation' ? 'selected' : '' }}>Automation</option>
+                                        <option value="Blockchain" {{ old('project_category', $project->project_category) == 'Blockchain' ? 'selected' : '' }}>Blockchain</option>
+                                        <option value="Machine Learning" {{ old('project_category', $project->project_category) == 'Machine Learning' ? 'selected' : '' }}>Machine Learning</option>
+                                        <option value="System Integration" {{ old('project_category', $project->project_category) == 'System Integration' ? 'selected' : '' }}>System Integration</option>
+                                    @endif
                                 </select>
                             </div>
                         </div>

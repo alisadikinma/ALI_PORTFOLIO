@@ -30,6 +30,9 @@ Route::get('/test', function () {
     return 'Laravel is working! Route system is functional.';
 });
 
+// DEBUG ROUTE for testing categories
+Route::get('/debug-categories', [ProjectController::class, 'debugCategories']);
+
 // TEST HOMEPAGE WITHOUT LOADING ISSUES
 Route::get('/test-homepage', function () {
     try {

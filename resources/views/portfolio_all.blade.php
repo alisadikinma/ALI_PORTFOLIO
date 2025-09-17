@@ -1,5 +1,7 @@
 @extends('layouts.web')
 
+@section('title', 'Portfolio - Ali Sadikin')
+
 @section('isi')
 <!-- Enhanced Portfolio Page with Cards Design using Lookup Data -->
 <section class="min-h-screen bg-gradient-footer py-20 px-4">

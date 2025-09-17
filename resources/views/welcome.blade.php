@@ -18,29 +18,71 @@
 </div>
 @endif
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const alert = document.getElementById('successAlert');
-        const closeBtn = document.getElementById('closeAlertBtn');
+<!-- Scroll to Top Button -->
+<button id="scrollToTopBtn" 
+        class="fixed bottom-8 right-8 z-50 p-4 bg-yellow-400 hover:bg-yellow-500 text-black rounded-full shadow-xl transition-all duration-300 opacity-0 invisible transform translate-y-4 hover:scale-110"
+        style="position: fixed !important; bottom: 2rem !important; right: 2rem !important; z-index: 9999 !important;">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+    </svg>
+</button>
 
-        if (alert && closeBtn) {
-            closeBtn.addEventListener('click', () => {
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Success Alert Handler
+    const alert = document.getElementById('successAlert');
+    const closeBtn = document.getElementById('closeAlertBtn');
+
+    if (alert && closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            alert.classList.add('animate-fade-out');
+            setTimeout(() => {
+                alert.remove();
+            }, 300);
+        });
+
+        setTimeout(() => {
+            if (alert) {
                 alert.classList.add('animate-fade-out');
                 setTimeout(() => {
                     alert.remove();
                 }, 300);
-            });
+            }
+        }, 5000);
+    }
 
-            setTimeout(() => {
-                if (alert) {
-                    alert.classList.add('animate-fade-out');
-                    setTimeout(() => {
-                        alert.remove();
-                    }, 300);
-                }
-            }, 5000);
+    // Scroll to Top Button Handler
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    
+    // Show/hide scroll to top button based on scroll position
+    function toggleScrollButton() {
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.classList.remove('opacity-0', 'invisible', 'translate-y-4');
+            scrollToTopBtn.classList.add('opacity-100', 'visible', 'translate-y-0');
+        } else {
+            scrollToTopBtn.classList.add('opacity-0', 'invisible', 'translate-y-4');
+            scrollToTopBtn.classList.remove('opacity-100', 'visible', 'translate-y-0');
         }
+    }
+
+    // Scroll to top functionality
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
+
+    // Listen for scroll events
+    window.addEventListener('scroll', toggleScrollButton);
+
+    // DISABLED: Menu highlighting now handled by layouts/web.blade.php IntersectionObserver
+    // This prevents double processing and conflicts
+    console.log('📝 Menu highlighting handled by IntersectionObserver in layout');
+    
+    // Only handle scroll button
+    toggleScrollButton();
+});
 </script>
 
 <style>

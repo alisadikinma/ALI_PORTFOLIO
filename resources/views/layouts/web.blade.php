@@ -556,6 +556,14 @@ $konf = DB::table('setting')->first();
                 </a>
                 @endif
 
+                {{-- Awards --}}
+                @if($konf->awards_section_active ?? true)
+                <a href="{{ url('/#awards') }}"
+                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    Awards
+                </a>
+                @endif
+
                 {{-- Services --}}
                 @if($konf->services_section_active ?? true)
                 <a href="{{ url('/#services') }}"
@@ -566,8 +574,17 @@ $konf = DB::table('setting')->first();
 
                 {{-- Portfolio --}}
                 @if($konf->portfolio_section_active ?? true)
+                @php
+                    // Check if current route is portfolio related
+                    $isPortfolioPage = request()->is('portfolio*') || 
+                                      request()->routeIs('portfolio.*') || 
+                                      str_contains(request()->path(), 'portfolio') ||
+                                      request()->routeIs('project.public.show') ||
+                                      str_contains(request()->url(), '/portfolio/') ||
+                                      (View::getSection('title') && str_contains(View::getSection('title'), 'Portfolio'));
+                @endphp
                 <a href="{{ url('/#portfolio') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="{{ $isPortfolioPage ? 'text-yellow-400 text-base font-semibold' : 'text-gray-400 text-base font-normal' }} hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
                     Portfolio
                 </a>
                 @endif
@@ -739,16 +756,22 @@ $konf = DB::table('setting')->first();
         const sections = document.querySelectorAll("section[id]");
         const navLinks = document.querySelectorAll("#nav-menu a");
 
+        console.log('🔍 Available sections:', Array.from(sections).map(s => s.id));
+        console.log('🔗 Navigation links:', Array.from(navLinks).map(l => l.getAttribute('href')));
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
+                        console.log('🎯 Section in view:', entry.target.id);
+                        
                         navLinks.forEach((link) => {
                             link.classList.remove("text-yellow-400", "font-semibold");
                             link.classList.add("text-gray-400", "font-normal");
 
                             // ✅ cocokkan dengan href yang mungkin berupa URL penuh
                             if (link.getAttribute("href").endsWith("#" + entry.target.id)) {
+                                console.log('✨ Highlighting menu for section:', entry.target.id);
                                 link.classList.add("text-yellow-400", "font-semibold");
                                 link.classList.remove("text-gray-400", "font-normal");
                             }
@@ -756,7 +779,7 @@ $konf = DB::table('setting')->first();
                     }
                 });
             }, {
-                threshold: 0.6
+                threshold: 0.5
             }
         );
 

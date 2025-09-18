@@ -517,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         {{ $konf->profile_title ?? 'TRANSFORMING MANUFACTURING WITH AUTOMATION & ROBOTICS' }}
                     </div>
                 </div>
-                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.25rem;">
+                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.1rem;">
                     Hello bro, I'm<br />
                     <span class="text-yellow-400 relative">
                     {{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}
@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>
                 </h1>
             </div>
-            <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: 0.25rem;">
+            <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: -1rem;">
                 {!! $konf->profile_content ?? 'Strategic Digital Transformation Leader with over 16 years of expertise in Innovation, Leadership, and impactful Transformation within Industry 4.0. Proven ability to drive meaningful results through advanced technology integration spanning AI, IoT, Web & Mobile Development, and Robotic Process Automation.' !!}
             </p>
 

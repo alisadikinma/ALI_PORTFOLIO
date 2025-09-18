@@ -170,37 +170,11 @@ $menuItems = DB::table('lookup_data')
             backdrop-filter: blur(12px);
         }
 
-        /* Enhanced Mobile Menu Styles */
+        /* COMPLETELY FIXED Mobile Menu Styles - VERSION 3 */
         #nav-menu {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            transform: translateX(-100%);
-            opacity: 0;
+            transition: all 0.3s ease-in-out;
         }
-
-        #nav-menu.hidden {
-            transform: translateX(-100%);
-            opacity: 0;
-        }
-
-        #nav-menu:not(.hidden) {
-            transform: translateX(0);
-            opacity: 1;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            border-radius: 0 8px 8px 0;
-            padding: 2rem 1.5rem;
-            width: 80%;
-            max-width: 320px;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
+        
         /* Mobile menu overlay */
         #nav-menu-overlay {
             position: fixed;
@@ -208,8 +182,8 @@ $menuItems = DB::table('lookup_data')
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 40;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -218,6 +192,138 @@ $menuItems = DB::table('lookup_data')
         #nav-menu-overlay.show {
             opacity: 1;
             visibility: visible;
+        }
+        
+        /* Mobile specific styles */
+        @media (max-width: 639px) {
+            /* Hidden state */
+            #nav-menu.hidden {
+                transform: translateX(-100%);
+                opacity: 0;
+                visibility: hidden;
+            }
+
+            /* Visible state - Mobile Menu */
+            #nav-menu:not(.hidden) {
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 320px !important;
+                height: 100vh !important;
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.5) !important;
+                padding: 2rem 1.5rem !important;
+                z-index: 999 !important;
+                flex-direction: column !important;
+                gap: 0 !important;
+                transform: translateX(0) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                overflow-y: auto !important;
+                align-items: flex-start !important;
+                justify-content: flex-start !important;
+                border-radius: 0 !important;
+            }
+            
+            /* Mobile menu header */
+            #nav-menu:not(.hidden) .mobile-menu-header {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                width: 100% !important;
+                padding-bottom: 1.5rem !important;
+                margin-bottom: 1.5rem !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+            
+            #nav-menu:not(.hidden) .mobile-menu-title {
+                font-size: 1.25rem !important;
+                font-weight: 600 !important;
+                color: #fbbf24 !important;
+            }
+            
+            #nav-menu:not(.hidden) .close-menu-btn {
+                background: none !important;
+                border: none !important;
+                cursor: pointer !important;
+                padding: 0.5rem !important;
+                color: #fbbf24 !important;
+            }
+            
+            /* Menu items styling */
+            #nav-menu:not(.hidden) a {
+                display: block !important;
+                width: 100% !important;
+                color: white !important;
+                text-decoration: none !important;
+                padding: 1rem 0 !important;
+                font-size: 1rem !important;
+                font-weight: 500 !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+                margin-bottom: 0.5rem !important;
+                transition: all 0.3s ease !important;
+            }
+            
+            #nav-menu:not(.hidden) a:hover {
+                color: #fbbf24 !important;
+                background-color: rgba(251, 191, 36, 0.1) !important;
+                transform: translateX(8px) !important;
+                border-radius: 8px !important;
+                padding-left: 1rem !important;
+            }
+            
+            /* Special styling for Send Message button in mobile */
+            #nav-menu:not(.hidden) a.bg-yellow-400 {
+                background: #fbbf24 !important;
+                color: #000 !important;
+                text-align: center !important;
+                font-weight: 600 !important;
+                margin-top: 1rem !important;
+                border-radius: 8px !important;
+                padding: 1rem !important;
+                border-bottom: none !important;
+            }
+            
+            #nav-menu:not(.hidden) a.bg-yellow-400:hover {
+                background: #f59e0b !important;
+                color: #000 !important;
+                transform: translateY(-2px) !important;
+                padding-left: 1rem !important;
+            }
+            
+            /* Override for flex display */
+            #nav-menu:not(.hidden) a.bg-yellow-400 {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 0.5rem !important;
+            }
+        }
+
+        /* Desktop styles remain unchanged */
+        @media (min-width: 640px) {
+            #nav-menu {
+                transform: none !important;
+                opacity: 1 !important;
+                background: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                padding: 0 !important;
+                width: auto !important;
+                height: auto !important;
+                position: static !important;
+                flex-direction: row !important;
+                gap: 1.75rem !important;
+                visibility: visible !important;
+            }
+
+            #nav-menu .mobile-menu-header {
+                display: none !important;
+            }
+
+            #nav-menu-overlay {
+                display: none !important;
+            }
         }
 
         #nav-menu a {
@@ -277,40 +383,6 @@ $menuItems = DB::table('lookup_data')
 
         #nav-menu .close-menu-btn:hover svg {
             transform: rotate(90deg);
-        }
-
-        /* Responsive adjustments */
-        @media (min-width: 640px) {
-            #nav-menu {
-                transform: none !important;
-                opacity: 1 !important;
-                background: none !important;
-                box-shadow: none !important;
-                border-radius: 0 !important;
-                padding: 0 !important;
-                width: auto !important;
-                height: auto !important;
-                position: static !important;
-                flex-direction: row !important;
-                gap: 1.75rem !important;
-            }
-
-            #nav-menu .mobile-menu-header {
-                display: none !important;
-            }
-
-            #nav-menu a::before {
-                display: none !important;
-            }
-
-            #nav-menu a:hover {
-                background: none !important;
-                transform: none !important;
-            }
-
-            #nav-menu-overlay {
-                display: none !important;
-            }
         }
 
         .scrollbar-thin {
@@ -690,13 +762,24 @@ $menuItems = DB::table('lookup_data')
     </footer>
 
     <script>
+        // COMPLETELY FIXED MOBILE MENU TOGGLE FUNCTION
         function toggleMenu() {
             const menu = document.getElementById('nav-menu');
             const overlay = document.getElementById('nav-menu-overlay');
             const toggleButton = document.getElementById('menu-toggle');
             const menuIcon = toggleButton.querySelector('.menu-icon');
             const closeIcon = toggleButton.querySelector('.close-icon');
+            
+            console.log('Toggle menu clicked', { menu, overlay, toggleButton });
+            
+            // Check if elements exist
+            if (!menu || !overlay || !toggleButton || !menuIcon || !closeIcon) {
+                console.error('Menu elements not found:', { menu, overlay, toggleButton, menuIcon, closeIcon });
+                return;
+            }
+            
             const isOpen = !menu.classList.contains('hidden');
+            console.log('Menu is currently open:', isOpen);
 
             if (isOpen) {
                 // Close menu
@@ -706,6 +789,7 @@ $menuItems = DB::table('lookup_data')
                 closeIcon.classList.add('hidden');
                 document.body.style.overflow = '';
                 toggleButton.setAttribute('aria-expanded', 'false');
+                console.log('Menu closed');
             } else {
                 // Open menu
                 menu.classList.remove('hidden');
@@ -714,20 +798,29 @@ $menuItems = DB::table('lookup_data')
                 closeIcon.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
                 toggleButton.setAttribute('aria-expanded', 'true');
+                console.log('Menu opened');
             }
         }
 
         // Close mobile menu when clicking on navigation links
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Initializing mobile menu');
+            
             const mobileMenuLinks = document.querySelectorAll('#nav-menu a');
+            console.log('Found menu links:', mobileMenuLinks.length);
+            
             mobileMenuLinks.forEach(link => {
                 link.addEventListener('click', function() {
+                    console.log('Menu link clicked:', this.textContent);
                     // Check if we're on mobile (menu is currently visible and not in desktop mode)
                     const menu = document.getElementById('nav-menu');
                     const isMenuVisible = !menu.classList.contains('hidden');
                     const isMobile = window.innerWidth < 640;
                     
+                    console.log('Link click - Menu visible:', isMenuVisible, 'Is mobile:', isMobile);
+                    
                     if (isMenuVisible && isMobile) {
+                        console.log('Closing menu due to link click');
                         toggleMenu();
                     }
                 });

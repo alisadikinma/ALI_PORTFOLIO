@@ -514,40 +514,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex items-center gap-4 sm:gap-6">
                     <div class="w-12 sm:w-20 h-0.5 bg-yellow-400"></div>
                     <div class="text-yellow-400 text-sm sm:text-base font-semibold uppercase leading-normal">
-                        {{ $konf->profile_title }}
+                        {{ $konf->profile_title ?? 'TRANSFORMING MANUFACTURING WITH AUTOMATION & ROBOTICS' }}
                     </div>
                 </div>
                 <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.25rem;">
                     Hello bro, I'm<br />
                     <span class="text-yellow-400 relative">
-                    {{ $konf->pimpinan_setting }}
+                    {{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}
                     <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full"></div>
                     </span>
                 </h1>
             </div>
             <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: 0.25rem;">
-                {!! $konf->tentang_setting !!}
+                {!! $konf->profile_content ?? 'Strategic Digital Transformation Leader with over 16 years of expertise in Innovation, Leadership, and impactful Transformation within Industry 4.0. Proven ability to drive meaningful results through advanced technology integration spanning AI, IoT, Web & Mobile Development, and Robotic Process Automation.' !!}
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{ !empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact' }}" 
-                   target="{{ !empty($konf->view_cv_url) ? '_blank' : '_self' }}" 
+                {{-- Primary Button - Menggunakan data dari table settings --}}
+                <a href="{{ !empty($konf->primary_button_link) ? $konf->primary_button_link : (!empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact') }}" 
+                   target="{{ (!empty($konf->primary_button_link) && (Str::startsWith($konf->primary_button_link, 'http') || Str::startsWith($konf->primary_button_link, 'https'))) || (!empty($konf->view_cv_url) && (Str::startsWith($konf->view_cv_url, 'http') || Str::startsWith($konf->view_cv_url, 'https'))) ? '_blank' : '_self' }}" 
                    class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3" 
                    style="min-width: 180px; text-align: center;">
                     <span class="text-neutral-900 text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        View CV
+                        {{ $konf->primary_button_title ?? 'View CV' }}
                     </span>
-                    @if(!empty($konf->view_cv_url))
+                    @if((!empty($konf->primary_button_link) && (Str::startsWith($konf->primary_button_link, 'http') || Str::startsWith($konf->primary_button_link, 'https'))) || (!empty($konf->view_cv_url) && (Str::startsWith($konf->view_cv_url, 'http') || Str::startsWith($konf->view_cv_url, 'https'))))
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     @endif
                 </a>
 
-                <a href="{{ url('portfolio') }}" target="_blank"
+                {{-- Secondary Button - Menggunakan data dari table settings --}}
+                <a href="{{ !empty($konf->secondary_button_link) ? $konf->secondary_button_link : url('portfolio') }}" 
+                   target="{{ !empty($konf->secondary_button_link) && (Str::startsWith($konf->secondary_button_link, 'http') || Str::startsWith($konf->secondary_button_link, 'https')) ? '_blank' : '_self' }}"
                     class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3" style="min-width: 200px; text-align: center;">
                     <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        View Portfolio
+                        {{ $konf->secondary_button_title ?? 'View Portfolio' }}
                     </span>
                 </a>
             </div>
@@ -677,8 +680,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flex flex-col gap-8 max-w-2xl flex-1 order-2 lg:order-1">
                         <div class="flex flex-col gap-6">
                             <h2 class="text-3xl lg:text-4xl font-bold text-white leading-snug">
-                                {{-- DYNAMIC TITLE: Using lookup_description from database --}}
-                                {{ $sectionConfig['description'] ?? ($konf->about_section_title ?? 'With over 16+ years of experience in manufacturing and technology') }}
+                                {{-- DYNAMIC TITLE: Using about_section_title from database --}}
+                                {{ $konf->about_section_title ?? 'With over 16+ years of experience in manufacturing and technology' }}
                             </h2>
                             @if(isset($konf->about_section_subtitle) && $konf->about_section_subtitle)
                             <h3 class="text-xl lg:text-2xl font-semibold text-yellow-400">

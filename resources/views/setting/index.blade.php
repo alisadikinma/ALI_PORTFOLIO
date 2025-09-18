@@ -30,6 +30,11 @@
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">
+                                <i class="fas fa-phone"></i> Contact Settings
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
                             <button class="nav-link" id="award-tab" data-bs-toggle="tab" data-bs-target="#award" type="button" role="tab" aria-controls="award" aria-selected="false">
                                 <i class="fas fa-trophy"></i> Award Settings
                             </button>
@@ -65,73 +70,9 @@
                                         <label for="" class="form-label">Alamat</label>
                                         <input type="text" name="alamat_setting" class="form-control" value="{{ $setting->alamat_setting ?? '' }}">
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">View CV URL <small class="text-muted">(Link untuk download CV)</small></label>
-                                        <input type="url" name="view_cv_url" class="form-control" value="{{ $setting->view_cv_url ?? '' }}" placeholder="https://example.com/my-cv.pdf">
-                                        <small class="text-muted">Masukkan URL lengkap untuk file CV yang bisa didownload</small>
-                                    </div>
 
-                                    <!-- Social Media -->
-                                    <div class="col-12">
-                                        <h5 class="fw-bold text-primary mt-4 mb-3">Social Media</h5>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Youtube</label>
-                                        <input type="text" class="form-control" name="youtube_setting" placeholder="Masukkan Channel Youtube disini" value="{{ $setting->youtube_setting ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Instagram</label>
-                                        <input type="text" name="instagram_setting" class="form-control" placeholder="Masukkan akun instagram disini..." value="{{ $setting->instagram_setting ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Email</label>
-                                        <input type="email" class="form-control" name="email_setting" placeholder="Masukkan email disini" value="{{ $setting->email_setting ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Tik - Tok</label>
-                                        <input type="text" class="form-control" name="tiktok_setting" placeholder="Masukkan tik-tok disini" value="{{ $setting->tiktok_setting ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">Facebook</label>
-                                        <input type="text" class="form-control" name="facebook_setting" placeholder="Masukkan facebook disini" value="{{ $setting->facebook_setting ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">LinkedIn</label>
-                                        <input type="text" class="form-control" name="linkedin_setting" placeholder="Masukkan linkedin disini" value="{{ $setting->linkedin_setting ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="">No. HP</label>
-                                        <input type="text" name="no_hp_setting" class="form-control" placeholder="Masukkan No HP disini..." value="{{ $setting->no_hp_setting ?? '' }}">
-                                    </div>
 
-                                    <!-- Profile Section -->
-                                    <div class="col-12">
-                                        <h5 class="fw-bold text-primary mt-4 mb-3">Profile Section</h5>
-                                    </div>
-                                    <div class="col-6 mb-3">
-                                        <label for="" class="form-label">Profile Title</label>
-                                        <input type="text" name="profile_title" class="form-control" value="{{ $setting->profile_title ?? '' }}">
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="" class="form-label">Profile Content</label>
-                                        <textarea name="profile_content" class="form-control" id="editor3" rows="5">{{ $setting->profile_content ?? '' }}</textarea>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">Primary Button Title</label>
-                                        <input type="text" name="primary_button_title" class="form-control" value="{{ $setting->primary_button_title ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">Primary Button Link</label>
-                                        <input type="text" name="primary_button_link" class="form-control" value="{{ $setting->primary_button_link ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">Secondary Button Title</label>
-                                        <input type="text" name="secondary_button_title" class="form-control" value="{{ $setting->secondary_button_title ?? '' }}">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="" class="form-label">Secondary Button Link</label>
-                                        <input type="text" name="secondary_button_link" class="form-control" value="{{ $setting->secondary_button_link ?? '' }}">
-                                    </div>
+
 
                                     <!-- Media -->
                                     <div class="col-12">
@@ -164,21 +105,33 @@
                             <!-- About Tab -->
                             <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab">
                                 <div class="row">
-                                    <!-- Content -->
+                                    <!-- Profile Section -->
                                     <div class="col-12">
-                                        <h5 class="fw-bold text-primary mb-3">Content</h5>
+                                        <h5 class="fw-bold text-primary mb-3">Profile Section</h5>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <label for="" class="form-label">Profile Title</label>
+                                        <input type="text" name="profile_title" class="form-control" value="{{ $setting->profile_title ?? '' }}">
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <label for="">Tentang Saya</label>
-                                        <textarea name="tentang_setting" class="form-control" id="editor" cols="30" rows="5">{{ $setting->tentang_setting ?? '' }}</textarea>
+                                        <label for="" class="form-label">Profile Content</label>
+                                        <textarea name="profile_content" class="form-control" id="editor3" rows="5">{{ $setting->profile_content ?? '' }}</textarea>
                                     </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="">Misi Saya</label>
-                                        <textarea name="misi_setting" class="form-control" id="editor1" cols="30" rows="5">{{ $setting->misi_setting ?? '' }}</textarea>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="" class="form-label">Primary Button Title</label>
+                                        <input type="text" name="primary_button_title" class="form-control" value="{{ $setting->primary_button_title ?? '' }}">
                                     </div>
-                                    <div class="col-12 mb-3">
-                                        <label for="">Visi Saya</label>
-                                        <textarea name="visi_setting" class="form-control" id="editor2" cols="30" rows="10">{{ $setting->visi_setting ?? '' }}</textarea>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="" class="form-label">Primary Button Link</label>
+                                        <input type="text" name="primary_button_link" class="form-control" value="{{ $setting->primary_button_link ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="" class="form-label">Secondary Button Title</label>
+                                        <input type="text" name="secondary_button_title" class="form-control" value="{{ $setting->secondary_button_title ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="" class="form-label">Secondary Button Link</label>
+                                        <input type="text" name="secondary_button_link" class="form-control" value="{{ $setting->secondary_button_link ?? '' }}">
                                     </div>
 
                                     <!-- Statistics -->
@@ -233,6 +186,44 @@
                                 </div>
                             </div>
 
+                            <!-- Contact Tab -->
+                            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                                <div class="row">
+                                    <!-- Social Media -->
+                                    <div class="col-12">
+                                        <h5 class="fw-bold text-primary mb-3">Social Media</h5>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">Youtube</label>
+                                        <input type="text" class="form-control" name="youtube_setting" placeholder="Masukkan Channel Youtube disini" value="{{ $setting->youtube_setting ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">Instagram</label>
+                                        <input type="text" name="instagram_setting" class="form-control" placeholder="Masukkan akun instagram disini..." value="{{ $setting->instagram_setting ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">Email</label>
+                                        <input type="email" class="form-control" name="email_setting" placeholder="Masukkan email disini" value="{{ $setting->email_setting ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">Tik - Tok</label>
+                                        <input type="text" class="form-control" name="tiktok_setting" placeholder="Masukkan tik-tok disini" value="{{ $setting->tiktok_setting ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">Facebook</label>
+                                        <input type="text" class="form-control" name="facebook_setting" placeholder="Masukkan facebook disini" value="{{ $setting->facebook_setting ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">LinkedIn</label>
+                                        <input type="text" class="form-control" name="linkedin_setting" placeholder="Masukkan linkedin disini" value="{{ $setting->linkedin_setting ?? '' }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="">No. HP</label>
+                                        <input type="text" name="no_hp_setting" class="form-control" placeholder="Masukkan No HP disini..." value="{{ $setting->no_hp_setting ?? '' }}">
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Award Tab -->
                             <div class="tab-pane fade" id="award" role="tabpanel" aria-labelledby="award-tab">
                                 <div class="row">
@@ -262,21 +253,6 @@
 
 <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
 <script>
-    ClassicEditor
-        .create(document.querySelector('#editor'))
-        .catch(error => {
-            console.error(error);
-        });
-    ClassicEditor
-        .create(document.querySelector('#editor1'))
-        .catch(error => {
-            console.error(error);
-        });
-    ClassicEditor
-        .create(document.querySelector('#editor2'))
-        .catch(error => {
-            console.error(error);
-        });
     ClassicEditor
         .create(document.querySelector('#editor3'))
         .catch(error => {

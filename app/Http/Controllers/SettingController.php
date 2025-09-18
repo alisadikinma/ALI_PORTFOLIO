@@ -122,9 +122,6 @@ class SettingController extends Controller
         'pimpinan_setting'       => $request->pimpinan_setting,
         'logo_setting'           => $logo,
         'favicon_setting'        => $favicon,
-        'tentang_setting'        => $request->tentang_setting,
-        'misi_setting'           => $request->misi_setting,
-        'visi_setting'           => $request->visi_setting,
         'keyword_setting'        => $request->keyword_setting,
         'alamat_setting'         => $request->alamat_setting,
         'instagram_setting'      => $request->instagram_setting,
@@ -146,7 +143,6 @@ class SettingController extends Controller
         'project_delivered'      => $request->project_delivered,
         'cost_savings'           => $request->cost_savings,
         'success_rate'           => $request->success_rate,
-        'view_cv_url'            => $request->view_cv_url,
     ];
 
     // Add optional columns only if they exist in the table

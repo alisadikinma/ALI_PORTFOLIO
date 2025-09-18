@@ -1,7 +1,25 @@
 <?php
 use Illuminate\Support\Facades\DB;
 
-$konf = DB::table('setting')->first();
+$konf = DB::table('setting')
+    ->select([
+        'id_setting',
+        'instansi_setting',
+        'pimpinan_setting',
+        'logo_setting',
+        'favicon_setting',
+        'keyword_setting',
+        'profile_content',
+        'alamat_setting',
+        'email_setting',
+        'no_hp_setting',
+        'instagram_setting',
+        'youtube_setting',
+        'linkedin_setting',
+        'tiktok_setting',
+        'facebook_setting'
+    ])
+    ->first();
 
 // Get menu items from lookup_data table ordered by sort_order and only active items
 $menuItems = DB::table('lookup_data')
@@ -21,7 +39,7 @@ $menuItems = DB::table('lookup_data')
     {{-- Dynamic SEO Meta Tags --}}
     <title>@yield('title', $konf->instansi_setting . ' - AI Generalist & Technopreneur')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('logo/' . ($konf->logo_setting ?? 'default.ico')) }}">
-    <meta name="description" content="@yield('meta_description', $konf->tentang_setting)">
+    <meta name="description" content="@yield('meta_description', $konf->profile_content ?? 'AI Generalist & Technopreneur Portfolio')">
     <meta name="keywords" content="@yield('meta_keywords', $konf->keyword_setting)">
     <meta name="author" content="{{ $konf->pimpinan_setting }}">
     <meta name="robots" content="@yield('robots', 'index, follow')">
@@ -29,7 +47,7 @@ $menuItems = DB::table('lookup_data')
     
     {{-- Open Graph Tags --}}
     <meta property="og:title" content="@yield('og_title', $konf->instansi_setting)">
-    <meta property="og:description" content="@yield('og_description', $konf->tentang_setting)">
+    <meta property="og:description" content="@yield('og_description', $konf->profile_content ?? 'AI Generalist & Technopreneur Portfolio')">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="@yield('og_url', request()->url())">
     <meta property="og:image" content="@yield('og_image', asset('logo/' . $konf->logo_setting))">
@@ -39,7 +57,7 @@ $menuItems = DB::table('lookup_data')
     {{-- Twitter Card Tags --}}
     <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')">
     <meta name="twitter:title" content="@yield('twitter_title', $konf->instansi_setting)">
-    <meta name="twitter:description" content="@yield('twitter_description', $konf->tentang_setting)">
+    <meta name="twitter:description" content="@yield('twitter_description', $konf->profile_content ?? 'AI Generalist & Technopreneur Portfolio')">
     <meta name="twitter:image" content="@yield('twitter_image', asset('logo/' . $konf->logo_setting))">
     <meta name="twitter:site" content="@yield('twitter_site', '@alisadikin')">
     <meta name="twitter:creator" content="@yield('twitter_creator', '@alisadikin')">

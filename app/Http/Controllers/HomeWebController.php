@@ -50,15 +50,55 @@ class HomeWebController extends Controller
     }
 
     /**
-     * Get site configuration using Model
+     * Get site configuration using Model - Updated to ensure all settings columns are available
      */
     private function getSiteConfiguration()
     {
         return Cache::remember('site_config', 300, function() {
-            // Use Setting model if it exists, otherwise use DB
+            // Use Setting model to get all configuration data
             try {
-                return Setting::first();
+                // Ensure we get the first settings record with all columns
+                $settings = Setting::select([
+                    'id_setting',
+                    'instansi_setting',
+                    'pimpinan_setting', 
+                    'logo_setting',
+                    'favicon_setting',
+                    'misi_setting',
+                    'visi_setting',
+                    'keyword_setting',
+                    'alamat_setting',
+                    'instagram_setting',
+                    'youtube_setting', 
+                    'email_setting',
+                    'tiktok_setting',
+                    'facebook_setting',
+                    'linkedin_setting',
+                    'no_hp_setting',
+                    'maps_setting',
+                    'profile_title',           // Column 1 yang diminta
+                    'profile_content',         // Column 3 yang diminta
+                    'primary_button_title',    // Column 4 yang diminta
+                    'primary_button_link',     // Column 4 link yang diminta
+                    'secondary_button_title',  // Column 5 yang diminta
+                    'secondary_button_link',   // Column 5 link yang diminta
+                    'years_experience',
+                    'followers_count',
+                    'project_delivered',
+                    'cost_savings',
+                    'success_rate',
+                    'about_section_title',
+                    'about_section_subtitle',
+                    'about_section_description',
+                    'about_section_image',
+                    'award_section_title',
+                    'award_section_subtitle',
+                    'view_cv_url'
+                ])->first();
+                
+                return $settings;
             } catch (\Exception $e) {
+                // Fallback to direct DB query if model fails
                 return DB::table('setting')->first();
             }
         });

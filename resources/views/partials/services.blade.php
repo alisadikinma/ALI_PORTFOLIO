@@ -1,10 +1,15 @@
 <!-- Services Section -->
-@if(($konf->services_section_active ?? true) && isset($layanan) && $layanan->count() > 0)
 <section id="services" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
     <!-- Header -->
     <div class="text-center mb-12">
         <h2 class="text-yellow-400 text-4xl sm:text-6xl font-bold mb-4">
-            Services
+            @php
+            $servicesSection = DB::table('lookup_data')
+                ->where('lookup_type', 'homepage_section')
+                ->where('lookup_code', 'services')
+                ->first();
+            @endphp
+            {{ $servicesSection->lookup_description ?? 'Services' }}
         </h2>
         <p class="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto">
             Comprehensive AI and automation solutions for your business transformation
@@ -473,4 +478,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endif

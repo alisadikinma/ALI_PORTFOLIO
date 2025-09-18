@@ -26,6 +26,11 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ProfileController;
 
 
+// TEST DRAG DROP ROUTE
+Route::get('/test-drag-drop', function () {
+    return view('test-drag-drop');
+})->name('test.drag.drop');
+
 // MAIN HOME ROUTE - This MUST work
 Route::get('/', function () {
     try {

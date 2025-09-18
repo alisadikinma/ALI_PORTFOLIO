@@ -1,10 +1,15 @@
 <!-- Gallery Section - ENHANCED VERSION with Global System Integration (Updated 9/14/2025) -->
-@if($konf->gallery_section_active ?? true)
 <section id="gallery" class="w-full max-w-screen-xl mx-auto px-3 sm:px-4 py-6 flex flex-col items-center gap-6 sm:gap-10">
     <!-- Header -->
     <div class="flex flex-col gap-2 text-center">
         <h2 class="text-yellow-400 text-3xl sm:text-5xl font-bold leading-tight tracking-tight">
-            Gallery
+            @php
+            $gallerySection = DB::table('lookup_data')
+                ->where('lookup_type', 'homepage_section')
+                ->where('lookup_code', 'gallery')
+                ->first();
+            @endphp
+            {{ $gallerySection->lookup_description ?? 'Gallery' }}
         </h2>
         <p class="text-neutral-400 text-base sm:text-lg font-normal leading-6 tracking-tight">
             Explore the visual journey of my work, from concept to impactful solutions
@@ -221,5 +226,3 @@ console.log('📍 Current location:', window.location.href);
 console.log('🔧 GlobalGalleryLoader available:', typeof window.GlobalGalleryLoader !== 'undefined');
 console.log('🖼️ GlobalImageModal available:', typeof window.GlobalImageModal !== 'undefined');
 </script>
-
-@endif

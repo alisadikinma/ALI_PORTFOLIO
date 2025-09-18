@@ -636,67 +636,386 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 </section>
 
-<!-- About Section - FIXED -->
-@if($konf->about_section_active ?? true)
-<section id="about" class="w-full max-w-screen-2xl mx-auto px-6 py-12">
-    <div class="flex flex-col lg:flex-row justify-between items-center gap-12">
-        
-        <!-- Left Content -->
-        <div class="flex flex-col gap-8 max-w-2xl flex-1 order-2 lg:order-1">
-            <div class="flex flex-col gap-6">
-                <h2 class="text-3xl lg:text-4xl font-bold text-white leading-snug">
-                    {{ $konf->about_section_title ?? 'With over 16+ years of experience in manufacturing and technology' }}
-                </h2>
-                @if(isset($konf->about_section_subtitle) && $konf->about_section_subtitle)
-                <h3 class="text-xl lg:text-2xl font-semibold text-yellow-400">
-                    {{ $konf->about_section_subtitle }}
-                </h3>
-                @endif
-                <div class="text-gray-400 text-lg leading-relaxed">
-                    {!! $konf->about_section_description ?? "I've dedicated my career to bridging the gap between traditional manufacturing and cutting-edge AI solutions.<br><br>From my early days as a Production Engineer to becoming an AI Generalist, I've consistently focused on delivering measurable business impact through innovative technology solutions." !!}
-                </div>
-            </div>
-        </div>
+{{-- Dynamic sections based on database configuration --}}
+@php
+    // Get active sections with their configurations from the database
+    $activeSections = [];
+    if (isset($sectionConfigs) && !empty($sectionConfigs)) {
+        foreach ($sectionConfigs as $code => $config) {
+            if ($config['is_active']) {
+                $activeSections[$code] = $config;
+            }
+        }
+        // Sort by sort_order
+        uasort($activeSections, function($a, $b) {
+            return ($a['sort_order'] ?? 999) <=> ($b['sort_order'] ?? 999);
+        });
+    } else {
+        // Fallback to default sections if no database config
+        $activeSections = [
+            'about' => ['title' => 'About', 'is_active' => true],
+            'services' => ['title' => 'Services', 'is_active' => true],
+            'portfolio' => ['title' => 'Portfolio', 'is_active' => true],
+            'awards' => ['title' => 'Awards', 'is_active' => true],
+            'testimonials' => ['title' => 'Testimonials', 'is_active' => true],
+            'gallery' => ['title' => 'Gallery', 'is_active' => true],
+            'articles' => ['title' => 'Articles', 'is_active' => true],
+            'contact' => ['title' => 'Contact', 'is_active' => true],
+        ];
+    }
+@endphp
 
-        <!-- Right Image - FIXED POSITION & BALANCED SIZE -->
-        <div class="flex-1 flex items-stretch justify-center order-1 lg:order-2">
-            <div class="w-full max-w-lg lg:max-w-xl xl:max-w-2xl p-6 bg-slate-800 rounded-2xl outline outline-2 outline-orange-400">
-                @if(isset($konf->about_section_image) && $konf->about_section_image && file_exists(public_path('images/about/' . $konf->about_section_image)))
-                    <img src="{{ asset('images/about/' . $konf->about_section_image) }}" 
-                         alt="About Section Image" 
-                         class="w-full h-full object-cover rounded-xl" />
-                @elseif(isset($award) && $award->count() > 0)
-                    <!-- Company Logos Grid from Awards -->
-                    <div class="grid grid-cols-2 gap-6 w-full h-full place-content-center">
-                        @foreach($award->take(6) as $award_item)
-                        <div class="p-6 bg-slate-700/60 rounded-xl outline outline-1 outline-slate-600 flex items-center justify-center aspect-square min-h-[120px]">
-                            <img src="{{ asset('file/award/' . $award_item->gambar_award) }}" 
-                                 alt="{{ $award_item->nama_award }}" 
-                                 class="max-w-full max-h-full object-contain opacity-80" />
+@foreach($activeSections as $sectionCode => $sectionConfig)
+    @switch($sectionCode)
+        @case('about')
+            <!-- About Section - DYNAMIC TITLE FROM DATABASE -->
+            @if($sectionConfig['is_active'] ?? true)
+            <section id="about" class="w-full max-w-screen-2xl mx-auto px-6 py-12">
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-12">
+                    
+                    <!-- Left Content -->
+                    <div class="flex flex-col gap-8 max-w-2xl flex-1 order-2 lg:order-1">
+                        <div class="flex flex-col gap-6">
+                            <h2 class="text-3xl lg:text-4xl font-bold text-white leading-snug">
+                                {{-- DYNAMIC TITLE: Using lookup_description from database --}}
+                                {{ $sectionConfig['description'] ?? ($konf->about_section_title ?? 'With over 16+ years of experience in manufacturing and technology') }}
+                            </h2>
+                            @if(isset($konf->about_section_subtitle) && $konf->about_section_subtitle)
+                            <h3 class="text-xl lg:text-2xl font-semibold text-yellow-400">
+                                {{ $konf->about_section_subtitle }}
+                            </h3>
+                            @endif
+                            <div class="text-gray-400 text-lg leading-relaxed">
+                                {!! $konf->about_section_description ?? "I've dedicated my career to bridging the gap between traditional manufacturing and cutting-edge AI solutions.<br><br>From my early days as a Production Engineer to becoming an AI Generalist, I've consistently focused on delivering measurable business impact through innovative technology solutions." !!}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Image - FIXED POSITION & BALANCED SIZE -->
+                    <div class="flex-1 flex items-stretch justify-center order-1 lg:order-2">
+                        <div class="w-full max-w-lg lg:max-w-xl xl:max-w-2xl p-6 bg-slate-800 rounded-2xl outline outline-2 outline-orange-400">
+                            @if(isset($konf->about_section_image) && $konf->about_section_image && file_exists(public_path('images/about/' . $konf->about_section_image)))
+                                <img src="{{ asset('images/about/' . $konf->about_section_image) }}" 
+                                     alt="About Section Image" 
+                                     class="w-full h-full object-cover rounded-xl" />
+                            @elseif(isset($award) && $award->count() > 0)
+                                <!-- Company Logos Grid from Awards -->
+                                <div class="grid grid-cols-2 gap-6 w-full h-full place-content-center">
+                                    @foreach($award->take(6) as $award_item)
+                                    <div class="p-6 bg-slate-700/60 rounded-xl outline outline-1 outline-slate-600 flex items-center justify-center aspect-square min-h-[120px]">
+                                        <img src="{{ asset('file/award/' . $award_item->gambar_award) }}" 
+                                             alt="{{ $award_item->nama_award }}" 
+                                             class="max-w-full max-h-full object-contain opacity-80" />
+                                    </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <!-- Default placeholder -->
+                                <div class="text-orange-400 text-4xl text-center flex flex-col items-center justify-center h-full">
+                                    Put image here
+                                    <div class="mt-6">
+                                        <svg class="w-20 h-20 mx-auto" fill="currentColor" viewBox="0 0 100 100">
+                                            <path d="M50 10 L90 50 L50 90 Z" stroke="currentColor" stroke-width="2"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </section>
+            @endif
+            @break
+
+        @case('awards')
+            @include('partials.awards-updated')
+            @break
+
+        @case('services')
+            @include('partials.services')
+            @break
+
+        @case('portfolio')
+            @include('partials.portfolio')
+            @break
+
+        @case('testimonials')
+            <!-- Testimonials Section - DYNAMIC TITLE FROM DATABASE -->
+            @if($sectionConfig['is_active'] ?? true)
+            <section class="testimonials-section" id="testimonials">
+                <div class="content-wrapper">
+                    <h2 class="testimonials-title">
+                        {{-- DYNAMIC TITLE: Using lookup_description from database --}}
+                        {{ $sectionConfig['description'] ?? 'Testimonials' }}
+                    </h2>
+                    <p class="about-content">
+                        Real stories from clients who transformed their business with AI and automation.
+                    </p>
+
+                    @if(isset($testimonial) && $testimonial->count() > 0)
+                    <div class="testimonials-wrapper relative overflow-hidden">
+                        <div class="testimonials-grid flex transition-transform duration-500 ease-in-out" id="testimonialSlider">
+                            @foreach ($testimonial as $row)
+                            <div class="testimonial-item flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4 text-center">
+                                <img src="{{ asset('file/testimonial/' . $row->gambar_testimonial) }}" alt="{{ $row->judul_testimonial }}" class="testimonial-image mx-auto rounded-full w-20 h-20 object-cover border-4 border-yellow-400">
+                                <div class="testimonial-text mt-4 text-white">"{!! $row->deskripsi_testimonial !!}"</div>
+                                <div class="testimonial-author mt-2 font-semibold text-yellow-400">
+                                    {{ $row->judul_testimonial ?? 'Testimonial' }}
+                                </div>
+                                <p class="text-gray-400 text-sm">{{ $row->jabatan }}</p>
+                            </div>
+                            @endforeach
+                        </div>
+                        <div class="flex justify-center mt-6 gap-2" id="testimonialDots"></div>
+                    </div>
+                    @else
+                    <!-- No Data State -->
+                    <div class="flex flex-col items-center justify-center py-16">
+                        <div class="text-yellow-400 text-6xl mb-4">💬</div>
+                        <h3 class="text-white text-xl font-semibold mb-2">No Testimonials Yet</h3>
+                        <p class="text-gray-400 text-center max-w-md">
+                            We're working on collecting testimonials from our clients. Check back soon to see what our customers are saying about our AI solutions!
+                        </p>
+                    </div>
+                    @endif
+                </div>
+            </section>
+            @endif
+            @break
+
+        @case('gallery')
+            @include('partials.gallery-updated')
+            @break
+
+        @case('articles')
+            <!-- Articles Section - DYNAMIC TITLE FROM DATABASE -->
+            @if($sectionConfig['is_active'] ?? true)
+            <section id="articles" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-14">
+                <div class="flex flex-col gap-3 text-center">
+                    <h2 class="text-yellow-400 text-3xl sm:text-5xl font-extrabold leading-tight sm:leading-[56px]">
+                        {{-- DYNAMIC TITLE: Using lookup_description from database --}}
+                        {{ $sectionConfig['description'] ?? 'Latest Article' }}
+                    </h2>
+                    <p class="text-neutral-400 text-lg sm:text-2xl font-normal leading-6 sm:leading-7 tracking-tight">
+                        Weekly insights on AI, technology, and innovation
+                    </p>
+                </div>
+                
+                @if(isset($article) && $article->count() > 0)
+                <div class="flex flex-col sm:flex-row gap-6 sm:gap-8">
+                    <div class="flex flex-col gap-6 sm:gap-8">
+                        @foreach ($article->take(3) as $row)
+                        <div class="p-6 sm:p-9 bg-slate-800 rounded-xl outline outline-1 outline-blue-950 outline-offset--1 flex flex-col sm:flex-row gap-4 sm:gap-8">
+                            <img src="{{ !empty($row->gambar_berita) ? asset('file/berita/' . $row->gambar_berita) : asset('file/berita/placeholder.png') }}" alt="{{ $row->judul_berita }} thumbnail" class="w-full sm:w-48 h-auto sm:h-32 object-cover rounded-xl" />
+                            <div class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-slate-600 text-sm sm:text-base font-medium leading-normal">
+                                            {{ \Carbon\Carbon::parse($row->tanggal_berita)->format('M d, Y') }}
+                                        </span>
+                                        <div class="px-2 sm:px-3 py-1 sm:py-2 bg-yellow-400/10 rounded-sm">
+                                            <span class="text-yellow-400 text-xs font-medium font-['Fira_Sans'] uppercase leading-3">
+                                                {{ $row->kategori_berita ?? 'AI & Tech' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-white text-base sm:text-xl font-bold leading-6 sm:leading-7 max-w-full sm:max-w-96">
+                                        {{ $row->judul_berita }}
+                                    </h3>
+                                </div>
+                                <p class="text-slate-500 text-sm sm:text-base font-medium leading-normal max-w-full sm:max-w-96">
+                                    {!! \Illuminate\Support\Str::limit(strip_tags($row->isi_berita), 150, '...') !!}
+                                    <a href="{{ route('article.detail', $row->slug_berita) }}" class="text-yellow-400 hover:text-yellow-500 font-medium">Read More</a>
+                                </p>
+                            </div>
                         </div>
                         @endforeach
                     </div>
-                @else
-                    <!-- Default placeholder -->
-                    <div class="text-orange-400 text-4xl text-center flex flex-col items-center justify-center h-full">
-                        Put image here
-                        <div class="mt-6">
-                            <svg class="w-20 h-20 mx-auto" fill="currentColor" viewBox="0 0 100 100">
-                                <path d="M50 10 L90 50 L50 90 Z" stroke="currentColor" stroke-width="2"/>
-                            </svg>
+                    @if ($article->count() > 0)
+                    @php
+                    $featuredArticle = $article->first();
+                    @endphp
+                    <div class="p-6 sm:p-12 bg-slate-800 rounded-xl outline outline-1 outline-blue-950 outline-offset--1 flex flex-col gap-6 sm:gap-8">
+                        <img src="{{ !empty($featuredArticle->gambar_berita) ? asset('file/berita/' . $featuredArticle->gambar_berita) : asset('file/berita/placeholder.png') }}" alt="{{ $featuredArticle->judul_berita }} featured thumbnail" class="w-full max-w-[640px] h-auto rounded-xl object-cover" />
+                        <div class="flex flex-col gap-6 sm:gap-8">
+                            <div class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-2">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-slate-600 text-sm sm:text-base font-medium leading-normal">
+                                            {{ \Carbon\Carbon::parse($featuredArticle->tanggal_berita)->format('M d, Y') }}
+                                        </span>
+                                        <div class="px-2 sm:px-3 py-1 sm:py-2 bg-yellow-400/10 rounded-sm">
+                                            <span class="text-yellow-400 text-xs font-medium font-['Fira_Sans'] uppercase leading-3">
+                                                {{ $featuredArticle->kategori_berita ?? 'AI & Tech' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-white text-xl sm:text-2xl font-bold leading-loose max-w-full sm:max-w-[641px]">
+                                        {{ $featuredArticle->judul_berita }}
+                                    </h3>
+                                </div>
+                                <p class="text-slate-500 text-sm sm:text-base font-medium leading-normal max-w-full sm:max-w-[641px]">
+                                    {!! \Illuminate\Support\Str::limit(strip_tags($featuredArticle->isi_berita), 150, '...') !!}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('article.detail', $featuredArticle->slug_berita) }}" class="text-yellow-400 text-base sm:text-xl font-semibold leading-normal tracking-tight hover:text-yellow-500">
+                                    Read More
+                                </a>
+                                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
+                    @endif
+                </div>
+                <a href="{{ url('articles') }}" class="px-6 sm:px-8 py-3 sm:py-4 rounded-xl outline outline-1 outline-yellow-400 outline-offset--1 backdrop-blur-[2px] flex items-center gap-2.5">
+                    <span class="text-yellow-400 text-base font-semibold leading-tight tracking-tight">See More</span>
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+                @else
+                <!-- No Data State -->
+                <div class="flex flex-col items-center justify-center py-16">
+                    <div class="text-yellow-400 text-6xl mb-4">📝</div>
+                    <h3 class="text-white text-xl font-semibold mb-2">No Articles Yet</h3>
+                    <p class="text-gray-400 text-center max-w-md">
+                        We're working on creating insightful articles about AI, technology, and innovation. Check back soon for the latest updates!
+                    </p>
+                    <a href="{{ url('articles') }}" class="mt-6 px-6 py-3 rounded-xl outline outline-1 outline-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all duration-300">
+                        <span class="font-semibold">Explore Articles</span>
+                    </a>
+                </div>
                 @endif
-            </div>
-        </div>
-    </div>
-</section>
-@endif
+            </section>
+            @endif
+            @break
 
-@include('partials.awards-updated')
-@include('partials.services')
-@include('partials.portfolio')
+        @case('contact')
+            <!-- Contact Section - DYNAMIC TITLE FROM DATABASE -->
+            @if($sectionConfig['is_active'] ?? true)
+            <section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
+                <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
+                    <div class="flex flex-col gap-4">
+                        <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">
+                            {{-- Can be dynamic based on section config --}}
+                            Have a project or question in mind? Just send me a message.
+                        </h2>
+                        <p class="text-gray-400 text-sm sm:text-base font-light leading-normal">
+                            Let's discuss how AI and automation can drive innovation and efficiency in your organization.
+                        </p>
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
+                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col gap-1 min-w-0 flex-1">
+                                <span class="text-gray-400 text-sm font-light leading-tight">Call me now</span>
+                                <a href="tel:{{ $konf->no_hp_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->no_hp_setting }}</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
+                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col gap-1 min-w-0 flex-1">
+                                <span class="text-gray-400 text-sm font-light leading-tight">Chat with me</span>
+                                <a href="mailto:{{ $konf->email_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->email_setting }}</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
+                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div class="flex flex-col gap-1 min-w-0 flex-1">
+                                <span class="text-gray-400 text-sm font-light leading-tight">Location</span>
+                                <span class="text-white text-base font-normal leading-normal">{{ $konf->alamat_setting }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 sm:p-7 bg-slate-900 rounded-2xl flex flex-col gap-4 hover:bg-slate-700 transition-all duration-300">
+                        <span class="text-white text-base font-normal leading-normal">Follow me on social media</span>
+                        <div class="flex gap-3 justify-center">
+                            <a href="https://www.instagram.com/{{ $konf->instagram_setting }}" target="_blank" class="social-icon p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300">
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm4.5-2a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
+                                </svg>
+                            </a>
+                            <a href="https://www.tiktok.com/@<?php echo $konf->tiktok_setting; ?>" target="_blank" class="social-icon p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300">
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19.321 5.562a5.124 5.124 0 0 1-.443-.258 6.228 6.228 0 0 1-1.137-.966c-.849-.849-1.254-1.99-1.254-3.338h-2.341v10.466c0 2.059-1.68 3.739-3.739 3.739-2.059 0-3.739-1.68-3.739-3.739s1.68-3.739 3.739-3.739c.659 0 1.254.18 1.787.493v-2.402c-.533-.09-1.076-.135-1.787-.135C5.67 5.683 2 9.352 2 13.989s3.67 8.306 8.307 8.306 8.306-3.669 8.306-8.306V9.072c1.181.849 2.628 1.344 4.163 1.344V7.861c-1.27 0-2.435-.413-3.455-1.299z"/>
+                                </svg>
+                            </a>                
+                            <a href="https://www.youtube.com/{{ $konf->youtube_setting }}" target="_blank" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300 group">
+                                <svg class="w-5 h-5 text-yellow-400 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M21.8 8s-.2-1.4-.8-2c-.7-.8-1.5-.8-1.9-.9C16.7 4.8 12 4.8 12 4.8h-.1s-4.7 0-7.1.3c-.4 0-1.2.1-1.9.9-.6.6-.8 2-.8 2S2 9.6 2 11.3v1.3c0 1.7.2 3.3.2 3.3s.2 1.4.8 2c.7.8 1.7.7 2.1.8 1.6.2 6.9.3 6.9.3s4.7 0 7.1-.3c.4 0 1.2-.1 1.9-.9.6-.6.8-2 .8-2s.2-1.6.2-3.3v-1.3c0-1.7-.2-3.3-.2-3.3zM10 14.6V9.4l5.2 2.6-5.2 2.6z" />
+                                </svg>
+                            </a>
+                            <a href="https://www.linkedin.com/in/{{ $konf->linkedin_setting }}" target="_blank" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300 group">
+                                <svg class="w-5 h-5 text-yellow-400 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                </svg>
+                            </a>                
+                            <a href="https://wa.me/{{ $konf->no_hp_setting }}" target="_blank" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 hover:text-black transition-all duration-300">
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12.017 2C6.486 2 2 6.484 2 12c0 1.73.443 3.361 1.22 4.78L2.1 21.712l5.056-1.323A9.951 9.951 0 0012.017 22c5.531 0 10.017-4.484 10.017-10S17.548 2 12.017 2zm5.23 14.314c-.251.714-1.233 1.334-2.005 1.491-.549.111-1.268.183-3.685-.825-2.831-1.18-4.673-4.057-4.814-4.247-.142-.19-1.157-1.569-1.157-2.993 0-1.425.731-2.127 1.012-2.421.281-.295.611-.369.815-.369.204 0 .407.002.584.011.189.009.441-.072.69.536.25.608.855 2.176.928 2.334.074.157.123.342.025.548-.099.206-.148.332-.296.51-.148.178-.311.394-.444.53-.133.136-.272.282-.118.553.154.271.685 1.166 1.471 1.888 1.01.928 1.862 1.215 2.128 1.351.266.136.421.114.576-.07.155-.185.662-.8.839-1.077.177-.276.354-.23.597-.138.243.093 1.54.748 1.805.884.266.136.443.204.509.318.066.115.066.663-.184 1.377z"/>
+                                </svg>
+                            </a>
+                            <a href="mailto:{{ $konf->email_setting }}" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 hover:text-black transition-all duration-300">
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v.01L12 13 20 6.01V6H4zm0 12h16V8l-8 7-8-7v10z" />
+                                </svg>
+                            </a>                
+                        </div>
+                    </div>
+                </div>
+                <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col gap-6 sm:gap-8 flex-1">
+                    @csrf
+                    <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <input type="text" name="full_name" placeholder="Full Name" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                            <input type="email" name="email" placeholder="Email Address" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                        </div>
+                        <input type="text" name="subject" placeholder="Subject" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <select name="service" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                                <option value="">Select Service</option>
+                                <option value="ai">Digital Transformation 4.0 Consultant</option>
+                                <option value="automation">AI AGENT AUTOMATION Solution</option>
+                                <option value="automation">CUSTOM GPT/GEM Solution</option>
+                                <option value="automation">Content Creator Endorsement</option>
+                            </select>
+                        </div>
+                        <textarea name="message" placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"></textarea>
+                        <button type="submit" class="send-message-btn w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center group">
+                            <span class="text-black text-base font-semibold capitalize leading-[40px] sm:leading-[72px] group-hover:text-black">
+                                Send Message
+                            </span>
+                            <svg class="w-5 sm:w-6 h-5 sm:h-6 text-black group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </section>
+            @endif
+            @break
 
+        @default
+            {{-- Handle any custom sections that might be added via database --}}
+    @endswitch
+@endforeach
 
 <!-- Image Error Handling Script -->
 <script>
@@ -755,44 +1074,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Testimonials Section -->
-@if($konf->testimonials_section_active ?? true)
-<section class="testimonials-section" id="testimonials">
-    <div class="content-wrapper">
-        <h2 class="testimonials-title">Testimonials</h2>
-        <p class="about-content">
-            Real stories from clients who transformed their business with AI and automation.
-        </p>
-
-        @if(isset($testimonial) && $testimonial->count() > 0)
-        <div class="testimonials-wrapper relative overflow-hidden">
-            <div class="testimonials-grid flex transition-transform duration-500 ease-in-out" id="testimonialSlider">
-                @foreach ($testimonial as $row)
-                <div class="testimonial-item flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4 text-center">
-                    <img src="{{ asset('file/testimonial/' . $row->gambar_testimonial) }}" alt="{{ $row->judul_testimonial }}" class="testimonial-image mx-auto rounded-full w-20 h-20 object-cover border-4 border-yellow-400">
-                    <div class="testimonial-text mt-4 text-white">"{!! $row->deskripsi_testimonial !!}"</div>
-                    <div class="testimonial-author mt-2 font-semibold text-yellow-400">
-                        {{ $row->judul_testimonial ?? 'Testimonial' }}
-                    </div>
-                    <p class="text-gray-400 text-sm">{{ $row->jabatan }}</p>
-                </div>
-                @endforeach
-            </div>
-            <div class="flex justify-center mt-6 gap-2" id="testimonialDots"></div>
-        </div>
-        @else
-        <!-- No Data State -->
-        <div class="flex flex-col items-center justify-center py-16">
-            <div class="text-yellow-400 text-6xl mb-4">💬</div>
-            <h3 class="text-white text-xl font-semibold mb-2">No Testimonials Yet</h3>
-            <p class="text-gray-400 text-center max-w-md">
-                We're working on collecting testimonials from our clients. Check back soon to see what our customers are saying about our AI solutions!
-            </p>
-        </div>
-        @endif
-    </div>
-</section>
-
+<!-- Testimonials Section Styles -->
 <style>
 .testimonials-section {
     width: 100%;
@@ -968,229 +1250,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-@endif
-
-@include('partials.gallery-updated')
-
-<!-- PERBAIKAN 2: Gap yang lebih lebar antara Gallery dan Contact Section -->
-
-<!-- Articles Section -->
-@if($konf->articles_section_active ?? true)
-<section id="articles" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-14">
-    <div class="flex flex-col gap-3 text-center">
-        <h2 class="text-yellow-400 text-3xl sm:text-5xl font-extrabold leading-tight sm:leading-[56px]">
-            Latest Article
-        </h2>
-        <p class="text-neutral-400 text-lg sm:text-2xl font-normal leading-6 sm:leading-7 tracking-tight">
-            Weekly insights on AI, technology, and innovation
-        </p>
-    </div>
-    
-    @if(isset($article) && $article->count() > 0)
-    <div class="flex flex-col sm:flex-row gap-6 sm:gap-8">
-        <div class="flex flex-col gap-6 sm:gap-8">
-            @foreach ($article->take(3) as $row)
-            <div class="p-6 sm:p-9 bg-slate-800 rounded-xl outline outline-1 outline-blue-950 outline-offset--1 flex flex-col sm:flex-row gap-4 sm:gap-8">
-                <img src="{{ !empty($row->gambar_berita) ? asset('file/berita/' . $row->gambar_berita) : asset('file/berita/placeholder.png') }}" alt="{{ $row->judul_berita }} thumbnail" class="w-full sm:w-48 h-auto sm:h-32 object-cover rounded-xl" />
-                <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-slate-600 text-sm sm:text-base font-medium leading-normal">
-                                {{ \Carbon\Carbon::parse($row->tanggal_berita)->format('M d, Y') }}
-                            </span>
-                            <div class="px-2 sm:px-3 py-1 sm:py-2 bg-yellow-400/10 rounded-sm">
-                                <span class="text-yellow-400 text-xs font-medium font-['Fira_Sans'] uppercase leading-3">
-                                    {{ $row->kategori_berita ?? 'AI & Tech' }}
-                                </span>
-                            </div>
-                        </div>
-                        <h3 class="text-white text-base sm:text-xl font-bold leading-6 sm:leading-7 max-w-full sm:max-w-96">
-                            {{ $row->judul_berita }}
-                        </h3>
-                    </div>
-                    <p class="text-slate-500 text-sm sm:text-base font-medium leading-normal max-w-full sm:max-w-96">
-                        {!! \Illuminate\Support\Str::limit(strip_tags($row->isi_berita), 150, '...') !!}
-                        <a href="{{ route('article.detail', $row->slug_berita) }}" class="text-yellow-400 hover:text-yellow-500 font-medium">Read More</a>
-                    </p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @if ($article->count() > 0)
-        @php
-        $featuredArticle = $article->first();
-        @endphp
-        <div class="p-6 sm:p-12 bg-slate-800 rounded-xl outline outline-1 outline-blue-950 outline-offset--1 flex flex-col gap-6 sm:gap-8">
-            <img src="{{ !empty($featuredArticle->gambar_berita) ? asset('file/berita/' . $featuredArticle->gambar_berita) : asset('file/berita/placeholder.png') }}" alt="{{ $featuredArticle->judul_berita }} featured thumbnail" class="w-full max-w-[640px] h-auto rounded-xl object-cover" />
-            <div class="flex flex-col gap-6 sm:gap-8">
-                <div class="flex flex-col gap-4">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-slate-600 text-sm sm:text-base font-medium leading-normal">
-                                {{ \Carbon\Carbon::parse($featuredArticle->tanggal_berita)->format('M d, Y') }}
-                            </span>
-                            <div class="px-2 sm:px-3 py-1 sm:py-2 bg-yellow-400/10 rounded-sm">
-                                <span class="text-yellow-400 text-xs font-medium font-['Fira_Sans'] uppercase leading-3">
-                                    {{ $featuredArticle->kategori_berita ?? 'AI & Tech' }}
-                                </span>
-                            </div>
-                        </div>
-                        <h3 class="text-white text-xl sm:text-2xl font-bold leading-loose max-w-full sm:max-w-[641px]">
-                            {{ $featuredArticle->judul_berita }}
-                        </h3>
-                    </div>
-                    <p class="text-slate-500 text-sm sm:text-base font-medium leading-normal max-w-full sm:max-w-[641px]">
-                        {!! \Illuminate\Support\Str::limit(strip_tags($featuredArticle->isi_berita), 150, '...') !!}
-                    </p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <a href="{{ route('article.detail', $featuredArticle->slug_berita) }}" class="text-yellow-400 text-base sm:text-xl font-semibold leading-normal tracking-tight hover:text-yellow-500">
-                        Read More
-                    </a>
-                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
-                    </svg>
-                </div>
-            </div>
-        </div>
-        @endif
-    </div>
-    <a href="{{ url('articles') }}" class="px-6 sm:px-8 py-3 sm:py-4 rounded-xl outline outline-1 outline-yellow-400 outline-offset--1 backdrop-blur-[2px] flex items-center gap-2.5">
-        <span class="text-yellow-400 text-base font-semibold leading-tight tracking-tight">See More</span>
-        <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="yellow" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
-        </svg>
-    </a>
-    @else
-    <!-- No Data State -->
-    <div class="flex flex-col items-center justify-center py-16">
-        <div class="text-yellow-400 text-6xl mb-4">📝</div>
-        <h3 class="text-white text-xl font-semibold mb-2">No Articles Yet</h3>
-        <p class="text-gray-400 text-center max-w-md">
-            We're working on creating insightful articles about AI, technology, and innovation. Check back soon for the latest updates!
-        </p>
-        <a href="{{ url('articles') }}" class="mt-6 px-6 py-3 rounded-xl outline outline-1 outline-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-all duration-300">
-            <span class="font-semibold">Explore Articles</span>
-        </a>
-    </div>
-    @endif
-</section>
-@endif
-
-<!-- Contact Section dengan gap yang diperlebar -->
-@if($konf->contact_section_active ?? true)
-<section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
-    <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
-        <div class="flex flex-col gap-4">
-            <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">
-                Have a project or question in mind? Just send me a message.
-            </h2>
-            <p class="text-gray-400 text-sm sm:text-base font-light leading-normal">
-                Let's discuss how AI and automation can drive innovation and efficiency in your organization.
-            </p>
-        </div>
-        <div class="flex flex-col gap-5">
-            <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                </div>
-                <div class="flex flex-col gap-1 min-w-0 flex-1">
-                    <span class="text-gray-400 text-sm font-light leading-tight">Call me now</span>
-                    <a href="tel:{{ $konf->no_hp_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->no_hp_setting }}</a>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                </div>
-                <div class="flex flex-col gap-1 min-w-0 flex-1">
-                    <span class="text-gray-400 text-sm font-light leading-tight">Chat with me</span>
-                    <a href="mailto:{{ $konf->email_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->email_setting }}</a>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                </div>
-                <div class="flex flex-col gap-1 min-w-0 flex-1">
-                    <span class="text-gray-400 text-sm font-light leading-tight">Location</span>
-                    <span class="text-white text-base font-normal leading-normal">{{ $konf->alamat_setting }}</span>
-                </div>
-            </div>
-        </div>
-        <div class="p-6 sm:p-7 bg-slate-900 rounded-2xl flex flex-col gap-4 hover:bg-slate-700 transition-all duration-300">
-            <span class="text-white text-base font-normal leading-normal">Follow me on social media</span>
-            <div class="flex gap-3 justify-center">
-                <a href="https://www.instagram.com/{{ $konf->instagram_setting }}" target="_blank" class="social-icon p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300">
-                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7zm10 2c1.654 0 3 1.346 3 3v10c0 1.654-1.346 3-3 3H7c-1.654 0-3-1.346-3-3V7c0-1.654 1.346-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm4.5-2a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
-                    </svg>
-                </a>
-                <a href="https://www.tiktok.com/@<?php echo $konf->tiktok_setting; ?>" target="_blank" class="social-icon p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300">
-                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19.321 5.562a5.124 5.124 0 0 1-.443-.258 6.228 6.228 0 0 1-1.137-.966c-.849-.849-1.254-1.99-1.254-3.338h-2.341v10.466c0 2.059-1.68 3.739-3.739 3.739-2.059 0-3.739-1.68-3.739-3.739s1.68-3.739 3.739-3.739c.659 0 1.254.18 1.787.493v-2.402c-.533-.09-1.076-.135-1.787-.135C5.67 5.683 2 9.352 2 13.989s3.67 8.306 8.307 8.306 8.306-3.669 8.306-8.306V9.072c1.181.849 2.628 1.344 4.163 1.344V7.861c-1.27 0-2.435-.413-3.455-1.299z"/>
-                    </svg>
-                </a>                
-                <a href="https://www.youtube.com/{{ $konf->youtube_setting }}" target="_blank" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300 group">
-                    <svg class="w-5 h-5 text-yellow-400 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M21.8 8s-.2-1.4-.8-2c-.7-.8-1.5-.8-1.9-.9C16.7 4.8 12 4.8 12 4.8h-.1s-4.7 0-7.1.3c-.4 0-1.2.1-1.9.9-.6.6-.8 2-.8 2S2 9.6 2 11.3v1.3c0 1.7.2 3.3.2 3.3s.2 1.4.8 2c.7.8 1.7.7 2.1.8 1.6.2 6.9.3 6.9.3s4.7 0 7.1-.3c.4 0 1.2-.1 1.9-.9.6-.6.8-2 .8-2s.2-1.6.2-3.3v-1.3c0-1.7-.2-3.3-.2-3.3zM10 14.6V9.4l5.2 2.6-5.2 2.6z" />
-                    </svg>
-                </a>
-                <a href="https://www.linkedin.com/in/{{ $konf->linkedin_setting }}" target="_blank" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 transition-all duration-300 group">
-                    <svg class="w-5 h-5 text-yellow-400 group-hover:text-black" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                </a>                
-                <a href="https://wa.me/{{ $konf->no_hp_setting }}" target="_blank" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 hover:text-black transition-all duration-300">
-                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12.017 2C6.486 2 2 6.484 2 12c0 1.73.443 3.361 1.22 4.78L2.1 21.712l5.056-1.323A9.951 9.951 0 0012.017 22c5.531 0 10.017-4.484 10.017-10S17.548 2 12.017 2zm5.23 14.314c-.251.714-1.233 1.334-2.005 1.491-.549.111-1.268.183-3.685-.825-2.831-1.18-4.673-4.057-4.814-4.247-.142-.19-1.157-1.569-1.157-2.993 0-1.425.731-2.127 1.012-2.421.281-.295.611-.369.815-.369.204 0 .407.002.584.011.189.009.441-.072.69.536.25.608.855 2.176.928 2.334.074.157.123.342.025.548-.099.206-.148.332-.296.51-.148.178-.311.394-.444.53-.133.136-.272.282-.118.553.154.271.685 1.166 1.471 1.888 1.01.928 1.862 1.215 2.128 1.351.266.136.421.114.576-.07.155-.185.662-.8.839-1.077.177-.276.354-.23.597-.138.243.093 1.54.748 1.805.884.266.136.443.204.509.318.066.115.066.663-.184 1.377z"/>
-                    </svg>
-                </a>
-                <a href="mailto:{{ $konf->email_setting }}" class="p-3 bg-slate-800 rounded-full hover:bg-yellow-400 hover:text-black transition-all duration-300">
-                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v.01L12 13 20 6.01V6H4zm0 12h16V8l-8 7-8-7v10z" />
-                    </svg>
-                </a>                
-            </div>
-        </div>
-    </div>
-    <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col gap-6 sm:gap-8 flex-1">
-        @csrf
-        <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
-        <div class="flex flex-col gap-4">
-            <div class="flex flex-col sm:flex-row gap-4">
-                <input type="text" name="full_name" placeholder="Full Name" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-                <input type="email" name="email" placeholder="Email Address" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-            </div>
-            <input type="text" name="subject" placeholder="Subject" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-            <div class="flex flex-col sm:flex-row gap-4">
-                <select name="service" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                    <option value="">Select Service</option>
-                    <option value="ai">Digital Transformation 4.0 Consultant</option>
-                    <option value="automation">AI AGENT AUTOMATION Solution</option>
-                    <option value="automation">CUSTOM GPT/GEM Solution</option>
-                    <option value="automation">Content Creator Endorsement</option>
-                </select>
-            </div>
-            <textarea name="message" placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"></textarea>
-            <button type="submit" class="send-message-btn w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center group">
-                <span class="text-black text-base font-semibold capitalize leading-[40px] sm:leading-[72px] group-hover:text-black">
-                    Send Message
-                </span>
-                <svg class="w-5 sm:w-6 h-5 sm:h-6 text-black group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
-                </svg>
-            </button>
-        </div>
-    </form>
-</section>
-@endif
 
 @endsection

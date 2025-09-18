@@ -2,6 +2,13 @@
 use Illuminate\Support\Facades\DB;
 
 $konf = DB::table('setting')->first();
+
+// Get menu items from lookup_data table ordered by sort_order and only active items
+$menuItems = DB::table('lookup_data')
+    ->where('lookup_type', 'homepage_section')
+    ->where('is_active', 1)
+    ->orderBy('sort_order', 'asc')
+    ->get();
 ?>
 
 <!DOCTYPE html>
@@ -97,6 +104,7 @@ $konf = DB::table('setting')->first();
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
     {
@@ -119,9 +127,9 @@ $konf = DB::table('setting')->first();
                 "url": "{{ url('/') }}",
                 "image": "{{ url('/images/logo.png') }}",
                 "sameAs": [
-                    "https://www.linkedin.com/in/ali-sadikin",
-                    "https://twitter.com/ali_sadikin",
-                    "https://github.com/ali-sadikin"
+                    "https://www.linkedin.com/in/alisadikinma",
+                    "https://twitter.com/alisadikinma",
+                    "https://github.com/alisadikinma"
                 ]
             }
         ]
@@ -144,6 +152,7 @@ $konf = DB::table('setting')->first();
             backdrop-filter: blur(12px);
         }
 
+        /* Enhanced Mobile Menu Styles */
         #nav-menu {
             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
             transform: translateX(-100%);
@@ -174,12 +183,32 @@ $konf = DB::table('setting')->first();
             gap: 1.5rem;
         }
 
+        /* Mobile menu overlay */
+        #nav-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #nav-menu-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
         #nav-menu a {
             position: relative;
             padding: 0.75rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
             overflow: hidden;
+            text-decoration: none;
         }
 
         #nav-menu a::before {
@@ -221,6 +250,7 @@ $konf = DB::table('setting')->first();
             border: none;
             cursor: pointer;
             padding: 0.5rem;
+            color: #ffd700;
         }
 
         #nav-menu .close-menu-btn svg {
@@ -231,6 +261,7 @@ $konf = DB::table('setting')->first();
             transform: rotate(90deg);
         }
 
+        /* Responsive adjustments */
         @media (min-width: 640px) {
             #nav-menu {
                 transform: none !important;
@@ -257,6 +288,10 @@ $konf = DB::table('setting')->first();
             #nav-menu a:hover {
                 background: none !important;
                 transform: none !important;
+            }
+
+            #nav-menu-overlay {
+                display: none !important;
             }
         }
 
@@ -516,130 +551,106 @@ $konf = DB::table('setting')->first();
 </head>
 
 <body class="bg-gradient-footer text-white font-['Inter']">
+    <!-- Mobile Menu Overlay -->
+    <div id="nav-menu-overlay" onclick="toggleMenu()"></div>
+
     <!-- Header -->
     <header class="w-full fixed top-0 left-0 z-50 bg-gradient-footer backdrop-blur-xl">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4" style="max-width: 1200px;">
             <div class="flex justify-between items-center">
-            <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">
-                <a href="{{ url('/') }}" class="flex items-center gap-4 hover:text-yellow-400 transition-colors">
-                    <img src="{{ asset('logo/' . $konf->logo_setting) }}" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
-                    {{ $konf->pimpinan_setting }}
-                </a>
-            </div>
-            <button class="sm:hidden p-2" onclick="toggleMenu()" aria-label="Toggle navigation menu"
-                aria-expanded="false" id="menu-toggle">
-                <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"
-                        class="menu-icon" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
-                        class="close-icon hidden" />
-                </svg>
-            </button>
-            <nav id="nav-menu"
-                class="hidden sm:flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-7 absolute sm:static top-0 left-0 w-full sm:w-auto sm:bg-transparent p-4 sm:p-0 shadow-lg sm:shadow-none">
-
-                <div class="mobile-menu-header sm:hidden">
-                    <span class="mobile-menu-title">{{ $konf->pimpinan_setting }}</span>
+                <!-- Logo and Name - Fixed to stay in one line -->
+                <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">
+                    <a href="{{ url('/') }}" class="flex items-center gap-4 hover:text-yellow-400 transition-colors whitespace-nowrap">
+                        <img src="{{ asset('logo/' . $konf->logo_setting) }}" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
+                        <span class="whitespace-nowrap">{{ $konf->pimpinan_setting }}</span>
+                    </a>
                 </div>
 
-                {{-- Home --}}
-                <a href="{{ url('/') }}"
-                    class="{{ request()->is('/') ? 'text-yellow-400 font-semibold' : 'text-white font-semibold' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Home
-                </a>
-
-                {{-- About --}}
-                @if($konf->about_section_active ?? true)
-                <a href="{{ url('/#about') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    About
-                </a>
-                @endif
-
-                {{-- Awards --}}
-                @if($konf->awards_section_active ?? true)
-                <a href="{{ url('/#awards') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Awards
-                </a>
-                @endif
-
-                {{-- Services --}}
-                @if($konf->services_section_active ?? true)
-                <a href="{{ url('/#services') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Services
-                </a>
-                @endif
-
-                {{-- Portfolio --}}
-                @if($konf->portfolio_section_active ?? true)
-                @php
-                    // More comprehensive portfolio page detection
-                    $currentPath = request()->path();
-                    $currentUrl = request()->url();
-                    $currentRoute = request()->route();
-                    $routeName = $currentRoute ? $currentRoute->getName() : '';
-                    
-                    $isCurrentlyPortfolioPage = 
-                        // Explicit variable from portfolio pages
-                        (isset($isPortfolioPage) && $isPortfolioPage) ||
-                        // URL path contains portfolio
-                        str_contains($currentPath, 'portfolio') ||
-                        // URL contains project detail
-                        str_contains($currentPath, 'project/') ||
-                        // Route names related to portfolio/project
-                        in_array($routeName, ['portfolio.detail', 'project.public.show', 'portfolio', 'portfolio.all']) ||
-                        // URL pattern matches
-                        preg_match('/\/(portfolio|project)\/[^\/]+$/', $currentPath) ||
-                        // Check if this is a project detail page by slug pattern
-                        preg_match('/\/portfolio\/[a-z0-9\-]+$/', $currentPath) ||
-                        preg_match('/\/project\/[a-z0-9\-]+$/', $currentPath) ||
-                        // Title contains Portfolio (fallback)
-                        (View::hasSection('title') && str_contains(View::getSection('title'), 'Portfolio'));
-                @endphp
-                <a href="{{ url('/#portfolio') }}"
-                    class="{{ $isCurrentlyPortfolioPage ? 'text-yellow-400 text-base font-semibold' : 'text-gray-400 text-base font-normal' }} hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Portfolio
-                </a>
-                @endif
-
-                {{-- Testimonials --}}
-                @if($konf->testimonials_section_active ?? true)
-                <a href="{{ url('/#testimonials') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Testimonials
-                </a>
-                @endif
-
-                {{-- Gallery --}}
-                @if($konf->gallery_section_active ?? true)
-                <a href="{{ url('/#gallery') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Gallery
-                </a>
-                @endif
-
-                {{-- Articles --}}
-                @if($konf->articles_section_active ?? true)
-                <a href="{{ url('/#articles') }}"
-                    class="{{ request()->is('article/*') ? 'text-yellow-400 font-semibold' : 'text-gray-400 font-normal' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
-                    Articles
-                </a>
-                @endif
-
-                {{-- Contact (tombol khusus) --}}
-                @if($konf->contact_section_active ?? true)
-                <a href="{{ url('/#contact') }}"
-                    class="px-4 sm:px-6 py-2 bg-yellow-400 rounded-lg flex items-center gap-3 text-neutral-900 hover:bg-yellow-500 transition-colors w-full sm:w-auto justify-center sm:justify-start">
-                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4m8-8v16" />
+                <!-- Mobile Menu Toggle Button -->
+                <button class="sm:hidden p-2" onclick="toggleMenu()" aria-label="Toggle navigation menu"
+                    aria-expanded="false" id="menu-toggle">
+                    <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"
+                            class="menu-icon" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
+                            class="close-icon hidden" />
                     </svg>
-                    <span class="text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send Message</span>
-                </a>
-                @endif
-            </nav>
+                </button>
 
+                <!-- Navigation Menu -->
+                <nav id="nav-menu"
+                    class="hidden sm:flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-7 absolute sm:static top-0 left-0 w-full sm:w-auto sm:bg-transparent p-4 sm:p-0 shadow-lg sm:shadow-none">
+
+                    <!-- Mobile Menu Header -->
+                    <div class="mobile-menu-header sm:hidden">
+                        <span class="mobile-menu-title">{{ $konf->pimpinan_setting }}</span>
+                        <button class="close-menu-btn" onclick="toggleMenu()" aria-label="Close menu">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Home Link (Always first and active) --}}
+                    <a href="{{ url('/') }}"
+                        class="{{ request()->is('/') ? 'text-yellow-400 font-semibold' : 'text-white font-semibold' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                        Home
+                    </a>
+
+                    {{-- Dynamic Menu Items from Database --}}
+                    @foreach($menuItems as $item)
+                        @php
+                            // Determine if this menu item is currently active page
+                            $currentPath = request()->path();
+                            $currentRoute = request()->route();
+                            $routeName = $currentRoute ? $currentRoute->getName() : '';
+                            
+                            $isCurrentSection = false;
+                            
+                            // Check for portfolio/project pages
+                            if ($item->lookup_code === 'portfolio') {
+                                $isCurrentSection = 
+                                    str_contains($currentPath, 'portfolio') ||
+                                    str_contains($currentPath, 'project/') ||
+                                    in_array($routeName, ['portfolio.detail', 'project.public.show', 'portfolio', 'portfolio.all']) ||
+                                    preg_match('/\/(portfolio|project)\/[^\/]+$/', $currentPath);
+                            }
+                            
+                            // Check for article pages
+                            if ($item->lookup_code === 'articles') {
+                                $isCurrentSection = request()->is('article/*');
+                            }
+                            
+                            // Set link classes based on current section
+                            $linkClasses = $isCurrentSection 
+                                ? 'text-yellow-400 font-semibold' 
+                                : 'text-gray-400 font-normal';
+                            
+                            // Create the link URL
+                            $linkUrl = url('/#' . $item->lookup_code);
+                            
+                            // Special styling for contact (Send Message button)
+                            $isContactButton = $item->lookup_code === 'contact';
+                        @endphp
+
+                        @if($isContactButton)
+                            {{-- Contact Button (Special Styling) --}}
+                            <a href="{{ $linkUrl }}"
+                                class="px-4 sm:px-6 py-2 bg-yellow-400 rounded-lg flex items-center gap-3 text-neutral-900 hover:bg-yellow-500 transition-colors w-full sm:w-auto justify-center sm:justify-start">
+                                <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4m8-8v16" />
+                                </svg>
+                                <span class="text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send Message</span>
+                            </a>
+                        @else
+                            {{-- Regular Menu Items --}}
+                            <a href="{{ $linkUrl }}"
+                                class="{{ $linkClasses }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                                {{ $item->lookup_name }}
+                            </a>
+                        @endif
+                    @endforeach
+                </nav>
             </div>
         </div>
     </header>
@@ -663,31 +674,47 @@ $konf = DB::table('setting')->first();
     <script>
         function toggleMenu() {
             const menu = document.getElementById('nav-menu');
+            const overlay = document.getElementById('nav-menu-overlay');
             const toggleButton = document.getElementById('menu-toggle');
             const menuIcon = toggleButton.querySelector('.menu-icon');
             const closeIcon = toggleButton.querySelector('.close-icon');
             const isOpen = !menu.classList.contains('hidden');
 
-            menu.classList.toggle('hidden');
-            menuIcon.classList.toggle('hidden', !isOpen);
-            closeIcon.classList.toggle('hidden', isOpen);
-            toggleButton.setAttribute('aria-expanded', !isOpen);
-            document.body.style.overflow = isOpen ? '' : 'hidden';
+            if (isOpen) {
+                // Close menu
+                menu.classList.add('hidden');
+                overlay.classList.remove('show');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+                document.body.style.overflow = '';
+                toggleButton.setAttribute('aria-expanded', 'false');
+            } else {
+                // Open menu
+                menu.classList.remove('hidden');
+                overlay.classList.add('show');
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                toggleButton.setAttribute('aria-expanded', 'true');
+            }
         }
 
-        function toggleFooterMenu() {
-            const menu = document.getElementById('footer-nav-menu');
-            const toggleButton = document.getElementById('footer-menu-toggle');
-            const menuIcon = toggleButton.querySelector('.menu-icon');
-            const closeIcon = toggleButton.querySelector('.close-icon');
-            const isOpen = !menu.classList.contains('hidden');
-
-            menu.classList.toggle('hidden');
-            menuIcon.classList.toggle('hidden', !isOpen);
-            closeIcon.classList.toggle('hidden', isOpen);
-            toggleButton.setAttribute('aria-expanded', !isOpen);
-            document.body.style.overflow = isOpen ? '' : 'hidden';
-        }
+        // Close mobile menu when clicking on navigation links
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuLinks = document.querySelectorAll('#nav-menu a');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    // Check if we're on mobile (menu is currently visible and not in desktop mode)
+                    const menu = document.getElementById('nav-menu');
+                    const isMenuVisible = !menu.classList.contains('hidden');
+                    const isMobile = window.innerWidth < 640;
+                    
+                    if (isMenuVisible && isMobile) {
+                        toggleMenu();
+                    }
+                });
+            });
+        });
 
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -699,10 +726,6 @@ $konf = DB::table('setting')->first();
                     targetElement.scrollIntoView({
                         behavior: 'smooth'
                     });
-                }
-                // Close mobile menu after clicking a link
-                if (!document.getElementById('nav-menu').classList.contains('sm:flex')) {
-                    toggleMenu();
                 }
             });
         });
@@ -741,20 +764,24 @@ $konf = DB::table('setting')->first();
             });
 
             // Handle scroll events
-            slider.addEventListener('scroll', updateActiveDot);
+            if (slider) {
+                slider.addEventListener('scroll', updateActiveDot);
+            }
 
             // Update on window resize
             let resizeTimeout;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
-                    const newCardWidth = cards[0].offsetWidth + parseFloat(cardStyle.marginLeft) +
-                        parseFloat(cardStyle.marginRight);
-                    slider.scrollTo({
-                        left: Math.round(slider.scrollLeft / cardWidth) * newCardWidth,
-                        behavior: 'smooth'
-                    });
-                    updateActiveDot();
+                    if (cards.length > 0) {
+                        const newCardWidth = cards[0].offsetWidth + parseFloat(cardStyle.marginLeft) +
+                            parseFloat(cardStyle.marginRight);
+                        slider.scrollTo({
+                            left: Math.round(slider.scrollLeft / cardWidth) * newCardWidth,
+                            behavior: 'smooth'
+                        });
+                        updateActiveDot();
+                    }
                 }, 100);
             });
 
@@ -784,7 +811,7 @@ $konf = DB::table('setting')->first();
                             link.classList.remove("text-yellow-400", "font-semibold");
                             link.classList.add("text-gray-400", "font-normal");
 
-                            // ✅ cocokkan dengan href yang mungkin berupa URL penuh
+                            // ✅ Match with href that might be full URL
                             if (link.getAttribute("href").endsWith("#" + entry.target.id)) {
                                 console.log('✨ Highlighting menu for section:', entry.target.id);
                                 link.classList.add("text-yellow-400", "font-semibold");
@@ -801,8 +828,6 @@ $konf = DB::table('setting')->first();
         sections.forEach((section) => observer.observe(section));
     });
 </script>
-
-
 
 </body>
 

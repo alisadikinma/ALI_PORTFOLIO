@@ -2,7 +2,13 @@
 <section id="portfolio" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-12">
     <div class="flex flex-col gap-3 text-center">
         <h2 class="text-yellow-400 text-3xl sm:text-5xl font-extrabold leading-tight sm:leading-[56px]">
-            Portfolio
+            @php
+            $portfolioSection = DB::table('lookup_data')
+                ->where('lookup_type', 'homepage_section')
+                ->where('lookup_code', 'portfolio')
+                ->first();
+            @endphp
+            {{ $portfolioSection->lookup_description ?? 'Portfolio' }}
         </h2>
         <p class="text-neutral-400 text-lg sm:text-2xl font-normal leading-6 sm:leading-7 tracking-tight">
             Discover my latest projects and achievements in AI, web development, and digital innovation

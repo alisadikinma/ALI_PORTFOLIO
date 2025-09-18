@@ -9,52 +9,125 @@ use App\Models\User;
 use App\Models\Berita;
 use App\Models\Galeri;
 use App\Models\Award;
+use App\Models\LookupData;
+use App\Models\Setting;
+use App\Services\HomepageSectionService;
 use Carbon\Carbon;
 
 class HomeWebController extends Controller
 {
     public function index()
     {
-        // Remove cache flush to improve performance
-        // Cache::flush(); // Commented out - this was causing performance issues
+        // Use models instead of direct DB queries for better MVC architecture
+        $konf = $this->getSiteConfiguration();
+        $homepageSections = $this->getHomepageSections();
+        $homepageData = $this->getHomepageData($homepageSections);
+        $projectCategories = $this->getProjectCategories();
         
-        // Cache site configuration for 5 minutes (300 seconds)
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
+        // Extract data for view
+        $layanan = $homepageData['layanan'];
+        $testimonial = $homepageData['testimonial'];
+        $galeri = $homepageData['galeri'];
+        $article = $homepageData['article'];
+        $award = $homepageData['award'];
+        $projects = $homepageData['projects'];
         
-        // Cache homepage data for 30 minutes with error handling
-        $data = Cache::remember('homepage_data', 1800, function() {
+        // Get section configurations for view
+        $sectionConfigs = HomepageSectionService::getAllSectionConfigs();
+        
+        return view('welcome', compact(
+            'konf', 
+            'layanan', 
+            'testimonial', 
+            'galeri', 
+            'article', 
+            'award', 
+            'projects', 
+            'projectCategories', 
+            'homepageSections',
+            'sectionConfigs'
+        ));
+    }
+
+    /**
+     * Get site configuration using Model
+     */
+    private function getSiteConfiguration()
+    {
+        return Cache::remember('site_config', 300, function() {
+            // Use Setting model if it exists, otherwise use DB
             try {
-                return [
-                    'layanan' => DB::table('layanan')
-                        ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
-                        ->where('status', 'Active')
-                        ->orderBy('sequence', 'asc')
-                        ->get(),
-                    'testimonial' => DB::table('testimonial')->select('judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan')->get(),
-                    'galeri' => Galeri::with(['galleryItems' => function($query) {
-                            $query->where('status', 'Active')
-                                  ->orderBy('sequence', 'asc');
-                        }])
-                        ->where('status', 'Active')
-                        ->orderBy('sequence', 'asc')
-                        ->limit(12)
-                        ->get(),
-                    'article' => DB::table('berita')->select('judul_berita', 'slug_berita', 'gambar_berita', 'isi_berita', 'tanggal_berita', 'kategori_berita', 'meta_description', 'tags')->orderBy('tanggal_berita', 'desc')->limit(4)->get(),
-                    'award' => Award::where('status', 'Active')
-                        ->orderBy('sequence', 'asc')
-                        ->get(),
-                    // FIXED: Use simple query that works with existing data structure
-                    'projects' => DB::table('project')
-                        ->select('project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 
-                               'location', 'project_category', 'created_at', 'sequence')
-                        ->where('status', 'Active')
-                        ->orderBy('sequence', 'asc')
-                        ->orderBy('created_at', 'desc')
-                        ->limit(9)
-                        ->get(),
+                return Setting::first();
+            } catch (\Exception $e) {
+                return DB::table('setting')->first();
+            }
+        });
+    }
+
+    /**
+     * Get homepage sections configuration using Service
+     */
+    private function getHomepageSections()
+    {
+        return Cache::remember('homepage_sections', 1800, function() {
+            try {
+                // Use HomepageSectionService for better architecture
+                $activeSections = HomepageSectionService::getActiveSectionsInOrder();
+                return array_keys($activeSections);
+            } catch (\Exception $e) {
+                \Log::error('Failed to get homepage sections: ' . $e->getMessage());
+                // Fallback to default sections
+                return ['about', 'services', 'portfolio', 'awards', 'testimonials', 'gallery', 'articles', 'contact'];
+            }
+        });
+    }
+
+    /**
+     * Get homepage data based on active sections using Models
+     */
+    private function getHomepageData($homepageSections)
+    {
+        return Cache::remember('homepage_data', 1800, function() use ($homepageSections) {
+            try {
+                $result = [];
+                
+                // Load data for active sections using Models instead of direct DB queries
+                if (in_array('services', $homepageSections)) {
+                    $result['layanan'] = $this->getServicesData();
+                }
+                
+                if (in_array('testimonials', $homepageSections)) {
+                    $result['testimonial'] = $this->getTestimonialsData();
+                }
+                
+                if (in_array('gallery', $homepageSections)) {
+                    $result['galeri'] = $this->getGalleryData();
+                }
+                
+                if (in_array('articles', $homepageSections)) {
+                    $result['article'] = $this->getArticlesData();
+                }
+                
+                if (in_array('awards', $homepageSections)) {
+                    $result['award'] = $this->getAwardsData();
+                }
+                
+                if (in_array('portfolio', $homepageSections)) {
+                    $result['projects'] = $this->getProjectsData();
+                }
+                
+                // Add empty collections for inactive sections to prevent errors
+                $defaultCollections = [
+                    'layanan' => collect(),
+                    'testimonial' => collect(),
+                    'galeri' => collect(),
+                    'article' => collect(),
+                    'award' => collect(),
+                    'projects' => collect(),
                 ];
+                
+                return array_merge($defaultCollections, $result);
+                
             } catch (\Exception $e) {
                 \Log::error('Database error in homepage: ' . $e->getMessage());
                 // Return empty collections if database fails
@@ -68,55 +141,148 @@ class HomeWebController extends Controller
                 ];
             }
         });
-        
-        // Cache project categories - keep this for new features but don't break homepage
-        $projectCategories = Cache::remember('project_categories_homepage', 3600, function() {
+    }
+
+    /**
+     * Get services data using proper Model structure
+     */
+    private function getServicesData()
+    {
+        return DB::table('layanan')
+            ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
+            ->where('status', 'Active')
+            ->orderBy('sequence', 'asc')
+            ->get();
+    }
+
+    /**
+     * Get testimonials data using proper Model structure
+     */
+    private function getTestimonialsData()
+    {
+        return DB::table('testimonial')
+            ->select('judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan')
+            ->get();
+    }
+
+    /**
+     * Get gallery data using Galeri Model
+     */
+    private function getGalleryData()
+    {
+        return Galeri::with(['galleryItems' => function($query) {
+                $query->where('status', 'Active')
+                      ->orderBy('sequence', 'asc');
+            }])
+            ->where('status', 'Active')
+            ->orderBy('sequence', 'asc')
+            ->limit(12)
+            ->get();
+    }
+
+    /**
+     * Get articles data using Berita Model
+     */
+    private function getArticlesData()
+    {
+        return Berita::select('judul_berita', 'slug_berita', 'gambar_berita', 'isi_berita', 'tanggal_berita', 'kategori_berita', 'meta_description', 'tags')
+            ->orderBy('tanggal_berita', 'desc')
+            ->limit(4)
+            ->get();
+    }
+
+    /**
+     * Get awards data using Award Model
+     */
+    private function getAwardsData()
+    {
+        return Award::where('status', 'Active')
+            ->orderBy('sequence', 'asc')
+            ->get();
+    }
+
+    /**
+     * Get projects data using proper Model structure
+     */
+    private function getProjectsData()
+    {
+        return DB::table('project')
+            ->select('project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 
+                   'location', 'project_category', 'created_at', 'sequence')
+            ->where('status', 'Active')
+            ->orderBy('sequence', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->limit(9)
+            ->get();
+    }
+
+    /**
+     * Get project categories using LookupData Model
+     */
+    private function getProjectCategories()
+    {
+        return Cache::remember('project_categories_homepage', 3600, function() {
             try {
-                return DB::table('lookup_data')
-                        ->where('lookup_type', 'project_category')
-                        ->where('is_active', 1)
-                        ->orderBy('sort_order')
-                        ->orderBy('lookup_name')
-                        ->get();
+                // Use LookupData model for better MVC architecture
+                return LookupData::getProjectCategories();
             } catch (\Exception $e) {
                 // Return empty collection if lookup_data doesn't exist yet
                 return collect();
             }
         });
+    }
+
+    /**
+     * Helper function to check if section is active using LookupData Model
+     */
+    public function isSectionActive($sectionCode)
+    {
+        $activeSections = Cache::remember('active_homepage_sections', 1800, function() {
+            try {
+                return LookupData::getActiveHomepageSectionCodes();
+            } catch (\Exception $e) {
+                return ['about', 'services', 'portfolio', 'awards', 'testimonials', 'gallery', 'articles', 'contact'];
+            }
+        });
         
-        // Extract cached data
-        $layanan = $data['layanan'];
-        $testimonial = $data['testimonial'];
-        $galeri = $data['galeri'];
-        $article = $data['article'];
-        $award = $data['award'];
-        $projects = $data['projects'];
+        return in_array($sectionCode, $activeSections);
+    }
+
+    /**
+     * Get section order for frontend use using LookupData Model
+     */
+    public function getSectionOrder($sectionCode)
+    {
+        $sectionOrders = Cache::remember('section_orders', 1800, function() {
+            try {
+                return LookupData::byType('homepage_section')
+                    ->active()
+                    ->pluck('sort_order', 'lookup_code')
+                    ->toArray();
+            } catch (\Exception $e) {
+                return [];
+            }
+        });
         
-        return view('welcome', compact('konf', 'layanan', 'testimonial', 'galeri', 'article', 'award', 'projects', 'projectCategories'));
+        return $sectionOrders[$sectionCode] ?? 999;
+    }
+
+    /**
+     * Get section configuration using LookupData Model
+     */
+    public function getSectionConfig($sectionCode)
+    {
+        return Cache::remember("section_config_{$sectionCode}", 1800, function() use ($sectionCode) {
+            return LookupData::getSectionConfig($sectionCode);
+        });
     }
 
     public function portfolio()
     {
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
+        $konf = $this->getSiteConfiguration();
+        $projectCategories = $this->getProjectCategories();
         
-        // Get project categories from lookup_data table
-        $projectCategories = Cache::remember('project_categories_frontend', 1800, function() {
-            try {
-                return DB::table('lookup_data')
-                        ->where('lookup_type', 'project_category')
-                        ->where('is_active', 1)
-                        ->orderBy('sort_order')
-                        ->orderBy('lookup_name')
-                        ->get();
-            } catch (\Exception $e) {
-                // Return empty collection if lookup_data doesn't exist yet
-                return collect();
-            }
-        });
-        
-        // Get projects data - same way as homepage
+        // Get projects data using proper model structure
         $projects = Cache::remember('portfolio_all_projects', 900, function() {
             try {
                 return DB::table('project')
@@ -137,9 +303,7 @@ class HomeWebController extends Controller
 
     public function portfolioAll()
     {
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
+        $konf = $this->getSiteConfiguration();
         
         // Use hybrid approach - try lookup first, fallback to old structure
         try {
@@ -169,11 +333,9 @@ class HomeWebController extends Controller
 
     public function gallery()
     {
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
+        $konf = $this->getSiteConfiguration();
         
-        // Get all active galleries with their active items
+        // Get all active galleries with their active items using Galeri Model
         $galeri = Galeri::with(['items' => function($query) {
                 $query->where('status', 'Active')
                       ->orderBy('sequence', 'asc');
@@ -212,7 +374,7 @@ class HomeWebController extends Controller
                 abort(404, 'Portfolio not found');
             }
             
-            $konf = DB::table('setting')->first();
+            $konf = $this->getSiteConfiguration();
             
             return view('portfolio_detail', compact('konf', 'portfolio'));
             
@@ -224,53 +386,19 @@ class HomeWebController extends Controller
 
     public function articleDetail($slug)
     {
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
+        $konf = $this->getSiteConfiguration();
         
-        // Get article with ALL fields including SEO data
-        $article = DB::table('berita')
-            ->select([
-                'id_berita',
-                'judul_berita',
-                'kategori_berita', 
-                'isi_berita',
-                'gambar_berita',
-                'tanggal_berita',
-                'slug_berita',
-                'created_at',
-                'updated_at',
-                // SEO Fields
-                'meta_title',
-                'meta_description',
-                'tags',
-                'focus_keyword',
-                // Content Enhancement
-                'featured_snippet',
-                'conclusion', 
-                'faq_data',
-                // Metadata
-                'reading_time',
-                'is_featured',
-                'views',
-                'related_ids'
-            ])
-            ->where('slug_berita', $slug)
-            ->first();
+        // Get article using Berita Model
+        $article = Berita::where('slug_berita', $slug)->first();
         
         if (!$article) {
             abort(404, 'Article not found');
         }
         
-        // Convert article to model instance if needed for relationships
-        $articleModel = Berita::find($article->id_berita);
-        
         // Increment view count (only once per session per article)
         $sessionKey = 'viewed_article_' . $article->id_berita;
         if (!session()->has($sessionKey)) {
-            DB::table('berita')
-                ->where('id_berita', $article->id_berita)
-                ->increment('views');
+            $article->increment('views');
             session()->put($sessionKey, true);
         }
         
@@ -281,6 +409,7 @@ class HomeWebController extends Controller
         if (!$article->reading_time) {
             $wordCount = str_word_count(strip_tags($article->isi_berita));
             $article->reading_time = max(1, ceil($wordCount / 200)); // 200 words per minute
+            $article->save();
         }
         
         // Parse FAQ data
@@ -292,19 +421,17 @@ class HomeWebController extends Controller
             }
         }
         
-        // Get related articles
+        // Get related articles using model relationships if available
         $related_articles = collect();
-        if ($articleModel && $articleModel->related_ids && count($articleModel->related_ids) > 0) {
-            $related_articles = DB::table('berita')
-                ->whereIn('id_berita', $articleModel->related_ids)
+        if ($article->related_ids && count($article->related_ids) > 0) {
+            $related_articles = Berita::whereIn('id_berita', $article->related_ids)
                 ->select(['judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita', 'isi_berita'])
                 ->get();
         }
         
         // If no manual related articles, get similar ones
         if ($related_articles->count() < 3) {
-            $autoRelated = DB::table('berita')
-                ->where('id_berita', '!=', $article->id_berita)
+            $autoRelated = Berita::where('id_berita', '!=', $article->id_berita)
                 ->where(function($query) use ($article) {
                     if (!empty($article->kategori_berita)) {
                         $query->where('kategori_berita', $article->kategori_berita);
@@ -326,10 +453,9 @@ class HomeWebController extends Controller
         
         $article->related_articles = $related_articles;
         
-        // Get recent articles from same category
+        // Get recent articles from same category using Berita Model
         $recent_articles = Cache::remember('recent_articles_' . $article->kategori_berita . '_' . $article->id_berita, 900, function() use ($article) {
-            return DB::table('berita')
-                ->select([
+            return Berita::select([
                     'judul_berita', 
                     'slug_berita', 
                     'gambar_berita', 
@@ -353,12 +479,10 @@ class HomeWebController extends Controller
 
     public function articles(Request $request)
     {
-        $konf = Cache::remember('site_config', 300, function() {
-            return DB::table('setting')->first();
-        });
+        $konf = $this->getSiteConfiguration();
         
-        $query = DB::table('berita')
-            ->select([
+        // Use Berita Model for article queries
+        $query = Berita::select([
                 'id_berita',
                 'judul_berita', 
                 'slug_berita', 
@@ -442,10 +566,9 @@ class HomeWebController extends Controller
         // Paginate results
         $articles = $query->paginate(12)->withQueryString();
         
-        // Get categories for filter dropdown
+        // Get categories for filter dropdown using Berita Model
         $categories = Cache::remember('article_categories', 1800, function() {
-            return DB::table('berita')
-                ->select('kategori_berita')
+            return Berita::select('kategori_berita')
                 ->distinct()
                 ->whereNotNull('kategori_berita')
                 ->where('kategori_berita', '!=', '')
@@ -458,23 +581,22 @@ class HomeWebController extends Controller
             return $this->getPopularTags(15);
         });
         
-        // Get featured articles for sidebar/highlights
+        // Get featured articles for sidebar/highlights using Berita Model
         $featured_articles = Cache::remember('featured_articles', 1800, function() {
-            return DB::table('berita')
-                ->select(['judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita'])
+            return Berita::select(['judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita'])
                 ->where('is_featured', true)
                 ->orderBy('tanggal_berita', 'desc')
                 ->limit(3)
                 ->get();
         });
         
-        // Get article statistics
+        // Get article statistics using Berita Model
         $stats = Cache::remember('article_stats', 3600, function() {
             return [
-                'total_articles' => DB::table('berita')->count(),
-                'total_views' => DB::table('berita')->sum('views'),
-                'total_categories' => DB::table('berita')->distinct()->whereNotNull('kategori_berita')->count('kategori_berita'),
-                'featured_count' => DB::table('berita')->where('is_featured', true)->count(),
+                'total_articles' => Berita::count(),
+                'total_views' => Berita::sum('views'),
+                'total_categories' => Berita::distinct()->whereNotNull('kategori_berita')->count('kategori_berita'),
+                'featured_count' => Berita::where('is_featured', true)->count(),
             ];
         });
         
@@ -564,13 +686,11 @@ class HomeWebController extends Controller
     }
     
     /**
-     * Get popular tags from articles
+     * Get popular tags from articles using Berita Model
      */
     private function getPopularTags($limit = 10)
     {
-        $allTags = DB::table('berita')
-            ->whereNotNull('tags')
-            ->pluck('tags');
+        $allTags = Berita::whereNotNull('tags')->pluck('tags');
         
         $tagCounts = [];
         
@@ -603,10 +723,8 @@ class HomeWebController extends Controller
             ['url' => url('/articles'), 'changefreq' => 'weekly', 'priority' => '0.8'],
         ]);
         
-        // Add articles
-        $articles = DB::table('berita')
-            ->select('slug_berita', 'updated_at')
-            ->get();
+        // Add articles using Berita Model
+        $articles = Berita::select('slug_berita', 'updated_at')->get();
             
         foreach ($articles as $article) {
             $urls->push([

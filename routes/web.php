@@ -24,6 +24,7 @@ use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\AwardController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ProfileController;
+use App\Config\FallbackConfiguration;
 
 
 // TEST DRAG DROP ROUTE
@@ -31,16 +32,58 @@ Route::get('/test-drag-drop', function () {
     return view('test-drag-drop');
 })->name('test.drag.drop');
 
+// TEST ERROR FALLBACK ROUTE
+Route::get('/test-error-fallback', function () {
+    try {
+        // Simulate the exact error scenario from main route
+        throw new Exception('Simulated HomeWebController error for testing fallback');
+    } catch (Exception $e) {
+        // Log the test error for debugging
+        Log::info('Test error fallback triggered', [
+            'exception' => $e->getMessage(),
+            'url' => request()->url()
+        ]);
+
+        // Get fallback data from configuration class
+        $fallbackData = array_merge(
+            FallbackConfiguration::getHomePageData(),
+            [
+                'error' => FallbackConfiguration::getUserFriendlyError(app()->environment()),
+                'message' => 'Test Mode: ' . FallbackConfiguration::getFallbackMessage(app()->environment()),
+                'fallback_mode' => true,
+                'test_mode' => true // Flag to indicate this is test route
+            ]
+        );
+
+        return view('welcome', $fallbackData);
+    }
+})->name('test.error.fallback');
+
 // MAIN HOME ROUTE - This MUST work
 Route::get('/', function () {
     try {
         $controller = new HomeWebController();
         return $controller->index();
     } catch (Exception $e) {
-        return view('welcome-simple', [
-            'error' => $e->getMessage(),
-            'message' => 'Emergency fallback page - Laravel is running but HomeWebController has issues'
+        // Log the error for debugging
+        Log::error('HomeWebController failed to load', [
+            'exception' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+            'url' => request()->url(),
+            'user_agent' => request()->userAgent()
         ]);
+
+        // Get fallback data from configuration class
+        $fallbackData = array_merge(
+            FallbackConfiguration::getHomePageData(),
+            [
+                'error' => FallbackConfiguration::getUserFriendlyError(app()->environment()),
+                'message' => FallbackConfiguration::getFallbackMessage(app()->environment()),
+                'fallback_mode' => true // Flag to indicate fallback state
+            ]
+        );
+
+        return view('welcome', $fallbackData);
     }
 })->name('home');
 

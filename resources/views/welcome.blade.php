@@ -18,6 +18,35 @@
 </div>
 @endif
 
+@if (isset($fallback_mode) && $fallback_mode)
+<div id="fallbackAlert" role="alert" aria-live="polite"
+    class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-2xl w-full mx-auto px-4 py-3 bg-amber-100 border-l-4 border-amber-500 text-amber-800 rounded-lg shadow-lg animate-fade-in">
+    <div class="flex items-start gap-3">
+        <div class="flex-shrink-0">
+            <svg class="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+        </div>
+        <div class="flex-1">
+            <p class="font-medium text-sm">
+                ⚠️ System Status: Emergency Mode
+            </p>
+            <p class="text-sm mt-1">
+                We're experiencing temporary technical difficulties. Some features may be limited while we resolve this issue.
+                @if (isset($test_mode) && $test_mode)
+                    <span class="font-medium">(Test Mode Active)</span>
+                @endif
+            </p>
+        </div>
+        <button id="closeFallbackAlert" class="flex-shrink-0 text-amber-600 hover:text-amber-800 focus:outline-none" aria-label="Close alert">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+</div>
+@endif
+
 <!-- Scroll to Top Button -->
 <button id="scrollToTopBtn" 
         class="fixed bottom-8 right-8 z-50 p-4 bg-yellow-400 hover:bg-yellow-500 text-black rounded-full shadow-xl transition-all duration-300 opacity-0 invisible transform translate-y-4 hover:scale-110"
@@ -49,6 +78,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 300);
             }
         }, 5000);
+    }
+
+    // Fallback Alert Handler
+    const fallbackAlert = document.getElementById('fallbackAlert');
+    const closeFallbackBtn = document.getElementById('closeFallbackAlert');
+
+    if (fallbackAlert && closeFallbackBtn) {
+        closeFallbackBtn.addEventListener('click', () => {
+            fallbackAlert.classList.add('animate-fade-out');
+            setTimeout(() => {
+                fallbackAlert.remove();
+            }, 300);
+        });
+
+        // Auto-hide fallback alert after 10 seconds (longer than success alert due to importance)
+        setTimeout(() => {
+            if (fallbackAlert) {
+                fallbackAlert.classList.add('animate-fade-out');
+                setTimeout(() => {
+                    fallbackAlert.remove();
+                }, 300);
+            }
+        }, 10000);
     }
 
     // Scroll to Top Button Handler

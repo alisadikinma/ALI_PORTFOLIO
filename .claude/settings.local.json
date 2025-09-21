@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp add:*)",
+      "Bash(gh pr:*)",
+      "Bash(php artisan route:list:*)",
+      "Bash(php artisan:*)",
+      "Bash(composer show:*)",
+      "Bash(npm audit:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

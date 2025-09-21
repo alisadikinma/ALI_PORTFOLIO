@@ -556,138 +556,207 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
-<section id="home"
-    class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16">
-    <div class="w-full flex flex-col sm:flex-row items-center gap-8 sm:gap-32">
-        <img src="{{ asset('favicon/' . $konf->favicon_setting) }}" alt="Profile image"
-            class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl" />
-        <div class="flex flex-col gap-4 sm:gap-6">
-            <div class="flex flex-col gap-4 sm:gap-6">
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <div class="w-12 sm:w-20 h-0.5 bg-yellow-400"></div>
-                    <div class="text-yellow-400 text-sm sm:text-base font-semibold uppercase leading-normal">
-                        {{ $konf->profile_title ?? 'TRANSFORMING MANUFACTURING WITH AUTOMATION & ROBOTICS' }}
+<section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0 opacity-30">
+        <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full filter blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full filter blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 right-1/3 w-48 h-48 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full filter blur-2xl animate-float"></div>
+    </div>
+
+    <!-- Content Container -->
+    <div class="relative z-10 w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14">
+        <div class="w-full flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+
+            <!-- Profile Image with Modern Effects -->
+            <div class="relative w-full max-w-[400px] lg:max-w-[500px]">
+                <!-- Floating decorative elements -->
+                <div class="absolute -top-6 -right-6 w-12 h-12 bg-yellow-400 rounded-full animate-float"></div>
+                <div class="absolute -bottom-6 -left-6 w-8 h-8 bg-pink-400 rounded-full animate-float" style="animation-delay: 1.5s;"></div>
+                <div class="absolute top-1/2 -right-8 w-6 h-6 bg-blue-400 rounded-full animate-float" style="animation-delay: 2s;"></div>
+
+                <div class="relative overflow-hidden rounded-3xl animate-pulse-glow">
+                    <img src="{{ asset('favicon/' . $konf->favicon_setting) }}" alt="Profile image"
+                        class="w-full h-auto" />
+                    <!-- Gradient overlay for modern effect -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-purple-900/20 via-transparent to-cyan-400/10"></div>
+                </div>
+            </div>
+
+            <!-- Content Section with Gen Z Design -->
+            <div class="flex flex-col gap-6 lg:gap-8 text-center lg:text-left max-w-2xl">
+
+                <!-- Dynamic Greeting -->
+                <div class="animate-slide-in-left">
+                    <p class="text-hero-subtitle text-yellow-400 mb-4 flex items-center justify-center lg:justify-start gap-2">
+                        <span class="text-2xl animate-bounce">👋</span>
+                        Hey there! I'm
+                    </p>
+                </div>
+
+                <!-- Large Display Name with Gradient -->
+                <div class="animate-fade-in" style="animation-delay: 0.3s;">
+                    <h1 class="text-display text-white mb-4">
+                        {{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}
+                        <br />
+                        <span class="text-gradient-hero animate-gradient">
+                            AI Generalist
+                        </span>
+                    </h1>
+
+                    <!-- Subtitle with modern styling -->
+                    <div class="text-hero-subtitle text-yellow-400 uppercase tracking-wider font-bold">
+                        {{ $konf->profile_title ?? '🚀 Transforming Manufacturing with AI' }}
                     </div>
                 </div>
-                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.1rem;">
-                    Hello bro, I'm<br />
-                    <span class="text-yellow-400 relative">
-                    {{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}
-                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full"></div>
-                    </span>
-                </h1>
-            </div>
-            <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: -1rem;">
-                {!! $konf->profile_content ?? 'Strategic Digital Transformation Leader with over 16 years of expertise in Innovation, Leadership, and impactful Transformation within Industry 4.0. Proven ability to drive meaningful results through advanced technology integration spanning AI, IoT, Web & Mobile Development, and Robotic Process Automation.' !!}
-            </p>
 
-            <div class="flex flex-col sm:flex-row gap-4">
-                {{-- Primary Button - Menggunakan data dari table settings --}}
-                <a href="{{ !empty($konf->primary_button_link) ? $konf->primary_button_link : (!empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact') }}" 
-                   target="{{ (!empty($konf->primary_button_link) && (Str::startsWith($konf->primary_button_link, 'http') || Str::startsWith($konf->primary_button_link, 'https'))) || (!empty($konf->view_cv_url) && (Str::startsWith($konf->view_cv_url, 'http') || Str::startsWith($konf->view_cv_url, 'https'))) ? '_blank' : '_self' }}" 
-                   class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3" 
-                   style="min-width: 180px; text-align: center;">
-                    <span class="text-neutral-900 text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        {{ $konf->primary_button_title ?? 'View CV' }}
-                    </span>
-                    @if((!empty($konf->primary_button_link) && (Str::startsWith($konf->primary_button_link, 'http') || Str::startsWith($konf->primary_button_link, 'https'))) || (!empty($konf->view_cv_url) && (Str::startsWith($konf->view_cv_url, 'http') || Str::startsWith($konf->view_cv_url, 'https'))))
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    @endif
-                </a>
+                <!-- Engaging Description -->
+                <div class="animate-slide-up" style="animation-delay: 0.6s;">
+                    <p class="text-modern-body text-xl text-gray-300 leading-relaxed">
+                        From production engineer to <span class="text-yellow-400 font-semibold">AI innovator</span> –
+                        I don't just build solutions, I create experiences that make people go
+                        <span class="text-pink-400 font-semibold">"wow, this actually works!"</span> 🤯
+                        <br><br>
+                        16+ years of turning traditional manufacturing into smart,
+                        <span class="text-blue-400 font-semibold">future-ready operations</span>.
+                        Let's build something amazing together! ✨
+                    </p>
+                </div>
 
-                {{-- Secondary Button - Menggunakan data dari table settings --}}
-                <a href="{{ !empty($konf->secondary_button_link) ? $konf->secondary_button_link : url('portfolio') }}" 
-                   target="{{ !empty($konf->secondary_button_link) && (Str::startsWith($konf->secondary_button_link, 'http') || Str::startsWith($konf->secondary_button_link, 'https')) ? '_blank' : '_self' }}"
-                    class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3" style="min-width: 200px; text-align: center;">
-                    <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        {{ $konf->secondary_button_title ?? 'View Portfolio' }}
-                    </span>
-                </a>
+                <!-- Gen Z Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mt-8 animate-slide-up" style="animation-delay: 0.9s;">
+                    {{-- Primary Cyber Button --}}
+                    <a href="{{ !empty($konf->primary_button_link) ? $konf->primary_button_link : (!empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact') }}"
+                       target="{{ (!empty($konf->primary_button_link) && (Str::startsWith($konf->primary_button_link, 'http') || Str::startsWith($konf->primary_button_link, 'https'))) || (!empty($konf->view_cv_url) && (Str::startsWith($konf->view_cv_url, 'http') || Str::startsWith($konf->view_cv_url, 'https'))) ? '_blank' : '_self' }}"
+                       class="btn-cyber px-8 py-4 rounded-xl font-bold text-white text-lg flex items-center justify-center gap-3 min-w-[200px] transition-all duration-300 hover:scale-105">
+                        <span class="relative z-10">
+                            {{ $konf->primary_button_title ?? '📄 Check My Work' }}
+                        </span>
+                        @if((!empty($konf->primary_button_link) && (Str::startsWith($konf->primary_button_link, 'http') || Str::startsWith($konf->primary_button_link, 'https'))) || (!empty($konf->view_cv_url) && (Str::startsWith($konf->view_cv_url, 'http') || Str::startsWith($konf->view_cv_url, 'https'))))
+                        <svg class="w-5 h-5 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        @endif
+                    </a>
+
+                    {{-- Secondary Glass Button --}}
+                    <a href="{{ !empty($konf->secondary_button_link) ? $konf->secondary_button_link : url('portfolio') }}"
+                       target="{{ !empty($konf->secondary_button_link) && (Str::startsWith($konf->secondary_button_link, 'http') || Str::startsWith($konf->secondary_button_link, 'https')) ? '_blank' : '_self' }}"
+                       class="card-modern px-8 py-4 rounded-xl font-semibold text-white text-lg flex items-center justify-center gap-3 min-w-[200px] transition-all duration-300 hover:scale-105 border border-white/20">
+                        <span>
+                            {{ $konf->secondary_button_title ?? '🚀 View Portfolio' }}
+                        </span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Stats Section -->
-    <div class="w-full bg-neutral-900/40 flex flex-col items-center gap-4 sm:gap-6 md:gap-8 lg:gap-11">
-        <div class="w-full h-0.5 outline outline-1 outline-neutral-900 outline-offset--1"></div>
+<!-- Gen Z Stats Section -->
+<section class="py-20 bg-gradient-to-b from-slate-900 to-black relative overflow-hidden">
+    <!-- Background decorative elements -->
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-yellow-400 to-pink-400 rounded-full filter blur-xl animate-pulse"></div>
+        <div class="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full filter blur-xl animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
 
-        <div class="w-full px-4">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8">
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
-                    <!-- Trade-up Icon -->
-                    <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M36.6667 23.8332V14.6665H27.5" stroke="#FFD300" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M36.6666 14.6665L27.5 23.8332C25.8811 25.452 25.0726 26.2605 24.0808 26.3503C23.9158 26.365 23.7508 26.365 23.5858 26.3503C22.594 26.2587 21.7855 25.452 20.1666 23.8332C18.5478 22.2143 17.7393 21.4058 16.7475 21.316C16.5828 21.3011 16.4171 21.3011 16.2525 21.316C15.2606 21.4077 14.4521 22.2143 12.8333 23.8332L7.33331 29.3332" stroke="#FFD300" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <div class="text-yellow-400 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">
-                        {{ $konf->years_experience }}
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+        <!-- Section Header -->
+        <div class="text-center mb-16">
+            <h2 class="text-modern-heading text-4xl lg:text-5xl text-white mb-4">
+                The Numbers Don't Lie 📊
+            </h2>
+            <p class="text-modern-body text-xl text-gray-300">
+                16+ years of delivering <span class="text-gradient-neon">game-changing</span> results
+            </p>
+        </div>
+
+        <!-- Modern Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+            <!-- Experience Stat -->
+            <div class="card-modern p-8 rounded-2xl text-center group cursor-pointer">
+                <div class="flex flex-col items-center gap-4">
+                    <!-- Modern Experience Icon -->
+                    <div class="p-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🚀</span>
                     </div>
-                    <div class="text-neutral-400 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-center">
+                    <div class="text-gradient-neon text-5xl font-black animate-pulse-glow">
+                        {{ $konf->years_experience ?? '16+' }}
+                    </div>
+                    <div class="text-gray-300 text-lg font-semibold">
                         Years Experience
                     </div>
                 </div>
+            </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
-                    <!-- People Icon -->
-                    <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9.89999 14.8502C9.89999 13.5374 10.4215 12.2783 11.3498 11.35C12.2781 10.4217 13.5372 9.9002 14.85 9.9002C16.1628 9.9002 17.4219 10.4217 18.3502 11.35C19.2785 12.2783 19.8 13.5374 19.8 14.8502C19.8 16.163 19.2785 17.4221 18.3502 18.3504C17.4219 19.2787 16.1628 19.8002 14.85 19.8002C13.5372 19.8002 12.2781 19.2787 11.3498 18.3504C10.4215 17.4221 9.89999 16.163 9.89999 14.8502ZM14.85 7.7002C12.9537 7.7002 11.1351 8.4535 9.79417 9.79438C8.45329 11.1353 7.69999 12.9539 7.69999 14.8502C7.69999 16.7465 8.45329 18.5651 9.79417 19.906C11.1351 21.2469 12.9537 22.0002 14.85 22.0002C16.7463 22.0002 18.5649 21.2469 19.9058 19.906C21.2467 18.5651 22 16.7465 22 14.8502C22 12.9539 21.2467 11.1353 19.9058 9.79438C18.5649 8.4535 16.7463 7.7002 14.85 7.7002ZM27.3614 33.3192C28.545 33.8032 30.0344 34.1002 31.9 34.1002C36.0382 34.1002 38.3262 32.6306 39.5318 30.9454C40.1621 30.0618 40.5566 29.032 40.678 27.9534C40.6888 27.8532 40.6961 27.7527 40.7 27.652V27.5002C40.7 27.0668 40.6146 26.6377 40.4488 26.2373C40.2829 25.837 40.0399 25.4732 39.7334 25.1667C39.427 24.8603 39.0632 24.6172 38.6628 24.4514C38.2625 24.2856 37.8334 24.2002 37.4 24.2002H27.214C27.742 24.8382 28.138 25.584 28.369 26.4002H37.4C37.6917 26.4002 37.9715 26.5161 38.1778 26.7224C38.3841 26.9287 38.5 27.2085 38.5 27.5002V27.619L38.489 27.729C38.4064 28.4269 38.1491 29.0928 37.741 29.665C37.0216 30.6748 35.4596 31.9002 31.9 31.9002C30.2896 31.9002 29.0884 31.6494 28.1886 31.282C28.0082 31.898 27.7464 32.5932 27.3614 33.3192ZM3.29999 28.6002C3.29999 27.4332 3.76356 26.3141 4.58872 25.4889C5.41388 24.6638 6.53304 24.2002 7.69999 24.2002H22C23.1669 24.2002 24.2861 24.6638 25.1113 25.4889C25.9364 26.3141 26.4 27.4332 26.4 28.6002V28.785L26.3956 28.873L26.3736 29.17C26.2177 30.5957 25.7113 31.9607 24.8996 33.1432C23.3574 35.3762 20.3786 37.4002 14.85 37.4002C9.32139 37.4002 6.34259 35.3762 4.80039 33.1454C3.98836 31.9623 3.48196 30.5965 3.32639 29.17C3.31384 29.0419 3.30503 28.9136 3.29999 28.785V28.6002ZM5.49999 28.7322V28.7718L5.51539 28.9544C5.63477 30.009 6.01096 31.0182 6.61099 31.8936C7.68239 33.4424 9.92859 35.2002 14.85 35.2002C19.7714 35.2002 22.0176 33.4424 23.089 31.8936C23.689 31.0182 24.0652 30.009 24.1846 28.9544C24.1934 28.8708 24.1978 28.8099 24.1978 28.7718L24.2 28.7344V28.6002C24.2 28.0167 23.9682 27.4571 23.5556 27.0446C23.143 26.632 22.5835 26.4002 22 26.4002H7.69999C7.11651 26.4002 6.55693 26.632 6.14435 27.0446C5.73177 27.4571 5.49999 28.0167 5.49999 28.6002V28.7322ZM28.6 16.5002C28.6 15.625 28.9477 14.7856 29.5665 14.1667C30.1854 13.5479 31.0248 13.2002 31.9 13.2002C32.7752 13.2002 33.6146 13.5479 34.2334 14.1667C34.8523 14.7856 35.2 15.625 35.2 16.5002C35.2 17.3754 34.8523 18.2148 34.2334 18.8336C33.6146 19.4525 32.7752 19.8002 31.9 19.8002C31.0248 19.8002 30.1854 19.4525 29.5665 18.8336C28.9477 18.2148 28.6 17.3754 28.6 16.5002ZM31.9 11.0002C30.4413 11.0002 29.0424 11.5797 28.0109 12.6111C26.9795 13.6426 26.4 15.0415 26.4 16.5002C26.4 17.9589 26.9795 19.3578 28.0109 20.3893C29.0424 21.4207 30.4413 22.0002 31.9 22.0002C33.3587 22.0002 34.7576 21.4207 35.7891 20.3893C36.8205 19.3578 37.4 17.9589 37.4 16.5002C37.4 15.0415 36.8205 13.6426 35.7891 12.6111C34.7576 11.5797 33.3587 11.0002 31.9 11.0002Z" fill="#FFD300"/>
-                    </svg>
-                    <div class="text-yellow-400 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">
-                        {{ $konf->followers_count }}
+            <!-- Followers Stat -->
+            <div class="card-modern p-8 rounded-2xl text-center group cursor-pointer">
+                <div class="flex flex-col items-center gap-4">
+                    <!-- Modern Followers Icon -->
+                    <div class="p-4 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">👥</span>
                     </div>
-                    <div class="text-neutral-400 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-center">
+                    <div class="text-gradient-neon text-5xl font-black animate-pulse-glow">
+                        {{ $konf->followers_count ?? '54K+' }}
+                    </div>
+                    <div class="text-gray-300 text-lg font-semibold">
                         Followers
                     </div>
                 </div>
+            </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
-                    <!-- Briefcase Icon -->
-                    <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M37.125 12.375H6.875C6.11561 12.375 5.5 12.9906 5.5 13.75V35.75C5.5 36.5094 6.11561 37.125 6.875 37.125H37.125C37.8844 37.125 38.5 36.5094 38.5 35.75V13.75C38.5 12.9906 37.8844 12.375 37.125 12.375Z" stroke="#FFD300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M28.875 12.375V9.625C28.875 8.89565 28.5853 8.19618 28.0695 7.68046C27.5538 7.16473 26.8543 6.875 26.125 6.875H17.875C17.1457 6.875 16.4462 7.16473 15.9305 7.68046C15.4147 8.19618 15.125 8.89565 15.125 9.625V12.375" stroke="#FFD300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M38.5 21.708C33.4852 24.6083 27.7931 26.1321 22 26.1252C16.2058 26.1403 10.5117 24.6159 5.5 21.708" stroke="#FFD300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M19.9375 20.625H24.0625" stroke="#FFD300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <div class="text-yellow-400 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">
-                        {{ $konf->project_delivered }}
+            <!-- Projects Stat -->
+            <div class="card-modern p-8 rounded-2xl text-center group cursor-pointer">
+                <div class="flex flex-col items-center gap-4">
+                    <!-- Modern Projects Icon -->
+                    <div class="p-4 bg-gradient-to-r from-green-400 to-teal-400 rounded-full group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">💼</span>
                     </div>
-                    <div class="text-neutral-400 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-center">
+                    <div class="text-gradient-neon text-5xl font-black animate-pulse-glow">
+                        {{ $konf->project_delivered ?? '18+' }}
+                    </div>
+                    <div class="text-gray-300 text-lg font-semibold">
                         Projects Delivered
                     </div>
                 </div>
+            </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
-                    <!-- Dollar Icon -->
-                    <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 38.0418C21.6368 38.0371 21.2898 37.8907 21.033 37.6338C20.7761 37.377 20.6297 37.03 20.625 36.6668V7.3335C20.625 6.96882 20.7699 6.61909 21.0277 6.36122C21.2856 6.10336 21.6353 5.9585 22 5.9585C22.3647 5.9585 22.7144 6.10336 22.9723 6.36122C23.2301 6.61909 23.375 6.96882 23.375 7.3335V36.6668C23.3703 37.03 23.2239 37.377 22.967 37.6338C22.7102 37.8907 22.3632 38.0371 22 38.0418Z" fill="#FFD300"/>
-                        <path d="M24.75 34.3751H12.8334C12.4687 34.3751 12.119 34.2302 11.8611 33.9723C11.6032 33.7145 11.4584 33.3647 11.4584 33.0001C11.4584 32.6354 11.6032 32.2856 11.8611 32.0278C12.119 31.7699 12.4687 31.6251 12.8334 31.6251H24.75C25.9629 31.7331 27.1698 31.3619 28.1122 30.5908C29.0546 29.8198 29.6575 28.7103 29.7917 27.5001C29.6575 26.2898 29.0546 25.1803 28.1122 24.4093C27.1698 23.6382 25.9629 23.267 24.75 23.3751H19.25C18.2866 23.4372 17.3204 23.3084 16.4068 22.9962C15.4933 22.684 14.6503 22.1945 13.9264 21.5557C13.2025 20.917 12.6118 20.1416 12.1883 19.274C11.7648 18.4064 11.5167 17.4637 11.4584 16.5001C11.5167 15.5364 11.7648 14.5937 12.1883 13.7261C12.6118 12.8586 13.2025 12.0831 13.9264 11.4444C14.6503 10.8056 15.4933 10.3161 16.4068 10.0039C17.3204 9.69169 18.2866 9.56295 19.25 9.62505H29.3334C29.698 9.62505 30.0478 9.76992 30.3056 10.0278C30.5635 10.2856 30.7084 10.6354 30.7084 11.0001C30.7084 11.3647 30.5635 11.7145 30.3056 11.9723C30.0478 12.2302 29.698 12.3751 29.3334 12.3751H19.25C18.0372 12.267 16.8303 12.6382 15.8879 13.4093C14.9455 14.1803 14.3426 15.2898 14.2084 16.5001C14.3426 17.7103 14.9455 18.8198 15.8879 19.5908C16.8303 20.3619 18.0372 20.7331 19.25 20.6251H24.75C25.7135 20.5629 26.6797 20.6917 27.5933 21.0039C28.5068 21.3161 29.3497 21.8056 30.0737 22.4444C30.7976 23.0831 31.3883 23.8586 31.8118 24.7261C32.2353 25.5937 32.4834 26.5364 32.5417 27.5001C32.4834 28.4637 32.2353 29.4064 31.8118 30.274C31.3883 31.1416 30.7976 31.917 30.0737 32.5557C29.3497 33.1945 28.5068 33.684 27.5933 33.9962C26.6797 34.3084 25.7135 34.4372 24.75 34.3751Z" fill="#FFD300"/>
-                    </svg>
-                    <div class="text-yellow-400 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">
-                        {{ $konf->cost_savings }}
+            <!-- Cost Savings Stat -->
+            <div class="card-modern p-8 rounded-2xl text-center group cursor-pointer">
+                <div class="flex flex-col items-center gap-4">
+                    <!-- Modern Cost Savings Icon -->
+                    <div class="p-4 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">💰</span>
                     </div>
-                    <div class="text-neutral-400 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-center">
+                    <div class="text-gradient-neon text-5xl font-black animate-pulse-glow">
+                        {{ $konf->cost_savings ?? '$250K+' }}
+                    </div>
+                    <div class="text-gray-300 text-lg font-semibold">
                         Cost Savings
                     </div>
                 </div>
+            </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
-                    <!-- Target Icon -->
-                    <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22 40.3332C19.4639 40.3332 17.0805 39.8516 14.85 38.8885C12.6194 37.9254 10.6791 36.6194 9.02913 34.9707C7.37913 33.3219 6.07318 31.3816 5.1113 29.1498C4.14941 26.9181 3.66785 24.5347 3.66663 21.9998C3.66541 19.4649 4.14696 17.0816 5.1113 14.8498C6.07563 12.6181 7.38157 10.6778 9.02913 9.029C10.6767 7.38023 12.617 6.07428 14.85 5.11117C17.083 4.14806 19.4663 3.6665 22 3.6665C24.5336 3.6665 26.917 4.14806 29.15 5.11117C31.383 6.07428 33.3232 7.38023 34.9708 9.029C36.6184 10.6778 37.9249 12.6181 38.8905 14.8498C39.856 17.0816 40.337 19.4649 40.3333 21.9998C40.3296 24.5347 39.8481 26.9181 38.8886 29.1498C37.9292 31.3816 36.6232 33.3219 34.9708 34.9707C33.3184 36.6194 31.3781 37.926 29.15 38.8903C26.9219 39.8547 24.5385 40.3356 22 40.3332ZM22 36.6665C26.0944 36.6665 29.5625 35.2457 32.4041 32.404C35.2458 29.5623 36.6666 26.0943 36.6666 21.9998C36.6666 17.9054 35.2458 14.4373 32.4041 11.5957C29.5625 8.754 26.0944 7.33317 22 7.33317C17.9055 7.33317 14.4375 8.754 11.5958 11.5957C8.75413 14.4373 7.33329 17.9054 7.33329 21.9998C7.33329 26.0943 8.75413 29.5623 11.5958 32.404C14.4375 35.2457 17.9055 36.6665 22 36.6665ZM22 32.9998C18.9444 32.9998 16.3472 31.9304 14.2083 29.7915C12.0694 27.6526 11 25.0554 11 21.9998C11 18.9443 12.0694 16.3471 14.2083 14.2082C16.3472 12.0693 18.9444 10.9998 22 10.9998C25.0555 10.9998 27.6527 12.0693 29.7916 14.2082C31.9305 16.3471 33 18.9443 33 21.9998C33 25.0554 31.9305 27.6526 29.7916 29.7915C27.6527 31.9304 25.0555 32.9998 22 32.9998ZM22 29.3332C24.0166 29.3332 25.743 28.6151 27.1791 27.179C28.6152 25.7429 29.3333 24.0165 29.3333 21.9998C29.3333 19.9832 28.6152 18.2568 27.1791 16.8207C25.743 15.3846 24.0166 14.6665 22 14.6665C19.9833 14.6665 18.2569 15.3846 16.8208 16.8207C15.3847 18.2568 14.6666 19.9832 14.6666 21.9998C14.6666 24.0165 15.3847 25.7429 16.8208 27.179C18.2569 28.6151 19.9833 29.3332 22 29.3332ZM22 25.6665C20.9916 25.6665 20.1287 25.3078 19.4113 24.5903C18.6939 23.8729 18.3345 23.0094 18.3333 21.9998C18.3321 20.9903 18.6914 20.1274 19.4113 19.4112C20.1312 18.6949 20.9941 18.3356 22 18.3332C23.0058 18.3307 23.8694 18.6901 24.5905 19.4112C25.3116 20.1323 25.6703 20.9952 25.6666 21.9998C25.663 23.0045 25.3042 23.868 24.5905 24.5903C23.8767 25.3127 23.0132 25.6714 22 25.6665Z" fill="#FFD300"/>
-                    </svg>
-                    <div class="text-yellow-400 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">
-                        {{ $konf->success_rate }}
+            <!-- Success Rate Stat -->
+            <div class="card-modern p-8 rounded-2xl text-center group cursor-pointer">
+                <div class="flex flex-col items-center gap-4">
+                    <!-- Modern Success Icon -->
+                    <div class="p-4 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🎯</span>
                     </div>
-                    <div class="text-neutral-400 text-base sm:text-lg md:text-xl lg:text-2xl font-medium text-center">
+                    <div class="text-gradient-neon text-5xl font-black animate-pulse-glow">
+                        {{ $konf->success_rate ?? '99%' }}
+                    </div>
+                    <div class="text-gray-300 text-lg font-semibold">
                         Success Rate
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="w-full h-0.5 outline outline-1 outline-neutral-900 outline-offset--1"></div>
     </div>
 </section>
 

@@ -11,6 +11,8 @@ Navigate to your XAMPP-hosted homepage and capture comprehensive screenshots:
 
 **Homepage URL**: `http://localhost/ALI_PORTFOLIO/public/`
 
+**IMPORTANT**: Ensure XAMPP is running and website is accessible before starting analysis.
+
 Take screenshots at multiple viewports:
 1. **Desktop viewport** (1440px width) - full page screenshot
 2. **Mobile viewport** (375px width) - full page screenshot  
@@ -20,6 +22,14 @@ Use these commands:
 ```
 mcp__playwright__browser_navigate http://localhost/ALI_PORTFOLIO/public/
 mcp__playwright__browser_resize 1440 900
+mcp__playwright__browser_take_screenshot
+
+# Mobile viewport
+mcp__playwright__browser_resize 375 812
+mcp__playwright__browser_take_screenshot
+
+# Tablet viewport  
+mcp__playwright__browser_resize 768 1024
 mcp__playwright__browser_take_screenshot
 ```
 
@@ -78,12 +88,15 @@ For each recommendation, provide:
 
 ## STEP 5: CODE IMPLEMENTATION
 
+⚠️ **SAFETY FIRST**: Always backup files before implementing changes!
+
 If improvements are approved, implement the changes directly:
 1. **Backup current files** before making changes
 2. **Implement high-priority improvements** one by one
-3. **Test changes** by refreshing the browser and taking new screenshots
+3. **Test changes** by refreshing browser and taking new screenshots
 4. **Verify responsive behavior** across all viewports
 5. **Ensure no breaking changes** to existing functionality
+6. **Performance check**: Verify page load speed after changes
 
 ## GENERATION Z DESIGN PSYCHOLOGY
 

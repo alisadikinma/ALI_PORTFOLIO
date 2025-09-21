@@ -1,11 +1,103 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides high-level guidance to Claude Code when working with this Laravel 10.49.0 portfolio website. For detailed information about specific directories, refer to README.md files in each folder.
 
-## Project Overview
-This is a Laravel 10.49.0 portfolio website application with MySQL database backend. The application uses Laravel Jetstream with Livewire for authentication and frontend components.
+## Quick Start
 
-## Core Development Commands
+### Development Server
+```bash
+php artisan serve    # Start Laravel server
+npm run dev         # Start Vite development
+```
+
+### Claude Code Workflow Commands
+```bash
+@genz-homepage-review           # Gen Z design assessment
+@comprehensive-quality-review   # Full responsive & UX testing
+@design-review                  # UI/UX design compliance
+@code-review                    # Code quality assessment
+@security-review                # Security vulnerability check
+```
+
+## Project Structure Overview
+
+### Core Directories (See individual README.md for details)
+- **`app/`** - Laravel MVC architecture (Controllers, Models, Services)
+- **`resources/`** - Frontend assets (CSS, JS, Blade views)
+- **`public/`** - Web-accessible files and compiled assets
+- **`database/`** - Migrations, seeders, and schema
+- **`routes/`** - URL routing configuration
+- **`tests/`** - Pest PHP test suite
+
+### Workflow Directories
+- **`.claude/`** - Claude Code commands and agents
+- **`.playwright-mcp/`** - Browser testing screenshots and traces
+
+## Architecture Highlights
+
+### Custom Patterns
+- **Custom Primary Keys**: `id_project`, `id_setting` (non-standard Laravel)
+- **Dynamic Image Handling**: Multiple images per project with auto-cleanup
+- **Flexible Configuration**: LookupData model for categories and settings
+- **Homepage Sections**: Dynamic section management through database
+
+### Technology Stack
+- **Backend**: Laravel 10.49.0 + Jetstream (Livewire)
+- **Frontend**: Tailwind CSS + Livewire 3.0 + Vite
+- **Database**: MySQL with custom primary keys
+- **Testing**: Pest PHP framework
+- **Quality Assurance**: MCP Playwright integration
+
+## Known Issues & Focus Areas
+
+### Current Priority Issues
+1. **Tablet Responsive Design** - Layout breaks at 768px viewport
+2. **Mobile Navigation Bug** - Hamburger menu overlay issues
+3. **Gen Z Design Appeal** - Needs modern color palette and typography
+4. **Performance Optimization** - Image loading and asset optimization
+
+### Quality Assurance Integration
+- **MCP Playwright Tools**: Automated browser testing with screenshot capture
+- **Design Compliance**: Style guide and design principles in `/context/`
+- **Responsive Testing**: Multi-viewport validation (mobile, tablet, desktop)
+- **Gen Z Assessment**: Modern design trend compliance scoring
+
+## Environment Setup
+
+### Required Environment Variables
+```env
+APP_KEY=base64:...              # php artisan key:generate
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+SESSION_DRIVER=file
+```
+
+### Development Dependencies
+- PHP 8.1+
+- Node.js for Vite
+- MySQL database
+- Composer for PHP dependencies
+- NPM for frontend assets
+
+## Workflow Integration
+
+### MCP Playwright Configuration
+- `.mcp.json` - Standard Playwright MCP
+- `.mcp-executeautomation.json` - Enhanced automation features
+- Screenshots automatically saved to `.playwright-mcp/`
+
+### Claude Code Commands
+All commands located in `.claude/commands/` with specific focus areas:
+- **Quality Reviews**: Responsive design and UX testing
+- **Design Assessment**: Gen Z appeal and modern design compliance
+- **Code Reviews**: Laravel best practices and security
+- **Architecture Reviews**: MVC pattern compliance
+
+## Quick Reference Commands
 
 ### Local Development
 ```bash

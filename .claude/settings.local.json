@@ -14,7 +14,8 @@
       "Bash(git push:*)",
       "Bash(where claude)",
       "Bash(claude auth login)",
-      "Bash(code --version)"
+      "Bash(code --version)",
+      "mcp__playwright__browser_resize"
     ],
     "deny": [],
     "ask": []

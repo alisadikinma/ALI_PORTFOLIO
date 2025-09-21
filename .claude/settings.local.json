@@ -9,7 +9,12 @@
       "Bash(npm audit:*)",
       "mcp__playwright__browser_navigate",
       "mcp__playwright__browser_take_screenshot",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(where claude)",
+      "Bash(claude auth login)",
+      "Bash(code --version)"
     ],
     "deny": [],
     "ask": []

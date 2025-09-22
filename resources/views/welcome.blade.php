@@ -771,21 +771,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 $activeSections[$code] = $config;
             }
         }
-        // Sort by sort_order
+        // Sort by sort_order from database
         uasort($activeSections, function($a, $b) {
             return ($a['sort_order'] ?? 999) <=> ($b['sort_order'] ?? 999);
         });
     } else {
         // Fallback to default sections if no database config
         $activeSections = [
-            'about' => ['title' => 'About', 'is_active' => true],
-            'services' => ['title' => 'Services', 'is_active' => true],
-            'portfolio' => ['title' => 'Portfolio', 'is_active' => true],
-            'awards' => ['title' => 'Awards', 'is_active' => true],
-            'testimonials' => ['title' => 'Testimonials', 'is_active' => true],
-            'gallery' => ['title' => 'Gallery', 'is_active' => true],
-            'articles' => ['title' => 'Articles', 'is_active' => true],
-            'contact' => ['title' => 'Contact', 'is_active' => true],
+            'about' => ['title' => 'About', 'description' => 'About me, mission, vision content', 'is_active' => true, 'sort_order' => 1],
+            'services' => ['title' => 'Services', 'description' => 'Services & Offering', 'is_active' => true, 'sort_order' => 2],
+            'portfolio' => ['title' => 'Portfolio', 'description' => 'Project showcase', 'is_active' => true, 'sort_order' => 3],
+            'awards' => ['title' => 'Awards', 'description' => 'Achievements and Recognitions', 'is_active' => true, 'sort_order' => 4],
+            'testimonials' => ['title' => 'Testimonials', 'description' => 'Client reviews', 'is_active' => true, 'sort_order' => 5],
+            'gallery' => ['title' => 'Gallery', 'description' => 'Achievements & Recognitions', 'is_active' => true, 'sort_order' => 6],
+            'articles' => ['title' => 'Articles', 'description' => 'Blog posts', 'is_active' => true, 'sort_order' => 7],
+            'contact' => ['title' => 'Contact', 'description' => 'Contact form', 'is_active' => true, 'sort_order' => 8],
         ];
     }
 @endphp

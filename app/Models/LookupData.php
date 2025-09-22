@@ -326,3 +326,4 @@ class LookupData extends Model
 
         return implode(' > ', $breadcrumb);
     }
+}

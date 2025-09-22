@@ -775,7 +775,7 @@ $menuItems = DB::table('lookup_data')
                 <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">
                     <a href="{{ url('/') }}" class="flex items-center gap-4 hover:text-yellow-400 transition-colors whitespace-nowrap">
                         <img src="{{ asset('logo/' . $konf->logo_setting) }}" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
-                        <span class="whitespace-nowrap">{{ $konf->pimpinan_setting }}</span>
+                        <span class="whitespace-nowrap">{{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}</span>
                     </a>
                 </div>
 
@@ -799,16 +799,6 @@ $menuItems = DB::table('lookup_data')
                 <!-- Navigation Menu -->
                 <nav id="nav-menu"
                     class="hidden sm:flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-7 absolute sm:static top-0 left-0 w-full sm:w-auto sm:bg-transparent p-4 sm:p-0 shadow-lg sm:shadow-none">
-
-                    <!-- Mobile Menu Header -->
-                    <div class="mobile-menu-header sm:hidden">
-                        <span class="mobile-menu-title">{{ $konf->pimpinan_setting }}</span>
-                        <button class="close-menu-btn" onclick="toggleMenu()" aria-label="Close menu">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
 
                     {{-- Home Link (Always first and active) --}}
                     <a href="{{ url('/') }}"

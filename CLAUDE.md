@@ -30,6 +30,16 @@ php artisan test --coverage             # Run with coverage
 php artisan migrate                     # Run migrations
 php artisan migrate:fresh               # Fresh migration (drops all tables)
 php artisan migrate:rollback            # Rollback migrations
+php artisan db:seed                     # Run database seeders
+```
+
+### Cache Management
+```bash
+php artisan cache:clear                 # Clear application cache
+php artisan config:clear                # Clear configuration cache
+php artisan route:clear                 # Clear route cache
+php artisan view:clear                  # Clear compiled views
+php clear_cache_portfolio.php           # Custom cache clearing script
 ```
 
 ## Architecture Overview
@@ -100,3 +110,9 @@ The `.claude/` directory contains a sophisticated multi-agent orchestration syst
 - reCAPTCHA (anhskohbo/no-captcha, greggilbert/recaptcha)
 - Image CAPTCHA (mews/captcha)
 - Smart ads (5balloons/laravel-smart-ads)
+
+## Development Tools
+- **Laravel Debugbar**: Available in development for debugging
+- **Laravel Telescope**: Advanced debugging and monitoring
+- **Playwright**: End-to-end testing framework
+- **Vite**: Modern frontend build tool with HMR

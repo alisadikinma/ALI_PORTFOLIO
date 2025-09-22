@@ -12,10 +12,6 @@ use App\Models\Galeri;
 use App\Models\Award;
 use App\Models\LookupData;
 use App\Models\Setting;
-use App\Services\HomepageSectionService;
-use App\Services\ProjectService;
-use App\Services\SettingService;
-use App\Services\ContentService;
 use Carbon\Carbon;
 use Exception;
 
@@ -24,44 +20,116 @@ class HomeWebController extends Controller
     public function index()
     {
         try {
-            // Use services for better architecture and performance
-            $konf = SettingService::getConfig();
-            $homepageSections = $this->getHomepageSections();
-            $sectionConfigs = HomepageSectionService::getAllSectionConfigs();
+            // Clear cache and get data directly from correct tables
+            Cache::forget('homepage_complete_data');
+            
+            // Get configuration
+            $konf = Setting::first();
 
-            // Load content using services with caching
-            $data = Cache::remember('homepage_complete_data', 1800, function() use ($homepageSections) {
-                return [
-                    'projects' => ProjectService::getHomepageProjects(9),
-                    'testimonial' => ContentService::getTestimonialsForHomepage(6),
-                    'galeri' => ContentService::getGalleryForHomepage(12),
-                    'article' => ContentService::getArticlesForHomepage(4),
-                    'award' => ContentService::getAwardsForHomepage(6),
-                    'layanan' => ContentService::getServicesForHomepage(),
-                    'projectCategories' => ProjectService::getProjectCategories(),
+            // 1. Services from 'layanan' table
+            $layanan = DB::table('layanan')
+                ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
+                ->where('status', 'Active')
+                ->orderBy('sequence', 'asc')
+                ->get();
+
+            // 2. Projects from 'project' table  
+            $projects = DB::table('project')
+                ->select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 'location', 'project_category', 'created_at', 'sequence')
+                ->where('status', 'Active')
+                ->orderBy('sequence', 'asc')
+                ->orderBy('created_at', 'desc')
+                ->limit(9)
+                ->get();
+
+            // 3. Gallery (Achievements) from 'galeri' table
+            $galeri = DB::table('galeri')
+                ->select('id_galeri', 'nama_galeri', 'company', 'period', 'deskripsi_galeri', 'thumbnail', 'sequence', 'status')
+                ->where('status', 'Active')
+                ->orderBy('sequence', 'asc')
+                ->limit(12)
+                ->get();
+
+            // Optional data (with fallbacks)
+            try {
+                $testimonial = DB::table('testimonial')
+                    ->select('id_testimonial', 'client_name', 'judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan', 'company_name', 'rating')
+                    ->where('status', 'Active')
+                    ->orderBy('display_order', 'asc')
+                    ->limit(6)
+                    ->get();
+            } catch (Exception $e) {
+                $testimonial = collect();
+            }
+
+            try {
+                $award = DB::table('award')
+                    ->select('id_award', 'nama_award', 'company', 'period', 'gambar_award', 'keterangan_award', 'award_level', 'sequence')
+                    ->where('status', 'Active')
+                    ->orderBy('sequence', 'asc')
+                    ->limit(6)
+                    ->get();
+            } catch (Exception $e) {
+                $award = collect();
+            }
+
+            try {
+                $article = DB::table('berita')
+                    ->select('id_berita', 'judul_berita', 'slug_berita', 'gambar_berita', 'isi_berita', 'tanggal_berita', 'kategori_berita')
+                    ->orderBy('tanggal_berita', 'desc')
+                    ->limit(4)
+                    ->get();
+            } catch (Exception $e) {
+                $article = collect();
+            }
+
+            // Enhanced data using LookupData configurations
+            $projectCategories = LookupData::getProjectCategories();
+            
+            // Get homepage sections configuration from lookup_data table
+            $homepageSectionsData = LookupData::getHomepageSections();
+            $homepageSections = $homepageSectionsData->pluck('lookup_code')->toArray();
+            
+            // Create section configurations array from database
+            $sectionConfigs = [];
+            foreach ($homepageSectionsData as $section) {
+                $sectionConfigs[$section->lookup_code] = [
+                    'title' => $section->lookup_name,
+                    'description' => $section->lookup_description,
+                    'icon' => $section->lookup_icon,
+                    'color' => $section->lookup_color,
+                    'metadata' => $section->lookup_metadata,
+                    'is_active' => $section->is_active,
+                    'sort_order' => $section->sort_order
                 ];
-            });
-
-            // Extract data for view
-            extract($data);
-
-            // Add performance metrics for admin
-            if (auth()->check() && auth()->user()->role === 'admin') {
-                $performanceMetrics = $this->getPagePerformanceMetrics();
+            }
+            
+            // Fallback if no sections in database
+            if (empty($sectionConfigs)) {
+                $homepageSections = ['about', 'services', 'portfolio', 'awards', 'testimonials', 'gallery', 'articles', 'contact'];
+                $sectionConfigs = [
+                    'about' => ['title' => 'About', 'description' => 'About me, mission, vision content', 'is_active' => true, 'sort_order' => 1],
+                    'services' => ['title' => 'Services', 'description' => 'Services & Offering', 'is_active' => true, 'sort_order' => 2], 
+                    'portfolio' => ['title' => 'Portfolio', 'description' => 'Project showcase', 'is_active' => true, 'sort_order' => 3],
+                    'awards' => ['title' => 'Awards', 'description' => 'Achievements and Recognitions', 'is_active' => true, 'sort_order' => 4],
+                    'testimonials' => ['title' => 'Testimonials', 'description' => 'Client reviews', 'is_active' => true, 'sort_order' => 5],
+                    'gallery' => ['title' => 'Gallery', 'description' => 'Achievements & Recognitions', 'is_active' => true, 'sort_order' => 6],
+                    'articles' => ['title' => 'Articles', 'description' => 'Blog posts', 'is_active' => true, 'sort_order' => 7],
+                    'contact' => ['title' => 'Contact', 'description' => 'Contact form', 'is_active' => true, 'sort_order' => 8]
+                ];
             }
 
             return view('welcome', compact(
                 'konf',
                 'layanan',
-                'testimonial',
+                'testimonial', 
                 'galeri',
                 'article',
                 'award',
                 'projects',
                 'projectCategories',
                 'homepageSections',
-                'sectionConfigs',
-                'performanceMetrics'
+                'sectionConfigs'
             ));
 
         } catch (Exception $e) {
@@ -71,25 +139,8 @@ class HomeWebController extends Controller
                 'line' => $e->getLine()
             ]);
 
-            // Fallback to basic homepage with minimal data
             return $this->renderFallbackHomepage();
         }
-    }
-
-    /**
-     * Get page performance metrics for admin users
-     */
-    private function getPagePerformanceMetrics()
-    {
-        $startTime = defined('LARAVEL_START') ? LARAVEL_START : request()->server('REQUEST_TIME_FLOAT');
-        $currentTime = microtime(true);
-
-        return [
-            'load_time_ms' => round(($currentTime - $startTime) * 1000, 2),
-            'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
-            'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
-            'query_count' => count(DB::getQueryLog()),
-        ];
     }
 
     /**
@@ -97,11 +148,18 @@ class HomeWebController extends Controller
      */
     private function renderFallbackHomepage()
     {
-        $konf = Setting::first();
-        $homepageSections = ['about', 'portfolio', 'contact'];
-        $sectionConfigs = HomepageSectionService::getAllSectionConfigs();
+        $konf = Setting::first() ?: (object)[
+            'instansi_setting' => 'ALI PORTFOLIO',
+            'pimpinan_setting' => 'Ali Sadikin'
+        ];
+        
+        $homepageSections = ['about', 'contact'];
+        $sectionConfigs = [
+            'about' => ['title' => 'About', 'is_active' => true],
+            'contact' => ['title' => 'Contact', 'is_active' => true]
+        ];
 
-        // Minimal data for fallback
+        // Empty collections for fallback
         $projects = collect();
         $testimonial = collect();
         $galeri = collect();
@@ -117,282 +175,29 @@ class HomeWebController extends Controller
         ))->with('fallback_mode', true);
     }
 
-    /**
-     * Get homepage sections configuration using Service
-     */
-    private function getHomepageSections()
+    public function portfolio()
     {
-        return Cache::remember('homepage_sections', 1800, function() {
-            try {
-                // Use HomepageSectionService for better architecture
-                $activeSections = HomepageSectionService::getActiveSectionsInOrder();
-                return array_keys($activeSections);
-            } catch (\Exception $e) {
-                \Log::error('Failed to get homepage sections: ' . $e->getMessage());
-                // Fallback to default sections
-                return ['about', 'services', 'portfolio', 'awards', 'testimonials', 'gallery', 'articles', 'contact'];
-            }
-        });
-    }
-
-    /**
-     * Get homepage data based on active sections using Models
-     */
-    private function getHomepageData($homepageSections)
-    {
-        return Cache::remember('homepage_data', 1800, function() use ($homepageSections) {
-            try {
-                $result = [];
-                
-                // Load data for active sections using Models instead of direct DB queries
-                if (in_array('services', $homepageSections)) {
-                    $result['layanan'] = $this->getServicesData();
-                }
-                
-                if (in_array('testimonials', $homepageSections)) {
-                    $result['testimonial'] = $this->getTestimonialsData();
-                }
-                
-                if (in_array('gallery', $homepageSections)) {
-                    $result['galeri'] = $this->getGalleryData();
-                }
-                
-                if (in_array('articles', $homepageSections)) {
-                    $result['article'] = $this->getArticlesData();
-                }
-                
-                if (in_array('awards', $homepageSections)) {
-                    $result['award'] = $this->getAwardsData();
-                }
-                
-                if (in_array('portfolio', $homepageSections)) {
-                    $result['projects'] = $this->getProjectsData();
-                }
-                
-                // Add empty collections for inactive sections to prevent errors
-                $defaultCollections = [
-                    'layanan' => collect(),
-                    'testimonial' => collect(),
-                    'galeri' => collect(),
-                    'article' => collect(),
-                    'award' => collect(),
-                    'projects' => collect(),
-                ];
-                
-                return array_merge($defaultCollections, $result);
-                
-            } catch (\Exception $e) {
-                \Log::error('Database error in homepage: ' . $e->getMessage());
-                // Return empty collections if database fails
-                return [
-                    'layanan' => collect(),
-                    'testimonial' => collect(),
-                    'galeri' => collect(),
-                    'article' => collect(),
-                    'award' => collect(),
-                    'projects' => collect(),
-                ];
-            }
-        });
-    }
-
-    /**
-     * Get services data using proper Model structure
-     */
-    private function getServicesData()
-    {
-        return DB::table('layanan')
-            ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
-            ->where('status', 'Active')
-            ->orderBy('sequence', 'asc')
-            ->get();
-    }
-
-    /**
-     * Get testimonials data using proper Model structure
-     */
-    private function getTestimonialsData()
-    {
-        return DB::table('testimonial')
-            ->select('judul_testimonial', 'gambar_testimonial', 'deskripsi_testimonial', 'jabatan')
-            ->get();
-    }
-
-    /**
-     * Get gallery data using Galeri Model
-     */
-    private function getGalleryData()
-    {
-        return Galeri::with(['galleryItems' => function($query) {
-                $query->where('status', 'Active')
-                      ->orderBy('sequence', 'asc');
-            }])
-            ->where('status', 'Active')
-            ->orderBy('sequence', 'asc')
-            ->limit(12)
-            ->get();
-    }
-
-    /**
-     * Get articles data using Berita Model
-     */
-    private function getArticlesData()
-    {
-        return Berita::select('judul_berita', 'slug_berita', 'gambar_berita', 'isi_berita', 'tanggal_berita', 'kategori_berita', 'meta_description', 'tags')
-            ->orderBy('tanggal_berita', 'desc')
-            ->limit(4)
-            ->get();
-    }
-
-    /**
-     * Get awards data using Award Model
-     */
-    private function getAwardsData()
-    {
-        return Award::where('status', 'Active')
-            ->orderBy('sequence', 'asc')
-            ->get();
-    }
-
-    /**
-     * Get projects data using proper Model structure
-     */
-    private function getProjectsData()
-    {
-        return DB::table('project')
-            ->select('project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 
-                   'location', 'project_category', 'created_at', 'sequence')
+        $konf = Setting::first();
+        
+        $projects = DB::table('project')
+            ->select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 
+                   'client_name', 'location', 'project_category', 'created_at', 'sequence', 'description')
             ->where('status', 'Active')
             ->orderBy('sequence', 'asc')
             ->orderBy('created_at', 'desc')
-            ->limit(9)
             ->get();
-    }
-
-    /**
-     * Get project categories using LookupData Model
-     */
-    private function getProjectCategories()
-    {
-        return Cache::remember('project_categories_homepage', 3600, function() {
-            try {
-                // Use LookupData model for better MVC architecture
-                return LookupData::getProjectCategories();
-            } catch (\Exception $e) {
-                // Return empty collection if lookup_data doesn't exist yet
-                return collect();
-            }
-        });
-    }
-
-    /**
-     * Helper function to check if section is active using LookupData Model
-     */
-    public function isSectionActive($sectionCode)
-    {
-        $activeSections = Cache::remember('active_homepage_sections', 1800, function() {
-            try {
-                return LookupData::getActiveHomepageSectionCodes();
-            } catch (\Exception $e) {
-                return ['about', 'services', 'portfolio', 'awards', 'testimonials', 'gallery', 'articles', 'contact'];
-            }
-        });
         
-        return in_array($sectionCode, $activeSections);
-    }
-
-    /**
-     * Get section order for frontend use using LookupData Model
-     */
-    public function getSectionOrder($sectionCode)
-    {
-        $sectionOrders = Cache::remember('section_orders', 1800, function() {
-            try {
-                return LookupData::byType('homepage_section')
-                    ->active()
-                    ->pluck('sort_order', 'lookup_code')
-                    ->toArray();
-            } catch (\Exception $e) {
-                return [];
-            }
-        });
-        
-        return $sectionOrders[$sectionCode] ?? 999;
-    }
-
-    /**
-     * Get section configuration using LookupData Model
-     */
-    public function getSectionConfig($sectionCode)
-    {
-        return Cache::remember("section_config_{$sectionCode}", 1800, function() use ($sectionCode) {
-            return LookupData::getSectionConfig($sectionCode);
-        });
-    }
-
-    public function portfolio()
-    {
-        $konf = $this->getSiteConfiguration();
-        $projectCategories = $this->getProjectCategories();
-        
-        // Get projects data using proper model structure
-        $projects = Cache::remember('portfolio_all_projects', 900, function() {
-            try {
-                return DB::table('project')
-                    ->select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 
-                           'client_name', 'location', 'project_category', 'created_at', 'sequence', 'description')
-                    ->where('status', 'Active')
-                    ->orderBy('sequence', 'asc')
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-            } catch (\Exception $e) {
-                \Log::error('Portfolio all projects error: ' . $e->getMessage());
-                return collect();
-            }
-        });
+        $projectCategories = collect(['Web Development', 'Digital Transformation', 'Manufacturing AI', 'Technology Consulting']);
         
         return view('portfolio_all', compact('konf', 'projectCategories', 'projects'));
     }
 
-    public function portfolioAll()
-    {
-        $konf = $this->getSiteConfiguration();
-        
-        // Use hybrid approach - try lookup first, fallback to old structure
-        try {
-            $projects = DB::table('project as p')
-                ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
-                ->select('p.id_project', 'p.project_name', 'p.client_name', 'p.location', 'p.slug_project', 
-                       'p.featured_image', 'p.images', 'p.summary_description', 'p.created_at', 'p.sequence',
-                       'p.project_category', // Keep old column for fallback
-                       'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 'ld.lookup_color as category_color')
-                ->where('p.status', 'Active')
-                ->orderBy('p.sequence', 'asc')
-                ->orderBy('p.created_at', 'desc')
-                ->paginate(12);
-        } catch (\Exception $e) {
-            // Fallback to simple query if lookup fails
-            $projects = DB::table('project')
-                ->select('id_project', 'project_name', 'client_name', 'location', 'slug_project', 
-                       'featured_image', 'images', 'summary_description', 'created_at', 'sequence', 'project_category')
-                ->where('status', 'Active')
-                ->orderBy('sequence', 'asc')
-                ->orderBy('created_at', 'desc')
-                ->paginate(12);
-        }
-        
-        return view('portfolio_all', compact('konf', 'projects'));
-    }
-
     public function gallery()
     {
-        $konf = $this->getSiteConfiguration();
+        $konf = Setting::first();
         
-        // Get all active galleries with their active items using Galeri Model
-        $galeri = Galeri::with(['items' => function($query) {
-                $query->where('status', 'Active')
-                      ->orderBy('sequence', 'asc');
-            }])
+        $galeri = DB::table('galeri')
+            ->select('id_galeri', 'nama_galeri', 'company', 'period', 'deskripsi_galeri', 'thumbnail', 'sequence')
             ->where('status', 'Active')
             ->orderBy('sequence', 'asc')
             ->get();
@@ -403,39 +208,29 @@ class HomeWebController extends Controller
     public function portfolioDetail($slug)
     {
         try {
-            // Use ProjectService for better performance and caching
-            $portfolio = ProjectService::getProjectBySlug($slug, true);
+            // Get project by slug
+            $portfolio = DB::table('project')
+                ->select('*')
+                ->where('slug_project', $slug)
+                ->where('status', 'Active')
+                ->first();
 
             if (!$portfolio) {
                 abort(404, 'Project not found or inactive');
             }
 
-            $konf = SettingService::getConfig();
+            $konf = Setting::first();
 
-            // Get related content
-            $relatedData = Cache::remember("portfolio_detail_{$slug}", 1800, function() use ($portfolio) {
-                return [
-                    'related_projects' => ProjectService::getProjectsByCategory(
-                        $portfolio->category->lookup_code ?? 'other', 4
-                    )->where('id_project', '!=', $portfolio->id_project),
-                    'project_testimonials' => ContentService::getTestimonialsByProject(
-                        $portfolio->id_project, 3
-                    ),
-                    'similar_awards' => Award::active()
-                        ->where('company', $portfolio->client_name)
-                        ->orWhere('award_category', 'LIKE', '%' . $portfolio->project_category . '%')
-                        ->limit(3)
-                        ->get(),
-                ];
-            });
+            // Get related projects from same category
+            $related_projects = DB::table('project')
+                ->select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name')
+                ->where('project_category', $portfolio->project_category)
+                ->where('id_project', '!=', $portfolio->id_project)
+                ->where('status', 'Active')
+                ->limit(3)
+                ->get();
 
-            // Track portfolio view for analytics
-            $this->trackPortfolioView($portfolio);
-
-            return view('portfolio_detail', array_merge(
-                compact('konf', 'portfolio'),
-                $relatedData
-            ));
+            return view('portfolio_detail', compact('konf', 'portfolio', 'related_projects'));
 
         } catch (Exception $e) {
             Log::error('Portfolio detail error', [
@@ -448,160 +243,52 @@ class HomeWebController extends Controller
         }
     }
 
-    /**
-     * Track portfolio view for analytics
-     */
-    private function trackPortfolioView($portfolio)
-    {
-        try {
-            // Simple analytics tracking
-            Cache::increment("portfolio_views_{$portfolio->id_project}");
-            Cache::increment('total_portfolio_views');
-
-            // Log for detailed analytics (optional)
-            Log::info('Portfolio viewed', [
-                'project_id' => $portfolio->id_project,
-                'project_name' => $portfolio->project_name,
-                'ip' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-                'referrer' => request()->header('referer'),
-            ]);
-        } catch (Exception $e) {
-            // Don't fail if tracking fails
-            Log::warning('Portfolio tracking failed', ['error' => $e->getMessage()]);
-        }
-    }
-
     public function articleDetail($slug)
     {
-        $konf = $this->getSiteConfiguration();
-        
-        // Get article using Berita Model
-        $article = Berita::where('slug_berita', $slug)->first();
-        
-        if (!$article) {
-            abort(404, 'Article not found');
-        }
-        
-        // Increment view count (only once per session per article)
-        $sessionKey = 'viewed_article_' . $article->id_berita;
-        if (!session()->has($sessionKey)) {
-            $article->increment('views');
-            session()->put($sessionKey, true);
-        }
-        
-        // Track visitor geo location (optional)
-        $this->trackVisitor($article->id_berita);
-        
-        // Calculate reading time if not set
-        if (!$article->reading_time) {
-            $wordCount = str_word_count(strip_tags($article->isi_berita));
-            $article->reading_time = max(1, ceil($wordCount / 200)); // 200 words per minute
-            $article->save();
-        }
-        
-        // Parse FAQ data
-        if ($article->faq_data) {
-            try {
-                $article->faq_data = is_string($article->faq_data) ? json_decode($article->faq_data, true) : $article->faq_data;
-            } catch (Exception $e) {
-                $article->faq_data = null;
+        try {
+            $konf = Setting::first();
+            
+            // Get article by slug
+            $article = DB::table('berita')
+                ->select('*')
+                ->where('slug_berita', $slug)
+                ->first();
+            
+            if (!$article) {
+                abort(404, 'Article not found');
             }
-        }
-        
-        // Get related articles using model relationships if available
-        $related_articles = collect();
-        if ($article->related_ids && count($article->related_ids) > 0) {
-            $related_articles = Berita::whereIn('id_berita', $article->related_ids)
-                ->select(['judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita', 'isi_berita'])
-                ->get();
-        }
-        
-        // If no manual related articles, get similar ones
-        if ($related_articles->count() < 3) {
-            $autoRelated = Berita::where('id_berita', '!=', $article->id_berita)
-                ->where(function($query) use ($article) {
-                    if (!empty($article->kategori_berita)) {
-                        $query->where('kategori_berita', $article->kategori_berita);
-                    }
-                    if (!empty($article->tags)) {
-                        $tags = explode(',', $article->tags);
-                        foreach ($tags as $tag) {
-                            $query->orWhere('tags', 'LIKE', '%' . trim($tag) . '%');
-                        }
-                    }
-                })
-                ->select(['judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita', 'isi_berita'])
-                ->orderBy('tanggal_berita', 'desc')
-                ->limit(3 - $related_articles->count())
-                ->get();
-                
-            $related_articles = $related_articles->merge($autoRelated);
-        }
-        
-        $article->related_articles = $related_articles;
-        
-        // Get recent articles from same category using Berita Model
-        $recent_articles = Cache::remember('recent_articles_' . $article->kategori_berita . '_' . $article->id_berita, 900, function() use ($article) {
-            return Berita::select([
-                    'judul_berita', 
-                    'slug_berita', 
-                    'gambar_berita', 
-                    'tanggal_berita', 
-                    'kategori_berita', 
-                    'created_at', 
-                    'isi_berita',
-                    'meta_description',
-                    'reading_time',
-                    'views'
-                ])
+            
+            // Get recent articles from same category
+            $recent_articles = DB::table('berita')
+                ->select('judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita')
                 ->where('kategori_berita', $article->kategori_berita)
                 ->where('id_berita', '!=', $article->id_berita)
                 ->orderBy('tanggal_berita', 'desc')
                 ->limit(4)
                 ->get();
-        });
-        
-        return view('article_detail', compact('konf', 'article', 'recent_articles'));
+            
+            return view('article_detail', compact('konf', 'article', 'recent_articles'));
+            
+        } catch (Exception $e) {
+            Log::error('Article detail error: ' . $e->getMessage());
+            abort(404, 'Article not found');
+        }
     }
 
     public function articles(Request $request)
     {
-        $konf = $this->getSiteConfiguration();
+        $konf = Setting::first();
         
-        // Use Berita Model for article queries
-        $query = Berita::select([
-                'id_berita',
-                'judul_berita', 
-                'slug_berita', 
-                'gambar_berita', 
-                'isi_berita', 
-                'tanggal_berita', 
-                'kategori_berita', 
-                'meta_title',
-                'meta_description', 
-                'tags', 
-                'reading_time', 
-                'views',
-                'is_featured',
-                'featured_snippet',
-                'conclusion',
-                'focus_keyword',
-                'created_at',
-                'updated_at'
-            ]);
+        // Get all articles with search and filter
+        $query = DB::table('berita')->select('*');
         
-        // Search functionality - search across multiple fields
+        // Search functionality
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('judul_berita', 'LIKE', "%{$search}%")
-                  ->orWhere('meta_title', 'LIKE', "%{$search}%")
-                  ->orWhere('meta_description', 'LIKE', "%{$search}%")
-                  ->orWhere('featured_snippet', 'LIKE', "%{$search}%")
                   ->orWhere('isi_berita', 'LIKE', "%{$search}%")
-                  ->orWhere('tags', 'LIKE', "%{$search}%")
-                  ->orWhere('focus_keyword', 'LIKE', "%{$search}%");
+                  ->orWhere('tags', 'LIKE', "%{$search}%");
             });
         }
         
@@ -610,310 +297,21 @@ class HomeWebController extends Controller
             $query->where('kategori_berita', $request->category);
         }
         
-        // Filter by tag
-        if ($request->has('tag') && $request->tag) {
-            $tag = $request->tag;
-            $query->where('tags', 'LIKE', "%{$tag}%");
-        }
+        // Sort
+        $query->orderBy('tanggal_berita', 'desc');
         
-        // Filter by featured articles
-        if ($request->has('featured') && $request->featured) {
-            $query->where('is_featured', true);
-        }
-        
-        // Sorting options
-        $sort = $request->get('sort', 'latest');
-        switch ($sort) {
-            case 'oldest':
-                $query->orderBy('tanggal_berita', 'asc');
-                break;
-            case 'popular':
-                $query->orderBy('views', 'desc')
-                      ->orderBy('tanggal_berita', 'desc');
-                break;
-            case 'featured':
-                $query->orderBy('is_featured', 'desc')
-                      ->orderBy('tanggal_berita', 'desc');
-                break;
-            case 'alphabetical':
-                $query->orderBy('judul_berita', 'asc');
-                break;
-            case 'reading_time':
-                $query->orderBy('reading_time', 'asc')
-                      ->orderBy('tanggal_berita', 'desc');
-                break;
-            case 'latest':
-            default:
-                $query->orderBy('tanggal_berita', 'desc');
-                break;
-        }
-        
-        // Add secondary sorting for consistency
-        $query->orderBy('created_at', 'desc');
-        
-        // Paginate results
+        // Paginate
         $articles = $query->paginate(12)->withQueryString();
         
-        // Get categories for filter dropdown using Berita Model
-        $categories = Cache::remember('article_categories', 1800, function() {
-            return Berita::select('kategori_berita')
-                ->distinct()
-                ->whereNotNull('kategori_berita')
-                ->where('kategori_berita', '!=', '')
-                ->orderBy('kategori_berita')
-                ->pluck('kategori_berita');
-        });
+        // Get categories for filter
+        $categories = DB::table('berita')
+            ->select('kategori_berita')
+            ->distinct()
+            ->whereNotNull('kategori_berita')
+            ->where('kategori_berita', '!=', '')
+            ->orderBy('kategori_berita')
+            ->pluck('kategori_berita');
         
-        // Get popular tags with counts
-        $popular_tags = Cache::remember('popular_tags_list', 1800, function() {
-            return $this->getPopularTags(15);
-        });
-        
-        // Get featured articles for sidebar/highlights using Berita Model
-        $featured_articles = Cache::remember('featured_articles', 1800, function() {
-            return Berita::select(['judul_berita', 'slug_berita', 'gambar_berita', 'tanggal_berita', 'kategori_berita'])
-                ->where('is_featured', true)
-                ->orderBy('tanggal_berita', 'desc')
-                ->limit(3)
-                ->get();
-        });
-        
-        // Get article statistics using Berita Model
-        $stats = Cache::remember('article_stats', 3600, function() {
-            return [
-                'total_articles' => Berita::count(),
-                'total_views' => Berita::sum('views'),
-                'total_categories' => Berita::distinct()->whereNotNull('kategori_berita')->count('kategori_berita'),
-                'featured_count' => Berita::where('is_featured', true)->count(),
-            ];
-        });
-        
-        return view('articles', compact(
-            'konf', 
-            'articles', 
-            'categories', 
-            'popular_tags', 
-            'featured_articles',
-            'stats'
-        ));
-    }
-    
-    /**
-     * Track visitor information
-     */
-    private function trackVisitor($articleId)
-    {
-        try {
-            $ip = request()->ip();
-            $userAgent = request()->userAgent();
-            
-            // Check if visitor already viewed this article today
-            $exists = DB::table('berita_visits')
-                ->where('article_id', $articleId)
-                ->where('ip_address', $ip)
-                ->whereDate('created_at', Carbon::today())
-                ->exists();
-            
-            if (!$exists) {
-                // Try to get geo information (optional, requires external API)
-                $geoData = $this->getGeoData($ip);
-                
-                DB::table('berita_visits')->insert([
-                    'article_id' => $articleId,
-                    'ip_address' => $ip,
-                    'user_agent' => $userAgent,
-                    'country' => $geoData['country'] ?? null,
-                    'city' => $geoData['city'] ?? null,
-                    'region' => $geoData['region'] ?? null,
-                    'latitude' => $geoData['lat'] ?? null,
-                    'longitude' => $geoData['lon'] ?? null,
-                    'created_at' => now(),
-                ]);
-            }
-        } catch (\Exception $e) {
-            // Log error but don't break the page
-            \Log::error('Failed to track visitor: ' . $e->getMessage());
-        }
-    }
-    
-    /**
-     * Get geo data from IP (optional)
-     */
-    private function getGeoData($ip)
-    {
-        // Skip for localhost
-        if ($ip == '127.0.0.1' || $ip == '::1') {
-            return [
-                'country' => 'Local',
-                'city' => 'Localhost',
-                'region' => 'Local',
-            ];
-        }
-        
-        try {
-            // Using ip-api.com (free tier: 45 requests per minute)
-            $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=status,country,regionName,city,lat,lon");
-            
-            if ($response) {
-                $data = json_decode($response, true);
-                if ($data && $data['status'] == 'success') {
-                    return [
-                        'country' => $data['country'] ?? null,
-                        'city' => $data['city'] ?? null,
-                        'region' => $data['regionName'] ?? null,
-                        'lat' => $data['lat'] ?? null,
-                        'lon' => $data['lon'] ?? null,
-                    ];
-                }
-            }
-        } catch (\Exception $e) {
-            \Log::error('Failed to get geo data: ' . $e->getMessage());
-        }
-        
-        return [];
-    }
-    
-    /**
-     * Get popular tags from articles using Berita Model
-     */
-    private function getPopularTags($limit = 10)
-    {
-        $allTags = Berita::whereNotNull('tags')->pluck('tags');
-        
-        $tagCounts = [];
-        
-        foreach ($allTags as $tagString) {
-            $tags = array_map('trim', explode(',', $tagString));
-            foreach ($tags as $tag) {
-                if (!empty($tag)) {
-                    if (!isset($tagCounts[$tag])) {
-                        $tagCounts[$tag] = 0;
-                    }
-                    $tagCounts[$tag]++;
-                }
-            }
-        }
-        
-        arsort($tagCounts);
-        
-        return array_slice($tagCounts, 0, $limit, true);
-    }
-    
-    /**
-     * Generate sitemap
-     */
-    public function sitemap()
-    {
-        $urls = collect([
-            ['url' => url('/'), 'changefreq' => 'weekly', 'priority' => '1.0'],
-            ['url' => url('/portfolio/all'), 'changefreq' => 'weekly', 'priority' => '0.8'],
-            ['url' => url('/gallery'), 'changefreq' => 'monthly', 'priority' => '0.7'],
-            ['url' => url('/articles'), 'changefreq' => 'weekly', 'priority' => '0.8'],
-        ]);
-        
-        // Add articles using Berita Model
-        $articles = Berita::select('slug_berita', 'updated_at')->get();
-            
-        foreach ($articles as $article) {
-            $urls->push([
-                'url' => url('/article/' . $article->slug_berita),
-                'changefreq' => 'monthly',
-                'priority' => '0.6',
-                'lastmod' => $article->updated_at,
-            ]);
-        }
-        
-        // Add projects
-        $projects = DB::table('project')
-            ->select('slug_project', 'updated_at')
-            ->get();
-            
-        foreach ($projects as $project) {
-            $urls->push([
-                'url' => url('/portfolio/' . $project->slug_project),
-                'changefreq' => 'monthly',
-                'priority' => '0.7',
-                'lastmod' => $project->updated_at,
-            ]);
-        }
-        
-        return response()
-            ->view('sitemap', ['urls' => $urls])
-            ->header('Content-Type', 'application/xml');
-    }
-    
-    /**
-     * Get gallery items for modal display
-     */
-    public function getGalleryItems($galleryId)
-    {
-        try {
-            $gallery = Galeri::with(['galleryItems' => function($query) {
-                    $query->where('status', 'Active')
-                          ->orderBy('sequence', 'asc');
-                }])
-                ->where('id_galeri', $galleryId)
-                ->where('status', 'Active')
-                ->first();
-            
-            if (!$gallery) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Gallery not found'
-                ], 404);
-            }
-            
-            // Format gallery items for frontend
-            $items = $gallery->galleryItems->map(function($item) {
-                $data = [
-                    'id' => $item->id_gallery_item,
-                    'type' => $item->type,
-                    'sequence' => $item->sequence,
-                    'status' => $item->status
-                ];
-                
-                if ($item->type === 'image') {
-                    $data['file_url'] = asset('file/galeri/' . $item->file_name);
-                    $data['thumbnail_url'] = asset('file/galeri/' . $item->file_name);
-                } elseif ($item->type === 'youtube') {
-                    $data['youtube_url'] = $item->youtube_url;
-                    $data['file_url'] = $item->youtube_url; // Add file_url for consistency
-                    $videoId = $this->extractYouTubeId($item->youtube_url);
-                    $data['thumbnail_url'] = $videoId ? "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg" : null;
-                }
-                
-                return $data;
-            });
-            
-            return response()->json([
-                'success' => true,
-                'gallery' => [
-                    'id' => $gallery->id_galeri,
-                    'nama_galeri' => $gallery->nama_galeri,
-                    'company' => $gallery->company,
-                    'period' => $gallery->period,
-                    'deskripsi_galeri' => $gallery->deskripsi_galeri,
-                    'thumbnail' => $gallery->thumbnail ? asset('file/galeri/' . $gallery->thumbnail) : null
-                ],
-                'items' => $items
-            ]);
-            
-        } catch (\Exception $e) {
-            \Log::error('Failed to get gallery items: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to load gallery items'
-            ], 500);
-        }
-    }
-    
-    /**
-     * Extract YouTube video ID from URL
-     */
-    private function extractYouTubeId($url)
-    {
-        preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/', $url, $matches);
-        return $matches[1] ?? null;
+        return view('articles', compact('konf', 'articles', 'categories'));
     }
 }

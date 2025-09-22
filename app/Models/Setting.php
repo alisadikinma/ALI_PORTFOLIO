@@ -156,8 +156,6 @@ class Setting extends Model
         'years_experience' => 'integer',
         'followers_count' => 'integer',
         'project_delivered' => 'integer',
-        'cost_savings' => 'decimal:2',
-        'success_rate' => 'decimal:1',
         'happy_clients' => 'integer',
         'awards_won' => 'integer',
         'technologies_mastered' => 'integer',
@@ -268,10 +266,17 @@ class Setting extends Model
             ],
             [
                 'label' => 'Success Rate',
-                'value' => $this->success_rate ?? 95,
-                'suffix' => '%',
+                'value' => $this->success_rate ?? '99%',
+                'suffix' => '',
                 'icon' => 'fas fa-chart-line',
                 'color' => '#ef4444'
+            ],
+            [
+                'label' => 'Cost Savings',
+                'value' => $this->cost_savings ?? '$250K',
+                'suffix' => '+',
+                'icon' => 'fas fa-dollar-sign',
+                'color' => '#8b5cf6'
             ],
         ];
     }

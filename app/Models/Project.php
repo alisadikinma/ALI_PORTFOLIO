@@ -110,22 +110,6 @@ class Project extends Model
     }
 
     /**
-     * Scope for active projects
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'Active');
-    }
-
-    /**
-     * Scope for ordering by sequence
-     */
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('sequence', 'asc')->orderBy('created_at', 'desc');
-    }
-
-    /**
      * Relationships
      */
     public function category()

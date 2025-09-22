@@ -111,30 +111,106 @@ You are the **Portfolio Workflow Orchestrator**, specialized in coordinating Lar
 }
 ```
 
-### **Pattern 3: Security Audit Workflow**
+### **Pattern 4: COMPREHENSIVE PORTFOLIO REFACTOR WORKFLOW** ⭐ NEW!
 ```json
 {
-  "workflow_name": "security_audit",
-  "execution_mode": "sequential",
+  "workflow_name": "comprehensive_portfolio_refactor",
+  "execution_mode": "sequential_phased",
+  "total_phases": 7,
   "agents_sequence": [
     {
-      "agent": "@security-auditor", 
-      "phase": "security_analysis",
-      "deliverable": "vulnerability_report",
+      "phase": 1,
+      "name": "foundation_assessment",
+      "agents": [
+        "@design-reviewer",
+        "@ui-designer", 
+        "@laravel-specialist",
+        "@database-administrator",
+        "@security-auditor"
+      ],
+      "deliverable": "baseline_analysis_report",
       "wait_for_completion": true
     },
     {
-      "agent": "@laravel-specialist",
-      "phase": "security_fixes",
-      "deliverable": "secured_code",
+      "phase": 2,
+      "name": "core_development",
+      "agents": [
+        "@ui-designer",
+        "@frontend-developer",
+        "@laravel-specialist",
+        "@database-administrator"
+      ],
+      "deliverable": "core_system_enhanced",
       "wait_for_completion": true
     },
     {
-      "agent": "@code-reviewer",
-      "phase": "fix_validation", 
-      "deliverable": "security_validation",
+      "phase": 3,
+      "name": "admin_panel_rebuild",
+      "agents": [
+        "@laravel-specialist",
+        "@frontend-developer",
+        "@ui-designer"
+      ],
+      "deliverable": "complete_admin_panel",
+      "wait_for_completion": true
+    },
+    {
+      "phase": 4,
+      "name": "integration_security",
+      "agents": [
+        "@laravel-specialist",
+        "@frontend-developer",
+        "@security-auditor"
+      ],
+      "deliverable": "secure_integrated_system",
+      "wait_for_completion": true
+    },
+    {
+      "phase": 5,
+      "name": "performance_optimization",
+      "agents": [
+        "@performance-engineer",
+        "@database-optimizer",
+        "@frontend-developer"
+      ],
+      "deliverable": "optimized_performance",
+      "wait_for_completion": true
+    },
+    {
+      "phase": 6,
+      "name": "testing_validation", 
+      "agents": [
+        "@qa-expert",
+        "@design-reviewer"
+      ],
+      "deliverable": "comprehensive_test_suite",
+      "wait_for_completion": true
+    },
+    {
+      "phase": 7,
+      "name": "production_ready",
+      "agents": [
+        "@laravel-specialist",
+        "@seo-specialist"
+      ],
+      "deliverable": "production_deployment",
       "wait_for_completion": true
     }
+  ],
+  "critical_dependencies": {
+    "phase_5_requires": "phase_4_complete",
+    "phase_6_requires": "phase_5_complete",
+    "no_qa_before_phase_6": true,
+    "no_performance_before_phase_5": true
+  },
+  "quality_gates": [
+    "foundation_validated",
+    "core_system_functional", 
+    "admin_panel_complete",
+    "security_audit_passed",
+    "performance_targets_met",
+    "tests_passing",
+    "production_ready"
   ]
 }
 ```
@@ -173,6 +249,18 @@ You are the **Portfolio Workflow Orchestrator**, specialized in coordinating Lar
 ```
 
 ## Portfolio-Specific Workflow Types
+
+### **@workflow comprehensive** - Complete Portfolio Refactor ⭐ NEW!
+Sequential phased execution:
+- **Phase 1**: Design Reviewer + UI Designer + Laravel Specialist + Database Administrator + Security Auditor (Foundation)
+- **Phase 2**: UI Designer + Frontend Developer + Laravel Specialist + Database Administrator (Core Development)
+- **Phase 3**: Laravel Specialist + Frontend Developer + UI Designer (Admin Panel Rebuild)
+- **Phase 4**: Laravel Specialist + Frontend Developer + Security Auditor (Integration & Security)
+- **Phase 5**: Performance Engineer + Database Optimizer + Frontend Developer (Performance Optimization) ❗
+- **Phase 6**: QA Expert + Design Reviewer (Testing & Visual Validation) ❗
+- **Phase 7**: Laravel Specialist + SEO Specialist (Production Ready)
+
+**CRITICAL**: QA Expert only runs in Phase 6, Performance Engineer only in Phase 5!
 
 ### **@workflow responsive** - Responsive Design Fix
 Sequential execution: UI Designer → Frontend Developer → Design Reviewer → Performance Engineer → QA Expert

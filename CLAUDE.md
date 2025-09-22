@@ -11,13 +11,65 @@ npm run dev         # Start Vite development
 ```
 
 ### Claude Code Workflow Commands
+
+#### **Multi-Agent Orchestration** (Recommended for complex tasks)
 ```bash
-@genz-homepage-review           # Gen Z design assessment
-@comprehensive-quality-review   # Full responsive & UX testing
-@design-review                  # UI/UX design compliance
-@code-review                    # Code quality assessment
-@security-review                # Security vulnerability check
+@orchestrate [task description]          # Intelligent multi-agent coordination
+@workflow [type] [task description]      # Structured workflow processes
 ```
+
+#### **Individual Agent Access** (For focused expertise)
+```bash
+# Core Development Team
+@laravel-specialist [task]               # Laravel framework expertise
+@frontend-developer [task]               # Responsive design & UI implementation
+@ui-designer [task]                      # Gen Z design appeal & modern aesthetics
+
+# Quality Assurance Team  
+@code-reviewer [task]                    # Code quality & best practices
+@security-auditor [task]                 # Security vulnerabilities & compliance
+@qa-expert [task]                        # Testing strategy & validation
+@performance-engineer [task]             # Performance optimization
+
+# Infrastructure & Database Team
+@database-administrator [task]           # MySQL configuration & schema
+@database-optimizer [task]               # Query optimization & performance
+
+# Specialized Experts
+@seo-specialist [task]                   # SEO optimization & visibility
+@design-reviewer [task]                  # Design compliance & accessibility
+```
+
+#### **Legacy Quality Review Commands** (Quick checks)
+```bash
+@code-review                             # Code quality assessment
+@design-review                           # UI/UX design compliance
+@security-review                         # Security vulnerability check
+```
+
+## Multi-Agent Orchestration System
+
+### **Key Features**
+- **Intelligent Agent Selection**: Automatically selects optimal agent combinations
+- **Coordinated Workflows**: Sequential and parallel agent execution
+- **Quality Gates**: Built-in validation at every stage
+- **Team Organization**: Agents organized by expertise domains
+
+### **Agent Teams Structure**
+```
+.claude/agents/
+├── portfolio-orchestrator.md           # Master coordinator
+├── Core_Development_Team/              # Development specialists
+├── Quality_Assurance_Team/             # Quality & security
+├── Infrastructure_n_Database/          # Database & infrastructure
+└── Specialized_Experts/                # Domain experts
+```
+
+### **When to Use Each Approach**
+- **@orchestrate**: Complex tasks requiring multiple technical skills
+- **@workflow**: Structured, multi-stage processes with specific quality gates
+- **Individual agents**: Focused expertise for specific technical questions
+- **Legacy commands**: Quick quality checks using existing workflows
 
 ## Project Structure Overview
 
@@ -30,7 +82,7 @@ npm run dev         # Start Vite development
 - **`tests/`** - Pest PHP test suite
 
 ### Workflow Directories
-- **`.claude/`** - Claude Code commands and agents
+- **`.claude/`** - Multi-agent orchestration system with organized teams
 - **`.playwright-mcp/`** - Browser testing screenshots and traces
 
 ## Architecture Highlights
@@ -46,7 +98,7 @@ npm run dev         # Start Vite development
 - **Frontend**: Tailwind CSS + Livewire 3.0 + Vite
 - **Database**: MySQL with custom primary keys
 - **Testing**: Pest PHP framework
-- **Quality Assurance**: MCP Playwright integration
+- **Quality Assurance**: MCP Playwright integration + Multi-agent system
 
 ## Known Issues & Focus Areas
 
@@ -57,6 +109,7 @@ npm run dev         # Start Vite development
 4. **Performance Optimization** - Image loading and asset optimization
 
 ### Quality Assurance Integration
+- **Multi-Agent System**: Coordinated expertise across all technical domains
 - **MCP Playwright Tools**: Automated browser testing with screenshot capture
 - **Design Compliance**: Style guide and design principles in `/context/`
 - **Responsive Testing**: Multi-viewport validation (mobile, tablet, desktop)
@@ -85,17 +138,51 @@ SESSION_DRIVER=file
 
 ## Workflow Integration
 
+### Multi-Agent Orchestration
+- **Intelligent Coordination**: Automatic agent selection based on task requirements
+- **Quality Gates**: Built-in validation at every development stage
+- **Team-based Organization**: Clear separation of expertise domains
+- **Scalable Architecture**: Professional structure for long-term growth
+
 ### MCP Playwright Configuration
 - `.mcp.json` - Standard Playwright MCP
 - `.mcp-executeautomation.json` - Enhanced automation features
 - Screenshots automatically saved to `.playwright-mcp/`
 
 ### Claude Code Commands
-All commands located in `.claude/commands/` with specific focus areas:
+All commands located in `.claude/commands/` with organized focus areas:
+- **Orchestration**: Multi-agent coordination and workflow management
 - **Quality Reviews**: Responsive design and UX testing
 - **Design Assessment**: Gen Z appeal and modern design compliance
 - **Code Reviews**: Laravel best practices and security
 - **Architecture Reviews**: MVC pattern compliance
+
+## Orchestration Examples
+
+### **Complex Feature Development**
+```bash
+@orchestrate Add advanced project filtering with search and categories
+# Coordinates: Laravel Specialist → Frontend Developer → UI Designer → Code Reviewer → QA Expert
+```
+
+### **Performance Optimization**
+```bash
+@orchestrate Fix slow mobile loading performance
+# Coordinates: Performance Engineer → Database Optimizer → Frontend Developer → Laravel Specialist → QA Expert
+```
+
+### **Design Enhancement**
+```bash
+@orchestrate Improve Gen Z design appeal across entire portfolio
+# Coordinates: UI Designer → Frontend Developer → Design Reviewer → Performance Engineer → QA Expert
+```
+
+### **Structured Workflows**
+```bash
+@workflow feature "Add user testimonials with rating system"
+@workflow security "Comprehensive security audit"
+@workflow quality "Pre-production quality review"
+```
 
 ## Quick Reference Commands
 
@@ -324,11 +411,12 @@ IMMEDIATELY after implementing any front-end change:
 
 This verification ensures changes meet design standards and user requirements.
 
-### Comprehensive Design Review
-Invoke the `@agent-design-review` subagent for thorough design validation when:
-- Completing significant UI/UX features
-- Before finalizing PRs with visual changes
-- Needing comprehensive accessibility and responsiveness testing
+### Multi-Agent Design Review
+Use the orchestration system for comprehensive design validation:
+```bash
+@orchestrate Conduct comprehensive design review for Gen Z appeal and accessibility
+@workflow design genz-modernization
+```
 
 ## Code Review Guidelines
 
@@ -356,28 +444,19 @@ Invoke the `@agent-design-review` subagent for thorough design validation when:
 - **Asset Compilation**: Vite build optimization
 - **Caching**: Route, config, and view caching in production
 
+## Multi-Agent Quality Assurance
 
-## Visual Development
+### Comprehensive Reviews
+```bash
+@orchestrate Conduct full quality review before production deployment
+@workflow quality pre-production
+```
 
-### Design Principles
-- Comprehensive design checklist in `/context/design-principles.md`
-- Brand style guide in `/context/style-guide.md`
-- When making visual (front-end, UI/UX) changes, always refer to these files for guidance
+### Specific Domain Reviews
+```bash
+@security-auditor Review authentication and authorization implementation
+@performance-engineer Analyze loading performance and optimization opportunities
+@design-reviewer Validate accessibility and design compliance
+```
 
-### Quick Visual Check
-IMMEDIATELY after implementing any front-end change:
-1. **Identify what changed** - Review the modified components/pages
-2. **Navigate to affected pages** - Use `mcp__playwright__browser_navigate` to visit each changed view
-3. **Verify design compliance** - Compare against `/context/design-principles.md` and `/context/style-guide.md`
-4. **Validate feature implementation** - Ensure the change fulfills the user's specific request
-5. **Check acceptance criteria** - Review any provided context files or requirements
-6. **Capture evidence** - Take full page screenshot at desktop viewport (1440px) of each changed view
-7. **Check for errors** - Run `mcp__playwright__browser_console_messages`
-
-This verification ensures changes meet design standards and user requirements.
-
-### Comprehensive Design Review
-Invoke the `@agent-design-review` subagent for thorough design validation when:
-- Completing significant UI/UX features
-- Before finalizing PRs with visual changes
-- Needing comprehensive accessibility and responsiveness testing
+The multi-agent orchestration system ensures your Laravel portfolio project receives expert attention across all technical domains while maintaining high quality, professional organization, and long-term maintainability! 🚀

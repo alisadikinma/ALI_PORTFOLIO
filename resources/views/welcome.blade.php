@@ -1018,12 +1018,15 @@ document.addEventListener('DOMContentLoaded', () => {
             @break
 
         @case('contact')
-            <!-- Contact Section - DYNAMIC TITLE FROM DATABASE -->
+            <!-- Contact Section - Enhanced Accessibility -->
             @if($sectionConfig['is_active'] ?? true)
-            <section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
+            <section id="contact"
+                     class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12"
+                     role="region"
+                     aria-labelledby="contact-section-title">
                 <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
                     <div class="flex flex-col gap-4">
-                        <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">
+                        <h2 id="contact-section-title" class="text-white text-xl sm:text-2xl font-semibold leading-loose">
                             {{-- Can be dynamic based on section config --}}
                             Have a project or question in mind? Just send me a message.
                         </h2>
@@ -1032,38 +1035,42 @@ document.addEventListener('DOMContentLoaded', () => {
                         </p>
                     </div>
                     <div class="flex flex-col gap-5">
-                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300 focus-within:ring-2 focus-within:ring-electric-purple">
+                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-neon-green rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
                             </div>
                             <div class="flex flex-col gap-1 min-w-0 flex-1">
                                 <span class="text-gray-400 text-sm font-light leading-tight">Call me now</span>
-                                <a href="tel:{{ $konf->no_hp_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->no_hp_setting }}</a>
+                                <a href="tel:{{ $konf->no_hp_setting }}"
+                                   class="text-white text-base font-normal leading-normal hover:text-neon-green transition-colors truncate focus-ring"
+                                   aria-label="Call {{ $konf->no_hp_setting }}">{{ $konf->no_hp_setting }}</a>
                             </div>
                         </div>
-                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                        <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300 focus-within:ring-2 focus-within:ring-electric-purple">
+                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-cyber-pink rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <div class="flex flex-col gap-1 min-w-0 flex-1">
                                 <span class="text-gray-400 text-sm font-light leading-tight">Chat with me</span>
-                                <a href="mailto:{{ $konf->email_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->email_setting }}</a>
+                                <a href="mailto:{{ $konf->email_setting }}"
+                                   class="text-white text-base font-normal leading-normal hover:text-cyber-pink transition-colors truncate focus-ring"
+                                   aria-label="Send email to {{ $konf->email_setting }}">{{ $konf->email_setting }}</a>
                             </div>
                         </div>
                         <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                            <div class="flex-shrink-0 w-12 h-12 p-3 bg-aurora-blue rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </div>
                             <div class="flex flex-col gap-1 min-w-0 flex-1">
                                 <span class="text-gray-400 text-sm font-light leading-tight">Location</span>
-                                <span class="text-white text-base font-normal leading-normal">{{ $konf->alamat_setting }}</span>
+                                <span class="text-white text-base font-normal leading-normal" aria-label="Location: {{ $konf->alamat_setting }}">{{ $konf->alamat_setting }}</span>
                             </div>
                         </div>
                     </div>
@@ -1103,34 +1110,101 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                 </div>
-                <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col gap-6 sm:gap-8 flex-1">
+                <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col gap-6 sm:gap-8 flex-1" role="form" aria-labelledby="contact-form-title">
                     @csrf
-                    <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
-                    <div class="flex flex-col gap-4">
+                    <h2 id="contact-form-title" class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
+
+                    <fieldset class="flex flex-col gap-4">
+                        <legend class="sr-only">Contact Information Form</legend>
+
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <input type="text" name="full_name" placeholder="Full Name" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-                            <input type="email" name="email" placeholder="Email Address" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                            <div class="w-full sm:w-1/2">
+                                <label for="full_name" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Full Name <span class="text-red-400" aria-label="required">*</span>
+                                </label>
+                                <input type="text"
+                                       id="full_name"
+                                       name="full_name"
+                                       required
+                                       aria-describedby="full_name_error"
+                                       class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-purple focus:border-electric-purple transition-all duration-300"
+                                       placeholder="Enter your full name" />
+                                <div id="full_name_error" class="text-red-400 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+                            </div>
+
+                            <div class="w-full sm:w-1/2">
+                                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Email Address <span class="text-red-400" aria-label="required">*</span>
+                                </label>
+                                <input type="email"
+                                       id="email"
+                                       name="email"
+                                       required
+                                       aria-describedby="email_error"
+                                       class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-purple focus:border-electric-purple transition-all duration-300"
+                                       placeholder="Enter your email address" />
+                                <div id="email_error" class="text-red-400 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+                            </div>
                         </div>
-                        <input type="text" name="subject" placeholder="Subject" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <select name="service" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                                <option value="">Select Service</option>
-                                <option value="ai">Digital Transformation 4.0 Consultant</option>
-                                <option value="automation">AI AGENT AUTOMATION Solution</option>
-                                <option value="automation">CUSTOM GPT/GEM Solution</option>
-                                <option value="automation">Content Creator Endorsement</option>
+
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">
+                                Subject
+                            </label>
+                            <input type="text"
+                                   id="subject"
+                                   name="subject"
+                                   aria-describedby="subject_help"
+                                   class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-purple focus:border-electric-purple transition-all duration-300"
+                                   placeholder="What's this about?" />
+                            <div id="subject_help" class="text-gray-400 text-xs mt-1">Optional: Brief description of your inquiry</div>
+                        </div>
+
+                        <div>
+                            <label for="service" class="block text-sm font-medium text-gray-300 mb-2">
+                                Service of Interest
+                            </label>
+                            <select id="service"
+                                    name="service"
+                                    aria-describedby="service_help"
+                                    class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white focus:outline-none focus:ring-2 focus:ring-electric-purple focus:border-electric-purple transition-all duration-300">
+                                <option value="" disabled selected>Select a service (optional)</option>
+                                <option value="digital-transformation">Digital Transformation 4.0 Consultant</option>
+                                <option value="ai-automation">AI AGENT AUTOMATION Solution</option>
+                                <option value="custom-gpt">CUSTOM GPT/GEM Solution</option>
+                                <option value="content-creator">Content Creator Endorsement</option>
+                                <option value="other">Other - Please specify in message</option>
                             </select>
+                            <div id="service_help" class="text-gray-400 text-xs mt-1">Help us understand your needs better</div>
                         </div>
-                        <textarea name="message" placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"></textarea>
-                        <button type="submit" class="send-message-btn w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center group">
-                            <span class="text-black text-base font-semibold capitalize leading-[40px] sm:leading-[72px] group-hover:text-black">
+
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-300 mb-2">
+                                Message <span class="text-red-400" aria-label="required">*</span>
+                            </label>
+                            <textarea id="message"
+                                      name="message"
+                                      required
+                                      aria-describedby="message_help message_error"
+                                      rows="4"
+                                      class="w-full bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-purple focus:border-electric-purple resize-none transition-all duration-300"
+                                      placeholder="Tell me about your project or question..."></textarea>
+                            <div id="message_help" class="text-gray-400 text-xs mt-1">Minimum 10 characters required</div>
+                            <div id="message_error" class="text-red-400 text-sm mt-1 hidden" role="alert" aria-live="polite"></div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn-cyber w-full sm:w-auto px-8 py-4 rounded-xl flex items-center gap-3 justify-center group transition-all duration-300 focus-ring"
+                                aria-describedby="submit_help">
+                            <span class="relative z-10 text-white text-base font-semibold group-hover:text-white">
                                 Send Message
                             </span>
-                            <svg class="w-5 sm:w-6 h-5 sm:h-6 text-black group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 sm:w-6 h-5 sm:h-6 text-white group-hover:text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
                             </svg>
                         </button>
-                    </div>
+                        <div id="submit_help" class="text-gray-400 text-xs">I'll get back to you within 24 hours</div>
+                    </fieldset>
                 </form>
             </section>
             @endif

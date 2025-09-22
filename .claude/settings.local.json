@@ -15,7 +15,12 @@
       "Bash(where claude)",
       "Bash(claude auth login)",
       "Bash(code --version)",
-      "mcp__playwright__browser_resize"
+      "mcp__playwright__browser_resize",
+      "Bash(npm run build:*)",
+      "Bash(curl:*)",
+      "Bash(npx:*)",
+      "Bash(find:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

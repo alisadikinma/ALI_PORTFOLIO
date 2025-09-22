@@ -81,33 +81,8 @@ export class NavigationManager {
     }
     
     initActiveSection() {
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('#nav-menu a[href^="#"]');
-        
-        if (!sections.length || !navLinks.length) return;
-        
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        // Remove active class from all links
-                        navLinks.forEach((link) => {
-                            link.classList.remove('text-yellow-400', 'font-semibold');
-                            link.classList.add('text-gray-400', 'font-normal');
-                        });
-                        
-                        // Add active class to current section link
-                        const activeLink = document.querySelector(`#nav-menu a[href="#${entry.target.id}"]`);
-                        if (activeLink) {
-                            activeLink.classList.add('text-yellow-400', 'font-semibold');
-                            activeLink.classList.remove('text-gray-400', 'font-normal');
-                        }
-                    }
-                });
-            },
-            { threshold: 0.6, rootMargin: '-20% 0px -20% 0px' }
-        );
-        
-        sections.forEach((section) => observer.observe(section));
+        // Active section highlighting is now handled by the main script in web.blade.php
+        // to avoid duplicate IntersectionObserver conflicts
+        console.log('Active section highlighting delegated to main script');
     }
 }

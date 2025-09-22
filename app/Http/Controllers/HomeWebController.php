@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Berita;
 use App\Models\Galeri;
@@ -12,96 +13,108 @@ use App\Models\Award;
 use App\Models\LookupData;
 use App\Models\Setting;
 use App\Services\HomepageSectionService;
+use App\Services\ProjectService;
+use App\Services\SettingService;
+use App\Services\ContentService;
 use Carbon\Carbon;
+use Exception;
 
 class HomeWebController extends Controller
 {
     public function index()
     {
-        // Use models instead of direct DB queries for better MVC architecture
-        $konf = $this->getSiteConfiguration();
-        $homepageSections = $this->getHomepageSections();
-        $homepageData = $this->getHomepageData($homepageSections);
-        $projectCategories = $this->getProjectCategories();
-        
-        // Extract data for view
-        $layanan = $homepageData['layanan'];
-        $testimonial = $homepageData['testimonial'];
-        $galeri = $homepageData['galeri'];
-        $article = $homepageData['article'];
-        $award = $homepageData['award'];
-        $projects = $homepageData['projects'];
-        
-        // Get section configurations for view
-        $sectionConfigs = HomepageSectionService::getAllSectionConfigs();
-        
-        return view('welcome', compact(
-            'konf', 
-            'layanan', 
-            'testimonial', 
-            'galeri', 
-            'article', 
-            'award', 
-            'projects', 
-            'projectCategories', 
-            'homepageSections',
-            'sectionConfigs'
-        ));
+        try {
+            // Use services for better architecture and performance
+            $konf = SettingService::getConfig();
+            $homepageSections = $this->getHomepageSections();
+            $sectionConfigs = HomepageSectionService::getAllSectionConfigs();
+
+            // Load content using services with caching
+            $data = Cache::remember('homepage_complete_data', 1800, function() use ($homepageSections) {
+                return [
+                    'projects' => ProjectService::getHomepageProjects(9),
+                    'testimonial' => ContentService::getTestimonialsForHomepage(6),
+                    'galeri' => ContentService::getGalleryForHomepage(12),
+                    'article' => ContentService::getArticlesForHomepage(4),
+                    'award' => ContentService::getAwardsForHomepage(6),
+                    'layanan' => ContentService::getServicesForHomepage(),
+                    'projectCategories' => ProjectService::getProjectCategories(),
+                ];
+            });
+
+            // Extract data for view
+            extract($data);
+
+            // Add performance metrics for admin
+            if (auth()->check() && auth()->user()->role === 'admin') {
+                $performanceMetrics = $this->getPagePerformanceMetrics();
+            }
+
+            return view('welcome', compact(
+                'konf',
+                'layanan',
+                'testimonial',
+                'galeri',
+                'article',
+                'award',
+                'projects',
+                'projectCategories',
+                'homepageSections',
+                'sectionConfigs',
+                'performanceMetrics'
+            ));
+
+        } catch (Exception $e) {
+            Log::error('Homepage loading error', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+
+            // Fallback to basic homepage with minimal data
+            return $this->renderFallbackHomepage();
+        }
     }
 
     /**
-     * Get site configuration using Model - Updated to ensure all settings columns are available
+     * Get page performance metrics for admin users
      */
-    private function getSiteConfiguration()
+    private function getPagePerformanceMetrics()
     {
-        return Cache::remember('site_config', 300, function() {
-            // Use Setting model to get all configuration data
-            try {
-                // Ensure we get the first settings record with all columns
-                $settings = Setting::select([
-                    'id_setting',
-                    'instansi_setting',
-                    'pimpinan_setting', 
-                    'logo_setting',
-                    'favicon_setting',
-                    'misi_setting',
-                    'visi_setting',
-                    'keyword_setting',
-                    'alamat_setting',
-                    'instagram_setting',
-                    'youtube_setting', 
-                    'email_setting',
-                    'tiktok_setting',
-                    'facebook_setting',
-                    'linkedin_setting',
-                    'no_hp_setting',
-                    'maps_setting',
-                    'profile_title',           // Column 1 yang diminta
-                    'profile_content',         // Column 3 yang diminta
-                    'primary_button_title',    // Column 4 yang diminta
-                    'primary_button_link',     // Column 4 link yang diminta
-                    'secondary_button_title',  // Column 5 yang diminta
-                    'secondary_button_link',   // Column 5 link yang diminta
-                    'years_experience',
-                    'followers_count',
-                    'project_delivered',
-                    'cost_savings',
-                    'success_rate',
-                    'about_section_title',
-                    'about_section_subtitle',
-                    'about_section_description',
-                    'about_section_image',
-                    'award_section_title',
-                    'award_section_subtitle',
-                    'view_cv_url'
-                ])->first();
-                
-                return $settings;
-            } catch (\Exception $e) {
-                // Fallback to direct DB query if model fails
-                return DB::table('setting')->first();
-            }
-        });
+        $startTime = defined('LARAVEL_START') ? LARAVEL_START : request()->server('REQUEST_TIME_FLOAT');
+        $currentTime = microtime(true);
+
+        return [
+            'load_time_ms' => round(($currentTime - $startTime) * 1000, 2),
+            'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+            'peak_memory_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
+            'query_count' => count(DB::getQueryLog()),
+        ];
+    }
+
+    /**
+     * Render fallback homepage when main loading fails
+     */
+    private function renderFallbackHomepage()
+    {
+        $konf = Setting::first();
+        $homepageSections = ['about', 'portfolio', 'contact'];
+        $sectionConfigs = HomepageSectionService::getAllSectionConfigs();
+
+        // Minimal data for fallback
+        $projects = collect();
+        $testimonial = collect();
+        $galeri = collect();
+        $article = collect();
+        $award = collect();
+        $layanan = collect();
+        $projectCategories = collect();
+
+        return view('welcome', compact(
+            'konf', 'layanan', 'testimonial', 'galeri',
+            'article', 'award', 'projects', 'projectCategories',
+            'homepageSections', 'sectionConfigs'
+        ))->with('fallback_mode', true);
     }
 
     /**
@@ -390,37 +403,72 @@ class HomeWebController extends Controller
     public function portfolioDetail($slug)
     {
         try {
-            // Try enhanced query with lookup data first
-            try {
-                $portfolio = DB::table('project as p')
-                            ->leftJoin('lookup_data as ld', 'p.category_lookup_id', '=', 'ld.id')
-                            ->select('p.*', 
-                                   'ld.lookup_name as category_name', 
-                                   'ld.lookup_icon as category_icon', 
-                                   'ld.lookup_color as category_color', 
-                                   'ld.lookup_description as category_description')
-                            ->where('p.slug_project', $slug)
-                            ->where('p.status', 'Active')
-                            ->first();
-            } catch (\Exception $e) {
-                // Fallback to simple query if lookup fails
-                $portfolio = DB::table('project')
-                            ->where('slug_project', $slug)
-                            ->where('status', 'Active')
-                            ->first();
-            }
-            
+            // Use ProjectService for better performance and caching
+            $portfolio = ProjectService::getProjectBySlug($slug, true);
+
             if (!$portfolio) {
-                abort(404, 'Portfolio not found');
+                abort(404, 'Project not found or inactive');
             }
-            
-            $konf = $this->getSiteConfiguration();
-            
-            return view('portfolio_detail', compact('konf', 'portfolio'));
-            
-        } catch (\Exception $e) {
-            \Log::error('Portfolio detail error: ' . $e->getMessage());
-            return response()->view('errors.500', ['error' => $e->getMessage()], 500);
+
+            $konf = SettingService::getConfig();
+
+            // Get related content
+            $relatedData = Cache::remember("portfolio_detail_{$slug}", 1800, function() use ($portfolio) {
+                return [
+                    'related_projects' => ProjectService::getProjectsByCategory(
+                        $portfolio->category->lookup_code ?? 'other', 4
+                    )->where('id_project', '!=', $portfolio->id_project),
+                    'project_testimonials' => ContentService::getTestimonialsByProject(
+                        $portfolio->id_project, 3
+                    ),
+                    'similar_awards' => Award::active()
+                        ->where('company', $portfolio->client_name)
+                        ->orWhere('award_category', 'LIKE', '%' . $portfolio->project_category . '%')
+                        ->limit(3)
+                        ->get(),
+                ];
+            });
+
+            // Track portfolio view for analytics
+            $this->trackPortfolioView($portfolio);
+
+            return view('portfolio_detail', array_merge(
+                compact('konf', 'portfolio'),
+                $relatedData
+            ));
+
+        } catch (Exception $e) {
+            Log::error('Portfolio detail error', [
+                'slug' => $slug,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            abort(404, 'Project not found');
+        }
+    }
+
+    /**
+     * Track portfolio view for analytics
+     */
+    private function trackPortfolioView($portfolio)
+    {
+        try {
+            // Simple analytics tracking
+            Cache::increment("portfolio_views_{$portfolio->id_project}");
+            Cache::increment('total_portfolio_views');
+
+            // Log for detailed analytics (optional)
+            Log::info('Portfolio viewed', [
+                'project_id' => $portfolio->id_project,
+                'project_name' => $portfolio->project_name,
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'referrer' => request()->header('referer'),
+            ]);
+        } catch (Exception $e) {
+            // Don't fail if tracking fails
+            Log::warning('Portfolio tracking failed', ['error' => $e->getMessage()]);
         }
     }
 

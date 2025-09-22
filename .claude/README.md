@@ -7,7 +7,6 @@ This directory contains the Claude Code configuration for the Laravel portfolio 
 ```
 .claude/
 ├── agents/                             # Organized agent teams
-│   ├── portfolio-orchestrator.md       # Master coordinator
 │   ├── Core_Development_Team/          # Development specialists
 │   │   ├── laravel-specialist.md
 │   │   ├── frontend-developer.md

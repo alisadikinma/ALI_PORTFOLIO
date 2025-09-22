@@ -589,8 +589,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- Dynamic Greeting -->
                 <div class="animate-slide-in-left">
                     <p class="text-hero-subtitle text-yellow-400 mb-4 flex items-center justify-center lg:justify-start gap-2">
-                        <span class="text-2xl animate-bounce">👋</span>
-                        Hey there! I'm
+                        <span class="text-2xl animate-bounce">🚀</span>
+                        Digital Transformation Consultant
                     </p>
                 </div>
 
@@ -600,26 +600,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         {{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}
                         <br />
                         <span class="text-gradient-hero animate-gradient">
-                            AI Generalist
+                            Manufacturing AI Expert
                         </span>
                     </h1>
 
-                    <!-- Subtitle with modern styling -->
+                    <!-- SEO-optimized subtitle with consulting focus -->
                     <div class="text-hero-subtitle text-yellow-400 uppercase tracking-wider font-bold">
-                        {{ $konf->profile_title ?? '🚀 Transforming Manufacturing with AI' }}
+                        {{ $konf->profile_title ?? '🏭 Manufacturing Digital Transformation Specialist' }}
                     </div>
                 </div>
 
-                <!-- Engaging Description -->
+                <!-- SEO-optimized description for Digital Transformation Consulting -->
                 <div class="animate-slide-up" style="animation-delay: 0.6s;">
                     <p class="text-modern-body text-xl text-gray-300 leading-relaxed">
-                        From production engineer to <span class="text-yellow-400 font-semibold">AI innovator</span> –
-                        I don't just build solutions, I create experiences that make people go
-                        <span class="text-pink-400 font-semibold">"wow, this actually works!"</span> 🤯
+                        <span class="text-yellow-400 font-semibold">Digital Transformation Consultant</span> specializing in
+                        <span class="text-blue-400 font-semibold">manufacturing AI implementation</span>.
+                        From production engineer to AI innovator – helping manufacturing companies modernize operations with
+                        <span class="text-pink-400 font-semibold">proven smart factory solutions</span>. 🏭
                         <br><br>
-                        16+ years of turning traditional manufacturing into smart,
-                        <span class="text-blue-400 font-semibold">future-ready operations</span>.
-                        Let's build something amazing together! ✨
+                        <strong>16+ years manufacturing experience</strong> • <strong>54K+ followers</strong> •
+                        <span class="text-green-400 font-semibold">99% project success rate</span>.
+                        Transform your manufacturing operations with AI today! 🚀
                     </p>
                 </div>
 

@@ -21,6 +21,20 @@ class DashboardController extends Controller
         // Ambil data pesan terbaru
         $contacts = Contact::latest()->take(10)->get();
 
+        // Check if enhanced dashboard is requested
+        $useEnhanced = request()->has('enhanced') || request()->routeIs('dashboard.enhanced');
+
+        if ($useEnhanced) {
+            return view('dashboard.enhanced-index', compact(
+                'title',
+                'countProject',
+                'countGaleri',
+                'countBerita',
+                'countPesan',
+                'contacts'
+            ));
+        }
+
         return view('dashboard.index', compact(
             'title',
             'countProject',

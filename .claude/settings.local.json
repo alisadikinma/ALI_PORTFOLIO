@@ -20,7 +20,18 @@
       "Bash(curl:*)",
       "Bash(npx:*)",
       "Bash(find:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(node:*)",
+      "Bash(dir)",
+      "Bash(dir:*)",
+      "Bash(php:*)",
+      "Bash(npm install:*)",
+      "Bash(chmod:*)",
+      "Bash(cat:*)",
+      "Bash(taskkill:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(start http://localhost:8000/validation_test.html)",
+      "mcp__ide__executeCode"
     ],
     "deny": [],
     "ask": []

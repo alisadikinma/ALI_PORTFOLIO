@@ -36,31 +36,78 @@ $menuItems = DB::table('lookup_data')
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    {{-- Dynamic SEO Meta Tags --}}
-    <title>@yield('title', $konf->instansi_setting . ' - AI Generalist & Technopreneur')</title>
+    {{-- Enhanced SEO Meta Tags for Digital Transformation Consulting --}}
+    @php
+        $seoService = app(\App\Services\SeoService::class);
+        $currentPage = request()->segment(1) ?: 'homepage';
+        $seoData = $seoService->generateConsultingMetadata($currentPage);
+    @endphp
+
+    <title>@yield('title', $seoData['title'])</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('logo/' . ($konf->logo_setting ?? 'default.ico')) }}">
-    <meta name="description" content="@yield('meta_description', $konf->profile_content ?? 'AI Generalist & Technopreneur Portfolio')">
-    <meta name="keywords" content="@yield('meta_keywords', $konf->keyword_setting)">
-    <meta name="author" content="{{ $konf->pimpinan_setting }}">
-    <meta name="robots" content="@yield('robots', 'index, follow')">
+    <meta name="description" content="@yield('meta_description', $seoData['description'])">
+    <meta name="keywords" content="@yield('meta_keywords', $seoData['keywords'])">
+    <meta name="author" content="{{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}">
+    <meta name="robots" content="@yield('robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1')">
     <meta name="theme-color" content="#1E2B44">
+
+    {{-- Professional Consulting Meta Tags --}}
+    <meta name="subject" content="Digital Transformation Consulting for Manufacturing Industry">
+    <meta name="audience" content="Manufacturing Decision Makers, Gen Z Professionals, Technology Leaders">
+    <meta name="category" content="Professional Services, Consulting, Manufacturing Technology">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    <meta name="coverage" content="worldwide">
+    <meta name="target" content="manufacturing companies, technology leaders, digital transformation professionals">
+
+    {{-- Geo-targeting for Indonesia and SEA --}}
+    <meta name="geo.region" content="ID">
+    <meta name="geo.placename" content="Jakarta, Indonesia">
+    <meta name="geo.position" content="-6.2088;106.8456">
+    <meta name="ICBM" content="-6.2088, 106.8456">
+
+    {{-- Business/Professional Meta --}}
+    <meta name="classification" content="Digital Transformation Consulting">
+    <meta name="directory" content="submission">
+    <meta name="pagename" content="@yield('page_name', 'Ali Sadikin Digital Transformation Consultant')">
+    <meta name="page-topic" content="Manufacturing AI Implementation, Digital Transformation Consulting">
+    <meta name="page-type" content="Professional Portfolio">
     
-    {{-- Open Graph Tags --}}
-    <meta property="og:title" content="@yield('og_title', $konf->instansi_setting)">
-    <meta property="og:description" content="@yield('og_description', $konf->profile_content ?? 'AI Generalist & Technopreneur Portfolio')">
+    {{-- Enhanced Open Graph Tags for Professional Consulting --}}
+    <meta property="og:title" content="@yield('og_title', $seoData['title'])">
+    <meta property="og:description" content="@yield('og_description', $seoData['description'])">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="@yield('og_url', request()->url())">
-    <meta property="og:image" content="@yield('og_image', asset('logo/' . $konf->logo_setting))">
-    <meta property="og:site_name" content="{{ $konf->instansi_setting }}">
+    <meta property="og:image" content="@yield('og_image', asset('images/social-share-consulting.jpg'))">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Ali Sadikin - Digital Transformation Consultant for Manufacturing">
+    <meta property="og:site_name" content="Ali Sadikin - Digital Transformation Consultant">
     <meta property="og:locale" content="id_ID">
+    <meta property="og:locale:alternate" content="en_US">
+
+    {{-- Professional/Business Open Graph --}}
+    <meta property="business:contact_data:street_address" content="{{ $konf->alamat_setting }}">
+    <meta property="business:contact_data:locality" content="Jakarta">
+    <meta property="business:contact_data:region" content="DKI Jakarta">
+    <meta property="business:contact_data:postal_code" content="10000">
+    <meta property="business:contact_data:country_name" content="Indonesia">
+    <meta property="business:contact_data:email" content="{{ $konf->email_setting }}">
+    <meta property="business:contact_data:phone_number" content="{{ $konf->no_hp_setting }}">
+    <meta property="business:contact_data:website" content="{{ url('/') }}">
     
-    {{-- Twitter Card Tags --}}
+    {{-- Enhanced Twitter Card for Professional Consulting --}}
     <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')">
-    <meta name="twitter:title" content="@yield('twitter_title', $konf->instansi_setting)">
-    <meta name="twitter:description" content="@yield('twitter_description', $konf->profile_content ?? 'AI Generalist & Technopreneur Portfolio')">
-    <meta name="twitter:image" content="@yield('twitter_image', asset('logo/' . $konf->logo_setting))">
-    <meta name="twitter:site" content="@yield('twitter_site', '@alisadikin')">
-    <meta name="twitter:creator" content="@yield('twitter_creator', '@alisadikin')">
+    <meta name="twitter:title" content="@yield('twitter_title', $seoData['title'])">
+    <meta name="twitter:description" content="@yield('twitter_description', $seoData['description'])">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('images/social-share-consulting.jpg'))">
+    <meta name="twitter:image:alt" content="Ali Sadikin Digital Transformation Consultant - Manufacturing AI Expert">
+    <meta name="twitter:site" content="@yield('twitter_site', '@alisadikinma')">
+    <meta name="twitter:creator" content="@yield('twitter_creator', '@alisadikinma')">
+    <meta name="twitter:label1" content="Experience">
+    <meta name="twitter:data1" content="16+ Years Manufacturing">
+    <meta name="twitter:label2" content="Followers">
+    <meta name="twitter:data2" content="54K+ Social Media">
     
     {{-- Canonical URL --}}
     <link rel="canonical" href="@yield('canonical', request()->url())">

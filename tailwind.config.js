@@ -9,16 +9,30 @@ export default {
         './vendor/laravel/jetstream/**/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        './resources/js/**/*.js',
     ],
 
     theme: {
+        screens: {
+            'xs': '475px',
+            'sm': '640px',
+            'md': '768px', // Critical tablet breakpoint
+            'lg': '1024px',
+            'xl': '1280px',
+            '2xl': '1536px',
+            // Professional consultation-focused breakpoints
+            'tablet': '768px',
+            'desktop': '1024px',
+            'wide': '1440px',
+        },
         extend: {
             fontFamily: {
-                sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+                sans: ['Inter', 'Space Grotesk', 'system-ui', 'sans-serif'],
                 display: ['Poppins', 'system-ui', 'sans-serif'],
-                mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                mono: ['JetBrains Mono', 'Fira Code', 'SF Mono', 'monospace'],
             },
             colors: {
+                // Enhanced Digital Transformation Consultant Brand Colors
                 'electric-purple': '#8b5cf6',
                 'cyber-pink': '#ec4899',
                 'neon-green': '#10b981',
@@ -28,6 +42,24 @@ export default {
                 'dark-surface': '#0f0f23',
                 'card-surface': '#1a1a2e',
                 'border-subtle': '#374151',
+
+                // Professional Consulting Brand Palette
+                'consulting': {
+                    50: '#f0f9ff',
+                    100: '#e0f2fe',
+                    500: '#06b6d4',
+                    600: '#0891b2',
+                    700: '#0e7490',
+                    900: '#164e63',
+                },
+                'manufacturing': {
+                    50: '#fef3c7',
+                    100: '#fde68a',
+                    500: '#f59e0b',
+                    600: '#d97706',
+                    700: '#b45309',
+                    900: '#78350f',
+                },
             },
             fontSize: {
                 'xs': ['0.75rem', { lineHeight: '1rem' }],
@@ -43,11 +75,25 @@ export default {
                 '7xl': ['4.5rem', { lineHeight: '1.1' }],
                 '8xl': ['6rem', { lineHeight: '1.1' }],
                 '9xl': ['8rem', { lineHeight: '1.1' }],
+                // Professional responsive typography
+                'display': ['clamp(2.5rem, 8vw, 5rem)', { lineHeight: '1.1' }],
+                'hero': ['clamp(1.875rem, 5vw, 3rem)', { lineHeight: '1.2' }],
+                'subtitle': ['clamp(1.125rem, 3vw, 1.5rem)', { lineHeight: '1.4' }],
             },
             spacing: {
                 '18': '4.5rem',
                 '88': '22rem',
                 '128': '32rem',
+                // Professional spacing scale
+                '15': '3.75rem',
+                '72': '18rem',
+                '84': '21rem',
+                '96': '24rem',
+            },
+            maxWidth: {
+                '8xl': '88rem',
+                '9xl': '96rem',
+                'screen-2xl': '1536px',
             },
             animation: {
                 'gradient-shift': 'gradient-shift 4s ease infinite',
@@ -133,11 +179,42 @@ export default {
             backdropBlur: {
                 'xs': '2px',
             },
-            containers: {
-                '2xs': '16rem',
-            },
         },
     },
 
     plugins: [forms, typography],
+
+    // Professional optimization settings
+    corePlugins: {
+        preflight: true,
+        container: true,
+    },
+
+    // Content-based purge safelist for dynamic classes
+    safelist: [
+        {
+            pattern: /(bg|text|border)-(electric-purple|cyber-pink|neon-green|consulting|manufacturing)-(50|100|500|600|700|900)/,
+        },
+        {
+            pattern: /(animate)-(fade-in|slide-up|float|pulse-glow|gradient)/,
+        },
+        {
+            pattern: /(grid-cols|md:grid-cols|lg:grid-cols)-(1|2|3|4|5|6)/,
+        },
+        {
+            pattern: /(w|h)-(1\/2|1\/3|2\/3|1\/4|3\/4|full)/,
+        },
+        // Tablet responsive classes (critical 768px breakpoint)
+        {
+            pattern: /md:(hidden|block|flex|grid|p|m|text|w|h)-.+/,
+        },
+    ],
 };
+
+// Professional Digital Transformation Consultant Configuration
+// Optimized for:
+// - Manufacturing industry presentations
+// - Gen Z professional appeal
+// - Cross-device consulting credibility
+// - High-performance content management
+// - Accessible professional design

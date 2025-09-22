@@ -1,117 +1,200 @@
+/**
+ * Professional Testimonials Manager
+ * Client testimonial showcase for manufacturing credibility
+ */
+
 export class TestimonialManager {
     constructor() {
-        this.slider = document.getElementById("testimonialSlider");
-        this.dotsContainer = document.getElementById("testimonialDots");
-        this.currentIndex = 0;
-        this.slideInterval = null;
-        this.autoSlideDelay = 5000;
-        
+        this.isInitialized = false;
+        this.currentSlide = 0;
+        this.testimonials = [];
+        this.autoPlayInterval = null;
+
         this.init();
     }
-    
+
     init() {
-        if (!this.slider || !this.dotsContainer) return;
-        
-        this.renderDots();
-        this.showSlide(0);
-        this.initEventListeners();
-        this.startAutoSlide();
+        console.log('💬 Testimonials Manager initializing...');
+
+        try {
+            this.setupTestimonialElements();
+            this.setupSlider();
+            this.setupAutoPlay();
+            this.setupTouchSupport();
+
+            this.isInitialized = true;
+            console.log('✅ Testimonials Manager initialized');
+        } catch (error) {
+            console.warn('Testimonials Manager initialization failed:', error);
+        }
     }
-    
-    getTotalPages() {
-        const itemsPerPage = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
-        return Math.ceil(this.slider.children.length / itemsPerPage);
-    }
-    
-    renderDots() {
-        this.dotsContainer.innerHTML = "";
-        const totalPages = this.getTotalPages();
-        
-        for (let i = 0; i < totalPages; i++) {
-            const dot = document.createElement("span");
-            dot.className = "dot w-3 h-3 rounded-full bg-gray-500 inline-block cursor-pointer transition-colors duration-300 hover:bg-gray-300";
-            dot.addEventListener("click", () => {
-                this.showSlide(i);
-                this.stopAutoSlide();
-                this.startAutoSlide();
+
+    setupTestimonialElements() {
+        this.testimonials = document.querySelectorAll('.testimonial-item');
+
+        if (this.testimonials.length === 0) {
+            console.log('No testimonials found');
+            return;
+        }
+
+        // Setup hover effects
+        this.testimonials.forEach((testimonial, index) => {
+            testimonial.addEventListener('mouseenter', () => {
+                this.pauseAutoPlay();
             });
-            this.dotsContainer.appendChild(dot);
-        }
-    }
-    
-    showSlide(index) {
-        const wrapper = this.slider.parentElement;
-        const wrapperWidth = wrapper.offsetWidth;
-        const totalPages = this.getTotalPages();
-        
-        if (index < 0) index = totalPages - 1;
-        if (index >= totalPages) index = 0;
-        
-        this.currentIndex = index;
-        const offset = -index * wrapperWidth;
-        this.slider.style.transform = `translateX(${offset}px)`;
-        
-        // Update dots
-        const dots = this.dotsContainer.querySelectorAll(".dot");
-        dots.forEach((dot, i) => {
-            dot.classList.toggle("bg-yellow-400", i === index);
-            dot.classList.toggle("bg-gray-500", i !== index);
+
+            testimonial.addEventListener('mouseleave', () => {
+                this.resumeAutoPlay();
+            });
         });
     }
-    
-    startAutoSlide() {
-        if (this.getTotalPages() <= 1) return;
-        
-        this.slideInterval = setInterval(() => {
-            this.showSlide(this.currentIndex + 1);
-        }, this.autoSlideDelay);
-    }
-    
-    stopAutoSlide() {
-        if (this.slideInterval) {
-            clearInterval(this.slideInterval);
-            this.slideInterval = null;
-        }
-    }
-    
-    initEventListeners() {
-        // Pause on hover
-        this.slider.addEventListener('mouseenter', () => this.stopAutoSlide());
-        this.slider.addEventListener('mouseleave', () => this.startAutoSlide());
-        
-        // Update on resize
-        let resizeTimeout;
-        window.addEventListener("resize", () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                this.renderDots();
-                this.showSlide(this.currentIndex);
-            }, 100);
+
+    setupSlider() {
+        const dotsContainer = document.getElementById('nav-dots');
+        const slider = document.querySelector('#testimonials .overflow-x-auto');
+
+        if (!dotsContainer || !slider) return;
+
+        const dots = dotsContainer.querySelectorAll('div');
+
+        // Handle dot clicks
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                this.goToSlide(index);
+                this.updateDots(index);
+            });
         });
-        
-        // Touch/swipe support
+
+        // Handle scroll events
+        slider.addEventListener('scroll', () => {
+            this.handleScrollUpdate();
+        });
+    }
+
+    setupAutoPlay() {
+        if (this.testimonials.length <= 1) return;
+
+        this.autoPlayInterval = setInterval(() => {
+            this.nextSlide();
+        }, 5000); // Auto-advance every 5 seconds
+    }
+
+    setupTouchSupport() {
+        const slider = document.querySelector('#testimonials .overflow-x-auto');
+        if (!slider) return;
+
         let startX = 0;
-        let currentX = 0;
-        
-        this.slider.addEventListener('touchstart', (e) => {
+        let scrollStart = 0;
+
+        slider.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
+            scrollStart = slider.scrollLeft;
+            this.pauseAutoPlay();
         });
-        
-        this.slider.addEventListener('touchmove', (e) => {
-            currentX = e.touches[0].clientX;
-        });
-        
-        this.slider.addEventListener('touchend', () => {
+
+        slider.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const currentX = e.touches[0].clientX;
             const diff = startX - currentX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    this.showSlide(this.currentIndex + 1);
-                } else {
-                    this.showSlide(this.currentIndex - 1);
-                }
-                this.stopAutoSlide();
-                this.startAutoSlide();
+            slider.scrollLeft = scrollStart + diff;
+        });
+
+        slider.addEventListener('touchend', () => {
+            this.resumeAutoPlay();
+            this.handleScrollUpdate();
+        });
+    }
+
+    goToSlide(index) {
+        const slider = document.querySelector('#testimonials .overflow-x-auto');
+        if (!slider || !this.testimonials[index]) return;
+
+        const testimonial = this.testimonials[index];
+        const cardWidth = testimonial.offsetWidth + 20; // Include gap
+
+        slider.scrollTo({
+            left: index * cardWidth,
+            behavior: 'smooth'
+        });
+
+        this.currentSlide = index;
+        this.trackTestimonialView(index);
+    }
+
+    nextSlide() {
+        const nextIndex = (this.currentSlide + 1) % this.testimonials.length;
+        this.goToSlide(nextIndex);
+    }
+
+    previousSlide() {
+        const prevIndex = this.currentSlide === 0 ? this.testimonials.length - 1 : this.currentSlide - 1;
+        this.goToSlide(prevIndex);
+    }
+
+    updateDots(activeIndex) {
+        const dots = document.querySelectorAll('#nav-dots > div');
+
+        dots.forEach((dot, index) => {
+            if (index === activeIndex) {
+                dot.classList.remove('bg-neutral-600');
+                dot.classList.add('bg-yellow-400');
+            } else {
+                dot.classList.remove('bg-yellow-400');
+                dot.classList.add('bg-neutral-600');
             }
         });
     }
+
+    handleScrollUpdate() {
+        const slider = document.querySelector('#testimonials .overflow-x-auto');
+        if (!slider || this.testimonials.length === 0) return;
+
+        const cardWidth = this.testimonials[0].offsetWidth + 20;
+        const newIndex = Math.round(slider.scrollLeft / cardWidth);
+
+        if (newIndex !== this.currentSlide) {
+            this.currentSlide = newIndex;
+            this.updateDots(newIndex);
+        }
+    }
+
+    pauseAutoPlay() {
+        if (this.autoPlayInterval) {
+            clearInterval(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    }
+
+    resumeAutoPlay() {
+        if (!this.autoPlayInterval && this.testimonials.length > 1) {
+            this.autoPlayInterval = setInterval(() => {
+                this.nextSlide();
+            }, 5000);
+        }
+    }
+
+    trackTestimonialView(index) {
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'testimonial_view', {
+                testimonial_index: index,
+                timestamp: new Date().toISOString()
+            });
+        }
+    }
+
+    // Public API
+    destroy() {
+        this.pauseAutoPlay();
+        this.isInitialized = false;
+    }
+
+    getCurrentSlide() {
+        return this.currentSlide;
+    }
+
+    getTotalSlides() {
+        return this.testimonials.length;
+    }
 }
+
+export default TestimonialManager;

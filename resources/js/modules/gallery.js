@@ -1,145 +1,155 @@
+/**
+ * Professional Gallery Manager
+ * Manufacturing Project Gallery Enhancement
+ */
+
 export class GalleryManager {
     constructor() {
-        this.modal = document.getElementById('imageModal');
-        this.modalContainer = document.getElementById('modalMediaContainer');
-        this.modalCaption = document.getElementById('modalCaption');
-        this.closeBtn = document.getElementById('closeModalBtn');
-        this.prevBtn = document.getElementById('prevGalleryBtn');
-        this.nextBtn = document.getElementById('nextGalleryBtn');
+        this.isInitialized = false;
         this.currentIndex = 0;
-        this.galleryData = [];
-        
+        this.galleryItems = [];
+
         this.init();
     }
-    
+
     init() {
-        if (!this.modal) return;
-        
-        this.initGalleryData();
-        this.initEventListeners();
-        this.initLazyLoading();
-    }
-    
-    initGalleryData() {
-        const images = document.querySelectorAll('#galleryGrid img.gallery-image');
-        
-        this.galleryData = Array.from(images).map((img) => ({
-            caption: img.dataset.caption || 'Gallery Image',
-            sources: [
-                img.dataset.gambar,
-                img.dataset.gambar1,
-                img.dataset.gambar2,
-                img.dataset.gambar3
-            ].filter(src => src && src !== ""),
-            video: img.dataset.video || null
-        }));
-    }
-    
-    initEventListeners() {
-        // Gallery image clicks
-        document.querySelectorAll('#galleryGrid img.gallery-image').forEach((img, index) => {
-            img.addEventListener('click', () => this.openModal(index));
-        });
-        
-        // Modal controls
-        this.closeBtn?.addEventListener('click', () => this.closeModal());
-        this.prevBtn?.addEventListener('click', () => this.navigate('prev'));
-        this.nextBtn?.addEventListener('click', () => this.navigate('next'));
-        
-        // Close on backdrop click
-        this.modal?.addEventListener('click', (e) => {
-            if (e.target === this.modal) {
-                this.closeModal();
-            }
-        });
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (!this.modal.classList.contains('hidden')) {
-                switch(e.key) {
-                    case 'Escape': this.closeModal(); break;
-                    case 'ArrowLeft': this.navigate('prev'); break;
-                    case 'ArrowRight': this.navigate('next'); break;
-                }
-            }
-        });
-    }
-    
-    openModal(index) {
-        this.currentIndex = index;
-        this.renderModal();
-        this.modal.classList.remove('hidden');
-        this.modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    closeModal() {
-        this.modal.classList.add('hidden');
-        this.modal.classList.remove('flex');
-        this.modalContainer.innerHTML = '';
-        document.body.style.overflow = '';
-    }
-    
-    navigate(direction) {
-        if (direction === 'next') {
-            this.currentIndex = (this.currentIndex + 1) % this.galleryData.length;
-        } else {
-            this.currentIndex = (this.currentIndex - 1 + this.galleryData.length) % this.galleryData.length;
+        console.log('🖼️ Gallery Manager initializing...');
+
+        try {
+            this.setupGalleryElements();
+            this.setupLightbox();
+            this.setupImageOptimization();
+
+            this.isInitialized = true;
+            console.log('✅ Gallery Manager initialized');
+        } catch (error) {
+            console.warn('Gallery Manager initialization failed:', error);
         }
-        this.renderModal();
     }
-    
-    renderModal() {
-        if (!this.modalContainer || !this.galleryData[this.currentIndex]) return;
-        
-        this.modalContainer.innerHTML = '';
-        const data = this.galleryData[this.currentIndex];
-        
-        const mediaItems = [...data.sources];
-        if (data.video) mediaItems.push(data.video);
-        
-        mediaItems.forEach(src => {
-            const wrapper = document.createElement('div');
-            wrapper.className = "bg-slate-900 rounded-lg overflow-hidden shadow-lg";
-            
-            if (src.includes('.mp4') || src.includes('.webm')) {
-                const video = document.createElement('video');
-                video.src = src;
-                video.controls = true;
-                video.className = "w-full aspect-video object-contain max-h-screen";
-                wrapper.appendChild(video);
-            } else {
-                const img = document.createElement('img');
-                img.src = src;
-                img.className = "w-full h-auto object-contain max-h-screen";
-                img.loading = "lazy";
-                wrapper.appendChild(img);
-            }
-            
-            this.modalContainer.appendChild(wrapper);
-        });
-        
-        this.modalCaption.textContent = data.caption;
-    }
-    
-    initLazyLoading() {
-        const images = document.querySelectorAll('img[data-src]');
-        
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    img.src = img.dataset.src;
-                    img.classList.remove('opacity-0');
-                    img.classList.add('opacity-100');
-                    observer.unobserve(img);
-                }
+
+    setupGalleryElements() {
+        this.galleryItems = document.querySelectorAll('.gallery-item, .gallery-image');
+
+        this.galleryItems.forEach((item, index) => {
+            item.addEventListener('click', (e) => {
+                this.openLightbox(index);
             });
         });
-        
-        images.forEach(img => {
-            img.classList.add('opacity-0', 'transition-opacity', 'duration-300');
-            imageObserver.observe(img);
+    }
+
+    setupLightbox() {
+        // Create lightbox if it doesn't exist
+        if (!document.getElementById('gallery-lightbox')) {
+            this.createLightbox();
+        }
+    }
+
+    createLightbox() {
+        const lightbox = document.createElement('div');
+        lightbox.id = 'gallery-lightbox';
+        lightbox.className = 'fixed inset-0 z-50 hidden bg-black bg-opacity-90 flex items-center justify-center';
+        lightbox.innerHTML = `
+            <div class="relative max-w-4xl max-h-full p-4">
+                <img id="lightbox-image" src="" alt="" class="max-w-full max-h-full object-contain">
+                <button id="lightbox-close" class="absolute top-4 right-4 text-white text-2xl hover:text-yellow-400">
+                    ✕
+                </button>
+                <button id="lightbox-prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-yellow-400">
+                    ‹
+                </button>
+                <button id="lightbox-next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-2xl hover:text-yellow-400">
+                    ›
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(lightbox);
+
+        // Setup lightbox controls
+        document.getElementById('lightbox-close').addEventListener('click', () => this.closeLightbox());
+        document.getElementById('lightbox-prev').addEventListener('click', () => this.previousImage());
+        document.getElementById('lightbox-next').addEventListener('click', () => this.nextImage());
+
+        // Close on overlay click
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                this.closeLightbox();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('hidden')) {
+                if (e.key === 'Escape') this.closeLightbox();
+                if (e.key === 'ArrowLeft') this.previousImage();
+                if (e.key === 'ArrowRight') this.nextImage();
+            }
         });
     }
+
+    setupImageOptimization() {
+        // Add loading="lazy" to gallery images
+        this.galleryItems.forEach(item => {
+            const img = item.querySelector('img') || item;
+            if (img.tagName === 'IMG') {
+                img.loading = 'lazy';
+                img.style.transition = 'all 0.3s ease';
+            }
+        });
+    }
+
+    openLightbox(index) {
+        const lightbox = document.getElementById('gallery-lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+
+        this.currentIndex = index;
+        const currentItem = this.galleryItems[index];
+        const img = currentItem.querySelector('img') || currentItem;
+
+        lightboxImage.src = img.src;
+        lightboxImage.alt = img.alt;
+
+        lightbox.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+
+        this.trackGalleryView(index);
+    }
+
+    closeLightbox() {
+        const lightbox = document.getElementById('gallery-lightbox');
+        lightbox.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    previousImage() {
+        this.currentIndex = this.currentIndex > 0 ? this.currentIndex - 1 : this.galleryItems.length - 1;
+        this.updateLightboxImage();
+    }
+
+    nextImage() {
+        this.currentIndex = this.currentIndex < this.galleryItems.length - 1 ? this.currentIndex + 1 : 0;
+        this.updateLightboxImage();
+    }
+
+    updateLightboxImage() {
+        const lightboxImage = document.getElementById('lightbox-image');
+        const currentItem = this.galleryItems[this.currentIndex];
+        const img = currentItem.querySelector('img') || currentItem;
+
+        lightboxImage.src = img.src;
+        lightboxImage.alt = img.alt;
+
+        this.trackGalleryView(this.currentIndex);
+    }
+
+    trackGalleryView(index) {
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'gallery_view', {
+                image_index: index,
+                timestamp: new Date().toISOString()
+            });
+        }
+    }
 }
+
+export default GalleryManager;

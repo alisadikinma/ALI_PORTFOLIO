@@ -1,4 +1,18 @@
 {
+  "output_configuration": {
+    "reports_directory": ".claude/outputs/reports",
+    "analysis_directory": ".claude/outputs/analysis",
+    "artifacts_directory": ".claude/outputs/artifacts",
+    "cleanup_root": true,
+    "timestamp_format": "YYYY-MM-DD_HH-mm-ss",
+    "file_naming": {
+      "comprehensive_audit": "comprehensive_audit_{timestamp}.md",
+      "security_report": "security_report_{timestamp}.md",
+      "code_review": "code_review_{timestamp}.md",
+      "design_analysis": "design_analysis_{timestamp}.md",
+      "performance_report": "performance_report_{timestamp}.md"
+    }
+  },
   "permissions": {
     "allow": [
       "Bash(claude mcp add:*)",

@@ -5,6 +5,13 @@
       "args": [
         "@playwright/mcp@latest"
       ]
+    },
+    "playwright-automation": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@executeautomation/playwright-mcp-server"
+      ]
     }
   }
 }

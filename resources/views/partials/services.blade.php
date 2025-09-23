@@ -21,7 +21,7 @@
         <!-- Left Side - Service Cards (30%) -->
         <div class="lg:w-3/10 xl:w-3/10 service-left-panel flex flex-col pl-4">
             @foreach ($layanan->where('status', 'Active')->sortBy('sequence') as $index => $row)
-            <div class="service-card {{ $index == 0 ? 'active' : '' }}" 
+            <div class="service-card {{ $index == 0 ? 'active' : '' }} scroll-animate stagger-child" 
                  data-service-id="{{ $row->id_layanan ?? $index }}"
                  data-service-type="{{ Str::slug($row->nama_layanan) }}"
                  data-image="{{ asset('file/layanan/' . $row->gambar_layanan) }}"
@@ -88,7 +88,7 @@
                 </div-->
                 
                 <div class="service-action">
-                    <a href="{{ url('/#contact') }}" class="request-quote-btn-services">
+                    <a href="{{ url('/#contact') }}" class="request-quote-btn-services btn-modern">
                        REQUEST QUOTE →
                     </a>
                 </div>

@@ -18,32 +18,8 @@ use App\Config\FallbackConfiguration;
 // PUBLIC PORTFOLIO ROUTES
 // =============================================
 
-// Homepage with fallback protection
-Route::get('/', function () {
-    try {
-        $controller = new HomeWebController();
-        return $controller->index();
-    } catch (Exception $e) {
-        \Illuminate\Support\Facades\Log::error('HomeWebController failed', [
-            'exception' => $e->getMessage(),
-            'trace' => $e->getTraceAsString(),
-            'url' => request()->url(),
-            'user_agent' => request()->userAgent()
-        ]);
-
-        // Professional fallback data
-        $fallbackData = array_merge(
-            FallbackConfiguration::getHomePageData(),
-            [
-                'error' => FallbackConfiguration::getUserFriendlyError(app()->environment()),
-                'message' => FallbackConfiguration::getFallbackMessage(app()->environment()),
-                'fallback_mode' => true
-            ]
-        );
-
-        return view('welcome', $fallbackData);
-    }
-})->name('home');
+// Homepage route
+Route::get('/', [HomeWebController::class, 'index'])->name('home');
 
 // Portfolio Routes
 Route::get('/portfolio/all', [HomeWebController::class, 'portfolio'])->name('portfolio');
@@ -103,6 +79,22 @@ Route::get('/smart-factory-solutions', function () {
 // =============================================
 
 Route::get('/file/project/{filename}', function ($filename) {
+    // Security: Sanitize filename to prevent directory traversal
+    $filename = basename($filename);
+
+    // Security: Only allow specific file extensions
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+    if (!in_array($extension, $allowedExtensions)) {
+        abort(404);
+    }
+
+    // Security: Validate filename pattern (prevent malicious filenames)
+    if (!preg_match('/^[a-zA-Z0-9_-]+\.' . $extension . '$/', $filename)) {
+        abort(404);
+    }
+
     $path = public_path('images/projects/' . $filename);
 
     if (!file_exists($path)) {

@@ -1,4 +1,5 @@
 import './bootstrap';
+import './gen-z-enhancements';
 
 /**
  * PHASE 3: MODERN FRONTEND ARCHITECTURE

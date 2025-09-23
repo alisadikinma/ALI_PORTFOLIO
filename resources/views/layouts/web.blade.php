@@ -1,25 +1,7 @@
 <?php
 use Illuminate\Support\Facades\DB;
 
-$konf = DB::table('setting')
-    ->select([
-        'id_setting',
-        'instansi_setting',
-        'pimpinan_setting',
-        'logo_setting',
-        'favicon_setting',
-        'keyword_setting',
-        'profile_content',
-        'alamat_setting',
-        'email_setting',
-        'no_hp_setting',
-        'instagram_setting',
-        'youtube_setting',
-        'linkedin_setting',
-        'tiktok_setting',
-        'facebook_setting'
-    ])
-    ->first();
+$konf = DB::table('setting')->first();
 
 // Get menu items from lookup_data table ordered by sort_order and only active items
 $menuItems = DB::table('lookup_data')
@@ -44,10 +26,10 @@ $menuItems = DB::table('lookup_data')
     @endphp
 
     <title>@yield('title', $seoData['title'])</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('logo/' . ($konf->logo_setting ?? 'default.ico')) }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('logo/' . ($konf->site_logo ?? 'default.ico')) }}">
     <meta name="description" content="@yield('meta_description', $seoData['description'])">
     <meta name="keywords" content="@yield('meta_keywords', $seoData['keywords'])">
-    <meta name="author" content="{{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}">
+    <meta name="author" content="{{ $konf->site_author ?? 'Ali Sadikin' }}">
     <meta name="robots" content="@yield('robots', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1')">
     <meta name="theme-color" content="#1E2B44">
 
@@ -87,13 +69,13 @@ $menuItems = DB::table('lookup_data')
     <meta property="og:locale:alternate" content="en_US">
 
     {{-- Professional/Business Open Graph --}}
-    <meta property="business:contact_data:street_address" content="{{ $konf->alamat_setting }}">
+    <meta property="business:contact_data:street_address" content="{{ $konf->site_address ?? 'Jakarta, Indonesia' }}">
     <meta property="business:contact_data:locality" content="Jakarta">
     <meta property="business:contact_data:region" content="DKI Jakarta">
     <meta property="business:contact_data:postal_code" content="10000">
     <meta property="business:contact_data:country_name" content="Indonesia">
-    <meta property="business:contact_data:email" content="{{ $konf->email_setting }}">
-    <meta property="business:contact_data:phone_number" content="{{ $konf->no_hp_setting }}">
+    <meta property="business:contact_data:email" content="{{ $konf->site_email ?? 'ali@aliportfolio.com' }}">
+    <meta property="business:contact_data:phone_number" content="{{ $konf->site_phone ?? '+62 812-3456-7890' }}">
     <meta property="business:contact_data:website" content="{{ url('/') }}">
     
     {{-- Enhanced Twitter Card for Professional Consulting --}}
@@ -126,7 +108,7 @@ $menuItems = DB::table('lookup_data')
         "@graph": [
             {
                 "@type": "WebSite",
-                "name": "{{ $konf->instansi_setting }}",
+                "name": "{{ $konf->site_name ?? 'ALI PORTFOLIO' }}",
                 "url": "{{ url('/') }}",
                 "potentialAction": {
                     "@type": "SearchAction",
@@ -136,9 +118,9 @@ $menuItems = DB::table('lookup_data')
             },
             {
                 "@type": "Organization",
-                "name": "{{ $konf->instansi_setting }}",
+                "name": "{{ $konf->site_name ?? 'ALI PORTFOLIO' }}",
                 "url": "{{ url('/') }}",
-                "logo": "{{ asset('logo/' . $konf->logo_setting) }}",
+                "logo": "{{ asset('logo/' . ($konf->site_logo ?? 'logo.png')) }}",
                 "sameAs": [
                     "https://twitter.com/alisadikin",
                     "https://linkedin.com/in/alisadikin",
@@ -147,12 +129,12 @@ $menuItems = DB::table('lookup_data')
             },
             {
                 "@type": "Person",
-                "name": "{{ $konf->pimpinan_setting }}",
+                "name": "{{ $konf->site_author ?? 'Ali Sadikin' }}",
                 "url": "{{ url('/') }}",
                 "jobTitle": "AI Generalist & Technopreneur",
                 "worksFor": {
                     "@type": "Organization",
-                    "name": "{{ $konf->instansi_setting }}"
+                    "name": "{{ $konf->site_name ?? 'ALI PORTFOLIO' }}"
                 }
             }
         ]
@@ -161,7 +143,7 @@ $menuItems = DB::table('lookup_data')
     @endif
     
     <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/png" href="{{ asset('logo/' . $konf->logo_setting) }}">
+    <link rel="icon" type="image/png" href="{{ asset('logo/' . ($konf->site_logo ?? 'logo.png')) }}">
     <link rel="apple-touch-icon" href="{{ asset('images/icons/icon-192x192.png') }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('images/icons/icon-152x152.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/icons/icon-192x192.png') }}">
@@ -211,7 +193,7 @@ $menuItems = DB::table('lookup_data')
             },
             {
                 "@type": "Person",
-                "name": "{{ $konf->pimpinan_setting }}",
+                "name": "{{ $konf->site_author ?? 'Ali Sadikin' }}",
                 "jobTitle": "AI Generalist & Technopreneur",
                 "url": "{{ url('/') }}",
                 "image": "{{ url('/images/logo.png') }}",
@@ -764,8 +746,21 @@ $menuItems = DB::table('lookup_data')
 </head>
 
 <body class="bg-gradient-footer text-white font-['Inter']">
+    <!-- Skip Links for Accessibility -->
+    <nav aria-label="Skip links" class="sr-only">
+        <a href="#main-content" class="skip-link sr-only-focusable bg-yellow-500 text-black px-4 py-2 absolute top-0 left-0 z-50 rounded-b-md font-semibold focus:not-sr-only">
+            Skip to main content
+        </a>
+        <a href="#nav-menu" class="skip-link sr-only-focusable bg-yellow-500 text-black px-4 py-2 absolute top-0 left-24 z-50 rounded-b-md font-semibold focus:not-sr-only">
+            Skip to navigation
+        </a>
+        <a href="#contact-section" class="skip-link sr-only-focusable bg-yellow-500 text-black px-4 py-2 absolute top-0 left-48 z-50 rounded-b-md font-semibold focus:not-sr-only">
+            Skip to contact
+        </a>
+    </nav>
+
     <!-- Mobile Menu Overlay -->
-    <div id="nav-menu-overlay" onclick="toggleMenu()"></div>
+    <div id="nav-menu-overlay" onclick="toggleMenu()" aria-hidden="true"></div>
 
     <!-- Header -->
     <header class="w-full fixed top-0 left-0 z-50 bg-gradient-footer backdrop-blur-xl">
@@ -774,8 +769,8 @@ $menuItems = DB::table('lookup_data')
                 <!-- Logo and Name - Fixed to stay in one line -->
                 <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">
                     <a href="{{ url('/') }}" class="flex items-center gap-4 hover:text-yellow-400 transition-colors whitespace-nowrap">
-                        <img src="{{ asset('logo/' . $konf->logo_setting) }}" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
-                        <span class="whitespace-nowrap">{{ $konf->pimpinan_setting ?? 'Ali Sadikin' }}</span>
+                        <img src="{{ asset('logo/' . ($konf->site_logo ?? 'logo.png')) }}" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
+                        <span class="whitespace-nowrap">{{ $konf->site_author ?? 'Ali Sadikin' }}</span>
                     </a>
                 </div>
 
@@ -865,7 +860,7 @@ $menuItems = DB::table('lookup_data')
     </header>
 
     <!-- Main Content -->
-    <main class="pt-20 sm:pt-24">
+    <main id="main-content" class="pt-20 sm:pt-24" role="main" aria-label="Main content area">
         @yield('isi')
     </main>
 
@@ -876,7 +871,7 @@ $menuItems = DB::table('lookup_data')
             </div>
             <div class="w-full max-w-96 h-0.5 outline outline-1 outline-slate-800"></div>
             <div class="text-white text-sm font-normal leading-tight text-center">© Copyright 2025 | Portfolio by
-                {{ $konf->pimpinan_setting }}</div>
+                {{ $konf->site_author ?? 'Ali Sadikin' }}</div>
         </div>
     </footer>
 

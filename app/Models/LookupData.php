@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class LookupData extends Model
 {
@@ -53,13 +54,16 @@ class LookupData extends Model
         return $query->orderBy('sort_order', 'asc');
     }
 
-    // Static methods for common queries
+    // Static methods for common queries - Optimized with caching
     public static function getHomepageSections()
     {
-        return self::byType('homepage_section')
-            ->active()
-            ->ordered()
-            ->get();
+        return Cache::remember('homepage_sections_v2', 3600, function() {
+            return self::select('lookup_code', 'lookup_name', 'lookup_description', 'lookup_icon', 'lookup_color', 'lookup_metadata', 'is_active', 'sort_order')
+                      ->byType('homepage_section')
+                      ->active()
+                      ->ordered()
+                      ->get();
+        });
     }
 
     public static function getActiveHomepageSectionCodes()
@@ -81,10 +85,13 @@ class LookupData extends Model
 
     public static function getProjectCategories()
     {
-        return self::byType('project_category')
-            ->active()
-            ->ordered()
-            ->get();
+        return Cache::remember('project_categories_v2', 3600, function() {
+            return self::select('id', 'lookup_name', 'lookup_code', 'lookup_icon', 'lookup_color', 'lookup_description', 'sort_order')
+                      ->byType('project_category')
+                      ->active()
+                      ->ordered()
+                      ->get();
+        });
     }
 
     // Helper method to get section status and order
@@ -103,25 +110,27 @@ class LookupData extends Model
         ];
     }
 
-    // Get all homepage sections with their configurations
+    // Get all homepage sections with their configurations - Optimized caching
     public static function getHomepageConfiguration()
     {
-        $sections = self::getHomepageSections();
-        $config = [];
+        return Cache::remember('homepage_configuration_v2', 3600, function() {
+            $sections = self::getHomepageSections();
+            $config = [];
 
-        foreach ($sections as $section) {
-            $config[$section->lookup_code] = [
-                'is_active' => $section->is_active,
-                'sort_order' => $section->sort_order,
-                'title' => $section->lookup_name,
-                'description' => $section->lookup_description,
-                'icon' => $section->lookup_icon,
-                'color' => $section->lookup_color,
-                'metadata' => $section->lookup_metadata
-            ];
-        }
+            foreach ($sections as $section) {
+                $config[$section->lookup_code] = [
+                    'is_active' => $section->is_active,
+                    'sort_order' => $section->sort_order,
+                    'title' => $section->lookup_name,
+                    'description' => $section->lookup_description,
+                    'icon' => $section->lookup_icon,
+                    'color' => $section->lookup_color,
+                    'metadata' => $section->lookup_metadata
+                ];
+            }
 
-        return $config;
+            return $config;
+        });
     }
 
     /**
@@ -238,14 +247,19 @@ class LookupData extends Model
     {
         $cacheKeys = [
             'homepage_sections',
+            'homepage_sections_v2',
             'homepage_configuration',
+            'homepage_configuration_v2',
             'project_categories',
+            'project_categories_v2',
             'active_homepage_sections',
+            'homepage_complete_data_v2',
         ];
 
         if ($type) {
             $cacheKeys[] = "lookup_type_{$type}";
             $cacheKeys[] = "lookup_options_{$type}";
+            $cacheKeys[] = "lookup_type_{$type}_v2";
         }
 
         foreach ($cacheKeys as $key) {

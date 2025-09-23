@@ -28,11 +28,11 @@
     <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl">
         @foreach ($displayGallery as $index => $row)
         <div class="relative group rounded-lg bg-slate-900 outline outline-1 outline-slate-500 overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-md cursor-pointer" 
-             onclick="openGalleryModal({{ $row->id_galeri }}, '{{ addslashes($row->nama_galeri) }}')">
+             onclick="openGalleryModal({{ $row->id_galeri }}, '{{ addslashes($row->judul_galeri) }}')">
             
-            @if($row->thumbnail)
-                <img src="{{ asset('file/galeri/' . $row->thumbnail) }}" 
-                     alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
+            @if($row->gambar_galeri)
+                <img src="{{ asset('file/galeri/' . $row->gambar_galeri) }}" 
+                     alt="{{ $row->judul_galeri ?? 'Gallery image' }}" 
                      class="w-full h-auto rounded-lg aspect-square object-cover" />
             @elseif($row->galleryItems->where('status', 'Active')->first())
                 @php
@@ -40,7 +40,7 @@
                 @endphp
                 @if($firstItem->type === 'image')
                     <img src="{{ asset('file/galeri/' . $firstItem->file_name) }}" 
-                         alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
+                         alt="{{ $row->judul_galeri ?? 'Gallery image' }}" 
                          class="w-full h-auto rounded-lg aspect-square object-cover" />
                 @elseif($firstItem->type === 'youtube')
                     @php
@@ -49,7 +49,7 @@
                     @endphp
                     @if($videoId)
                         <img src="https://img.youtube.com/vi/{{ $videoId }}/maxresdefault.jpg" 
-                             alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
+                             alt="{{ $row->judul_galeri ?? 'Gallery image' }}" 
                              class="w-full h-auto rounded-lg aspect-square object-cover" />
                     @endif
                 @endif
@@ -61,7 +61,7 @@
             
             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-opacity duration-300 flex items-center justify-center">
                 <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center">
-                    <p class="text-white text-sm font-semibold mb-2">{{ $row->nama_galeri ?? 'Gallery' }}</p>
+                    <p class="text-white text-sm font-semibold mb-2">{{ $row->judul_galeri ?? 'Gallery' }}</p>
                     <div class="inline-flex items-center px-3 py-2 bg-yellow-400 text-black rounded-lg text-sm font-medium">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>

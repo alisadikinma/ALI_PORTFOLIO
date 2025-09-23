@@ -1,4 +1,23 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(set DB_PASSWORD=aL1889900@@@)",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"CREATE TABLE users (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) NOT NULL, email VARCHAR(255) UNIQUE NOT NULL, email_verified_at TIMESTAMP NULL, password VARCHAR(255) NOT NULL, remember_token VARCHAR(100) NULL, created_at TIMESTAMP NULL, updated_at TIMESTAMP NULL);\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"SELECT COUNT(*) as total_projects FROM project;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"SELECT project_name FROM project;\")",
+      "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"DESCRIBE layanan;\")",
+      "Bash(del test_service.php)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(composer:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(Get-Content \"storage\\logs\\laravel.log\" -Tail 100)",
+      "Bash(Select-String -Pattern \"Undefined|SQLSTATE|ERROR|Exception\" -Context 2)",
+      "Bash(del test_access.php)"
+    ],
+    "deny": [],
+    "ask": []
+  },
   "output_configuration": {
     "reports_directory": ".claude/outputs/reports",
     "analysis_directory": ".claude/outputs/analysis",
@@ -12,42 +31,5 @@
       "design_analysis": "design_analysis_{timestamp}.md",
       "performance_report": "performance_report_{timestamp}.md"
     }
-  },
-  "permissions": {
-    "allow": [
-      "Bash(claude mcp add:*)",
-      "Bash(gh pr:*)",
-      "Bash(php artisan route:list:*)",
-      "Bash(php artisan:*)",
-      "Bash(composer show:*)",
-      "Bash(npm audit:*)",
-      "mcp__playwright__browser_navigate",
-      "mcp__playwright__browser_take_screenshot",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(where claude)",
-      "Bash(claude auth login)",
-      "Bash(code --version)",
-      "mcp__playwright__browser_resize",
-      "Bash(npm run build:*)",
-      "Bash(curl:*)",
-      "Bash(npx:*)",
-      "Bash(find:*)",
-      "Bash(npm run dev:*)",
-      "Bash(node:*)",
-      "Bash(dir)",
-      "Bash(dir:*)",
-      "Bash(php:*)",
-      "Bash(npm install:*)",
-      "Bash(chmod:*)",
-      "Bash(cat:*)",
-      "Bash(taskkill:*)",
-      "Bash(vendor/bin/pint:*)",
-      "Bash(start http://localhost:8000/validation_test.html)",
-      "mcp__ide__executeCode"
-    ],
-    "deny": [],
-    "ask": []
   }
 }

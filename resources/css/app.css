@@ -1,4 +1,7 @@
 @import 'custom.css';
+@import 'accessibility-enhancements.css';
+@import 'responsive-fixes.css';
+@import 'social-hover.css';
 
 @tailwind base;
 @tailwind components;

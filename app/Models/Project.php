@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class Project extends Model
@@ -18,6 +19,16 @@ class Project extends Model
     protected $primaryKey = 'id_project';
     public $timestamps = true;
 
+    // Security: Use guarded instead of fillable for better protection
+    protected $guarded = [
+        'id_project',
+        'created_at',
+        'updated_at',
+        'views_count',
+        'likes_count',
+    ];
+
+    // Security: Define fillable fields explicitly for form requests
     protected $fillable = [
         'project_name',
         'client_name',
@@ -41,8 +52,6 @@ class Project extends Model
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'views_count',
-        'likes_count',
     ];
 
     protected $casts = [
@@ -110,11 +119,12 @@ class Project extends Model
     }
 
     /**
-     * Relationships
+     * Relationships - Optimized for N+1 query prevention
      */
     public function category()
     {
         return $this->belongsTo(LookupData::class, 'category_lookup_id', 'id')
+                    ->select('id', 'lookup_name', 'lookup_code', 'lookup_icon', 'lookup_color', 'lookup_description')
                     ->where('lookup_type', 'project_category')
                     ->where('is_active', 1);
     }
@@ -177,12 +187,17 @@ class Project extends Model
 
     public function scopeWithCategory(Builder $query): Builder
     {
-        return $query->with(['category:id,lookup_name,lookup_code,lookup_icon,lookup_color']);
+        return $query->with(['category' => function($q) {
+            $q->select('id', 'lookup_name', 'lookup_code', 'lookup_icon', 'lookup_color', 'lookup_description')
+              ->where('lookup_type', 'project_category')
+              ->where('is_active', 1);
+        }]);
     }
 
     public function scopeForHomepage(Builder $query, $limit = 9): Builder
     {
-        return $query->active()
+        return $query->select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 'sequence', 'category_lookup_id', 'created_at', 'status')
+                    ->active()
                     ->ordered()
                     ->withCategory()
                     ->limit($limit);
@@ -372,12 +387,18 @@ class Project extends Model
         });
 
         static::saved(function ($project) {
-            // Clear relevant caches when project is saved
+            // Clear relevant caches when project is saved - including versioned caches
             Cache::forget('homepage_projects');
+            Cache::forget('homepage_complete_data_v2');
             Cache::forget('featured_projects');
+            Cache::forget('featured_projects_v2');
             Cache::forget('recent_projects');
+            Cache::forget('recent_projects_v2');
+            Cache::forget('popular_projects');
+            Cache::forget('popular_projects_v2');
             if ($project->is_featured) {
                 Cache::forget('featured_projects');
+                Cache::forget('featured_projects_v2');
             }
         });
     }
@@ -387,8 +408,9 @@ class Project extends Model
      */
     public static function getFeaturedProjects($limit = 6)
     {
-        return Cache::remember('featured_projects', 3600, function() use ($limit) {
-            return static::featured()
+        return Cache::remember('featured_projects_v2', 3600, function() use ($limit) {
+            return static::select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 'sequence', 'category_lookup_id', 'created_at', 'is_featured', 'status')
+                        ->featured()
                         ->active()
                         ->withCategory()
                         ->ordered()
@@ -399,8 +421,9 @@ class Project extends Model
 
     public static function getPopularProjects($limit = 6)
     {
-        return Cache::remember('popular_projects', 1800, function() use ($limit) {
-            return static::active()
+        return Cache::remember('popular_projects_v2', 1800, function() use ($limit) {
+            return static::select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 'views_count', 'likes_count', 'category_lookup_id', 'status')
+                        ->active()
                         ->withCategory()
                         ->popular()
                         ->limit($limit)
@@ -410,8 +433,9 @@ class Project extends Model
 
     public static function getRecentProjects($limit = 6)
     {
-        return Cache::remember('recent_projects', 900, function() use ($limit) {
-            return static::active()
+        return Cache::remember('recent_projects_v2', 900, function() use ($limit) {
+            return static::select('id_project', 'project_name', 'slug_project', 'featured_image', 'summary_description', 'client_name', 'created_at', 'category_lookup_id', 'status')
+                        ->active()
                         ->withCategory()
                         ->orderBy('created_at', 'desc')
                         ->limit($limit)
@@ -435,20 +459,36 @@ class Project extends Model
 
     public static function searchProjects($search, $filters = [])
     {
-        $query = static::active()->withCategory();
+        $query = static::active();
 
-        // Search in multiple fields
+        // Optimize search with FULLTEXT index when available
         if ($search) {
-            $query->where(function($q) use ($search) {
-                $q->where('project_name', 'LIKE', "%{$search}%")
-                  ->orWhere('client_name', 'LIKE', "%{$search}%")
-                  ->orWhere('description', 'LIKE', "%{$search}%")
-                  ->orWhere('summary_description', 'LIKE', "%{$search}%")
-                  ->orWhere('project_category', 'LIKE', "%{$search}%");
-            });
+            try {
+                // Try FULLTEXT search first (requires MySQL FULLTEXT index)
+                if (DB::connection()->getDriverName() === 'mysql') {
+                    $query->whereRaw('MATCH(project_name, summary_description) AGAINST(? IN BOOLEAN MODE)', [$search]);
+                } else {
+                    // Fallback to LIKE search with optimized queries
+                    $sanitizedSearch = '%' . addslashes(str_replace(['%', '_'], ['\\%', '\\_'], $search)) . '%';
+                    $query->where(function($q) use ($sanitizedSearch) {
+                        $q->where('project_name', 'LIKE', $sanitizedSearch)
+                          ->orWhere('client_name', 'LIKE', $sanitizedSearch)
+                          ->orWhere('summary_description', 'LIKE', $sanitizedSearch)
+                          ->orWhere('project_category', 'LIKE', $sanitizedSearch);
+                    });
+                }
+            } catch (\Exception $e) {
+                // FULLTEXT not available, use optimized LIKE search
+                $sanitizedSearch = '%' . addslashes(str_replace(['%', '_'], ['\\%', '\\_'], $search)) . '%';
+                $query->where(function($q) use ($sanitizedSearch) {
+                    $q->where('project_name', 'LIKE', $sanitizedSearch)
+                      ->orWhere('client_name', 'LIKE', $sanitizedSearch)
+                      ->orWhere('summary_description', 'LIKE', $sanitizedSearch);
+                });
+            }
         }
 
-        // Apply filters
+        // Apply filters with optimized indexes
         if (isset($filters['category'])) {
             $query->byCategoryCode($filters['category']);
         }
@@ -460,6 +500,9 @@ class Project extends Model
         if (isset($filters['featured'])) {
             $query->featured();
         }
+
+        // Include optimized eager loading
+        $query->withCategory();
 
         return $query->ordered()->paginate($filters['per_page'] ?? 12);
     }

@@ -46,9 +46,10 @@
     42 => 'App\\Providers\\AuthServiceProvider',
     43 => 'App\\Providers\\EventServiceProvider',
     44 => 'App\\Providers\\RouteServiceProvider',
-    45 => 'App\\Providers\\FortifyServiceProvider',
-    46 => 'App\\Providers\\JetstreamServiceProvider',
-    47 => 'Mews\\Captcha\\CaptchaServiceProvider',
+    45 => 'App\\Providers\\TelescopeServiceProvider',
+    46 => 'App\\Providers\\FortifyServiceProvider',
+    47 => 'App\\Providers\\JetstreamServiceProvider',
+    48 => 'Mews\\Captcha\\CaptchaServiceProvider',
   ),
   'eager' => 
   array (
@@ -83,9 +84,10 @@
     28 => 'App\\Providers\\AuthServiceProvider',
     29 => 'App\\Providers\\EventServiceProvider',
     30 => 'App\\Providers\\RouteServiceProvider',
-    31 => 'App\\Providers\\FortifyServiceProvider',
-    32 => 'App\\Providers\\JetstreamServiceProvider',
-    33 => 'Mews\\Captcha\\CaptchaServiceProvider',
+    31 => 'App\\Providers\\TelescopeServiceProvider',
+    32 => 'App\\Providers\\FortifyServiceProvider',
+    33 => 'App\\Providers\\JetstreamServiceProvider',
+    34 => 'Mews\\Captcha\\CaptchaServiceProvider',
   ),
   'deferred' => 
   array (

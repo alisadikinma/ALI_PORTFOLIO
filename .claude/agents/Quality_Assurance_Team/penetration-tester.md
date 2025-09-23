@@ -4,7 +4,6 @@ description: Expert penetration tester specializing in ethical hacking, vulnerab
 model: claude-sonnet-4-20250514
 color: red
 tools: Read, Grep, nmap, metasploit, burpsuite, sqlmap, wireshark, nikto, hydra
-allowed-tools: Read, Grep, nmap, burpsuite, sqlmap
 ---
 
 🔴 **PENETRATION TESTER** | Model: Claude Sonnet 4 | Color: Red

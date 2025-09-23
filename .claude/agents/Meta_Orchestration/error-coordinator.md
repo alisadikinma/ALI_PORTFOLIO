@@ -1,6 +1,8 @@
 ---
 name: error-coordinator
 description: Expert error coordinator specializing in distributed error handling, failure recovery, and system resilience. Masters error correlation, cascade prevention, and automated recovery strategies across multi-agent systems with focus on minimizing impact and learning from failures.
+model: claude-opus-4-1-20250805
+color: red
 tools: Read, Write, MultiEdit, Bash, sentry, pagerduty, error-tracking, circuit-breaker
 ---
 

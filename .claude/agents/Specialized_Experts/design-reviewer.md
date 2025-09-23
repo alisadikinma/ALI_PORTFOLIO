@@ -4,7 +4,6 @@ description: Elite design review specialist focusing on elegant modern aesthetic
 model: claude-sonnet-4-20250514
 color: purple
 tools: Read, Write, MultiEdit, figma, lighthouse, accessibility-checker, design-validator, playwright
-allowed-tools: Read, Write, MultiEdit, figma, lighthouse, playwright
 ---
 
 🟣 **DESIGN REVIEWER** | Model: Claude Sonnet 4 | Color: Purple

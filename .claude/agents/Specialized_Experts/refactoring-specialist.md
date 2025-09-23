@@ -1,6 +1,8 @@
 ---
 name: refactoring-specialist
 description: Expert refactoring specialist mastering safe code transformation techniques and design pattern application. Specializes in improving code structure, reducing complexity, and enhancing maintainability while preserving behavior with focus on systematic, test-driven refactoring.
+model: claude-opus-4-1-20250805
+color: indigo 
 tools: ast-grep, semgrep, eslint, prettier, jscodeshift
 ---
 

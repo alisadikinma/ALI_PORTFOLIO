@@ -4,7 +4,6 @@ description: Expert Laravel security auditor specializing in portfolio website s
 model: claude-opus-4-1-20250805
 color: red
 tools: Read, Write, MultiEdit, Bash, git, security-scanner, owasp-zap, nikto
-allowed-tools: Read, Write, MultiEdit, Bash, git
 ---
 
 🔴 **SECURITY AUDITOR** | Model: Claude Opus 4.1 | Color: Red

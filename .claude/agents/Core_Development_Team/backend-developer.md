@@ -4,7 +4,6 @@ description: Senior backend engineer specializing in scalable API development an
 model: claude-sonnet-4-20250514
 color: blue
 tools: Read, Write, MultiEdit, Bash, Docker, database, redis, postgresql
-allowed-tools: Read, Write, MultiEdit, Bash, database, redis
 ---
 
 🔵 **BACKEND DEVELOPER** | Model: Claude Sonnet 4 | Color: Blue

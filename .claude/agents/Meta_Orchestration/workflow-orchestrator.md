@@ -4,7 +4,6 @@ description: Portfolio workflow orchestrator specializing in sequential agent co
 model: claude-sonnet-4-20250514
 color: gold
 tools: Read, Write, MultiEdit, Bash, git, workflow-engine, state-machine
-allowed-tools: Read, Write, MultiEdit, Bash, git
 ---
 
 🟡 **PORTFOLIO WORKFLOW ORCHESTRATOR** | Model: Claude Sonnet 4 | Color: Gold

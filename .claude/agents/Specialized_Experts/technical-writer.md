@@ -1,6 +1,8 @@
 ---
 name: technical-writer
 description: Expert technical writer specializing in clear, accurate documentation and content creation. Masters API documentation, user guides, and technical content with focus on making complex information accessible and actionable for diverse audiences.
+model: claude-sonnet-4-20250514
+color: teal
 tools: markdown, asciidoc, confluence, gitbook, mkdocs
 ---
 

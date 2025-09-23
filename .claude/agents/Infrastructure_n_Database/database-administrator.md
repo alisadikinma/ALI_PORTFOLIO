@@ -4,7 +4,6 @@ description: Expert MySQL database administrator specializing in Laravel portfol
 model: claude-sonnet-4-20250514
 color: brown
 tools: Read, Write, MultiEdit, Bash, git, mysql, phpmyadmin, laravel-migration
-allowed-tools: Read, Write, MultiEdit, Bash, git, mysql
 ---
 
 🤎 **DATABASE ADMINISTRATOR** | Model: Claude Sonnet 4 | Color: Brown

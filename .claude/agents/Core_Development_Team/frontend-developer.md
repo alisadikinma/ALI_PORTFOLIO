@@ -4,7 +4,6 @@ description: Expert frontend developer specializing in Tailwind CSS, Livewire 3.
 model: claude-sonnet-4-20250514
 color: green
 tools: Read, Write, MultiEdit, Bash, npm, vite, tailwind, livewire, vue, javascript, playwright, git
-allowed-tools: Read, Write, MultiEdit, Bash, git, npm, vite, playwright
 ---
 
 🟢 **FRONTEND DEVELOPER** | Model: Claude Sonnet 4 | Color: Green

@@ -4,7 +4,6 @@ description: Portfolio task distributor specializing in intelligent agent queuin
 model: claude-sonnet-4-20250514
 color: blue
 tools: Read, Write, MultiEdit, Bash, git, task-queue, load-balancer
-allowed-tools: Read, Write, MultiEdit, Bash, git
 ---
 
 🔵 **PORTFOLIO TASK DISTRIBUTOR** | Model: Claude Sonnet 4 | Color: Blue

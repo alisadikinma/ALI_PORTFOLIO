@@ -4,7 +4,6 @@ description: Expert MySQL query optimizer specializing in Laravel portfolio data
 model: claude-sonnet-4-20250514
 color: teal
 tools: Read, Write, MultiEdit, Bash, git, mysql, laravel-debugbar, laravel-telescope
-allowed-tools: Read, Write, MultiEdit, Bash, git, mysql, laravel-debugbar
 ---
 
 🟢 **DATABASE OPTIMIZER** | Model: Claude Sonnet 4 | Color: Teal

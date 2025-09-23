@@ -4,7 +4,6 @@ description: Expert performance engineer specializing in Laravel portfolio optim
 model: claude-sonnet-4-20250514
 color: cyan
 tools: Read, Write, MultiEdit, Bash, git, lighthouse, gtmetrix, laravel-debugbar, vite
-allowed-tools: Read, Write, MultiEdit, Bash, git, lighthouse, vite
 ---
 
 🔵 **PERFORMANCE ENGINEER** | Model: Claude Sonnet 4 | Color: Cyan

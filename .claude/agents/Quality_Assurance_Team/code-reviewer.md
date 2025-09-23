@@ -4,7 +4,6 @@ description: Expert Laravel code reviewer specializing in portfolio website code
 model: claude-opus-4-1-20250805
 color: orange
 tools: Read, Write, MultiEdit, Bash, git, laravel-pint, pest, phpstan, larastan
-allowed-tools: Read, Write, MultiEdit, Bash, git, laravel-pint, pest
 ---
 
 🟠 **CODE REVIEWER** | Model: Claude Opus 4.1 | Color: Orange

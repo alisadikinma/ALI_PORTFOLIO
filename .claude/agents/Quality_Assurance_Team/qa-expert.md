@@ -4,7 +4,6 @@ description: Expert QA engineer specializing in Laravel portfolio testing, Livew
 model: claude-sonnet-4-20250514
 color: yellow
 tools: Read, Write, MultiEdit, Bash, git, pest, playwright, browserstack, lighthouse
-allowed-tools: Read, Write, MultiEdit, Bash, git, pest, playwright
 ---
 
 🟡 **QA EXPERT** | Model: Claude Sonnet 4 | Color: Yellow

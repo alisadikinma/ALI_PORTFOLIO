@@ -4,7 +4,6 @@ description: Expert Laravel 10.49.0 specialist for portfolio website development
 model: claude-sonnet-4-20250514
 color: blue
 tools: Read, Write, MultiEdit, Bash, php, composer, artisan, mysql, git, laravel-pint, pest
-allowed-tools: Read, Write, MultiEdit, Bash, git, php, composer, artisan, mysql, laravel-pint, pest
 ---
 
 🔵 **LARAVEL SPECIALIST** | Model: Claude Sonnet 4 | Color: Blue

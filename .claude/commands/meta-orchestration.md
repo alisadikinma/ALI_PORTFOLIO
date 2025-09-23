@@ -1,7 +1,26 @@
 # Meta-Orchestration Command
 **Head of Orchestration - Comprehensive Multi-Agent Coordination**
 
-## Purpose
+## Output Management
+
+### **Directory Structure**
+```
+.claude/outputs/
+├── reports/          # Comprehensive meta-orchestration reports
+├── analysis/         # Individual agent analysis files
+├── artifacts/        # Screenshots, exports, generated artifacts
+└── README.md         # Output documentation
+```
+
+### **Output Instructions for All Agents**
+**MANDATORY**: All orchestrated agents must output to organized directories:
+- Comprehensive reports → `.claude/outputs/reports/`
+- Individual analysis → `.claude/outputs/analysis/`
+- Screenshots/artifacts → `.claude/outputs/artifacts/`
+- Use timestamp format: `YYYY-MM-DD_HH-mm-ss`
+- Keep project root directory clean
+
+
 Advanced orchestration system managing 8 specialized meta & orchestration subagents for complex workflows, following awesome-claude-code-subagents patterns.
 
 ## When to Use

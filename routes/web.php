@@ -52,7 +52,7 @@ Route::get('/robots.txt', function () {
     $content .= "Allow: /\n";
     $content .= "Disallow: /admin/\n";
     $content .= "Disallow: /dashboard/\n";
-    $content .= "Disallow: /login\n";
+    $content .= "Disallow: /admin/login\n";
     $content .= "Disallow: /api/\n";
     $content .= "\n";
     $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
@@ -155,9 +155,10 @@ require __DIR__.'/upload.php';
 //     return redirect()->route('admin.login');
 // })->name('login');
 
-Route::post('/logout', function () {
-    return redirect()->route('admin.logout');
-})->name('logout');
+// Logout route removed - using admin.logout directly
+// Route::post('/logout', function () {
+//     return redirect()->route('admin.logout');
+// })->name('logout');
 
 // Legacy admin redirects
 Route::middleware(['auth'])->group(function () {

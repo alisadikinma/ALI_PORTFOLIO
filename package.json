@@ -3,11 +3,12 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "qa-test": "playwright test playwright-qa-test.js --reporter=line"
     },
     "devDependencies": {
         "@playwright/mcp": "^0.0.39",
-        "@playwright/test": "^1.55.0",
+        "@playwright/test": "^1.55.1",
         "@tailwindcss/forms": "^0.5.10",
         "@tailwindcss/typography": "^0.5.18",
         "autoprefixer": "^10.4.7",

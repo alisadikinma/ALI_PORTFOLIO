@@ -73,7 +73,7 @@ class HomeWebController extends Controller
         // Optimize with parallel data loading using optimized indexes
         // 1. Services - using new homepage index
         $layanan = DB::table('layanan')
-            ->select('id_layanan', 'nama_layanan', 'sub_nama_layanan', 'icon_layanan', 'gambar_layanan', 'keterangan_layanan', 'sequence', 'status')
+            ->select('id_layanan', 'nama_layanan', 'deskripsi_layanan', 'icon_layanan', 'gambar_layanan', 'sequence', 'status')
             ->where('status', 'Active')
             ->orderBy('sequence', 'asc')
             ->get();

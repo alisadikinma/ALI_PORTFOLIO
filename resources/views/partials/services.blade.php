@@ -20,12 +20,12 @@
     <div class="flex flex-col lg:flex-row gap-4 lg:gap-4 items-start">
         <!-- Left Side - Service Cards (30%) -->
         <div class="lg:w-3/10 xl:w-3/10 service-left-panel flex flex-col pl-4">
-            @foreach ($layanan->where('status', 'Active')->sortBy('sequence') as $index => $row)
+            @foreach ($layanan as $index => $row)
             <div class="service-card {{ $index == 0 ? 'active' : '' }} scroll-animate stagger-child" 
                  data-service-id="{{ $row->id_layanan ?? $index }}"
                  data-service-type="{{ Str::slug($row->nama_layanan) }}"
                  data-image="{{ asset('file/layanan/' . $row->gambar_layanan) }}"
-                 data-description="{!! htmlspecialchars($row->keterangan_layanan ?? '', ENT_QUOTES) !!}">
+                 data-description="{!! htmlspecialchars($row->deskripsi_layanan ?? '', ENT_QUOTES) !!}">
                 <div class="service-icon">
                     @if($row->icon_layanan)
                         <img src="{{ asset('file/layanan/icons/' . $row->icon_layanan) }}" alt="{{ $row->nama_layanan }} icon" style="width: 28px; height: 28px; object-fit: contain;">
@@ -61,8 +61,8 @@
                 </div>
                 <div class="service-content">
                     <h3 class="service-title">{{ $row->nama_layanan }}</h3>
-                    @if($row->sub_nama_layanan)
-                    <p class="service-subtitle-main">{{ $row->sub_nama_layanan }}</p>
+                    @if($row->deskripsi_layanan)
+                    <p class="service-subtitle-main">{{ Str::limit($row->deskripsi_layanan, 50) }}</p>
                     @endif
                 </div>
             </div>

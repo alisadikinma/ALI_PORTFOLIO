@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\Api\AdminApiController;
+use App\Http\Controllers\Api\PerformanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,10 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // Content Management
     Route::post('projects/sequence/update', [AdminApiController::class, 'updateProjectSequence']);
 });
+
+// Performance Monitoring API Routes (Public)
+Route::post('performance-metrics', [PerformanceController::class, 'receiveMetrics']);
+Route::get('performance-stats', [PerformanceController::class, 'getStatistics']);
 
 // Public API Routes (Rate Limited)
 Route::middleware(['throttle:api'])->group(function () {

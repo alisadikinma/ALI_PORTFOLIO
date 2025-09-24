@@ -164,7 +164,7 @@ Route::middleware(['auth', 'admin.security'])->group(function () {
     // PROFILE MANAGEMENT
     // =============================================
 
-    Route::prefix('admin/profile')->name('profile.')->group(function () {
+    Route::prefix('admin/profile')->name('admin.profile.')->group(function () {
         Route::get('/', function () {
             return view('profile.index');
         })->name('show');

@@ -4,7 +4,12 @@
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"SELECT lookup_code, lookup_name, is_active FROM lookup_data WHERE lookup_type = ''layanan'';\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"SHOW TABLES LIKE ''%layanan%'';\")",
       "Bash(\"C:\\xampp\\mysql\\bin\\mysql.exe\" -u root portfolio_db -e \"SELECT COUNT(*) as total, status FROM layanan GROUP BY status;\")",
-      "Bash(C:\\xampp\\mysql\\bin\\mysql.exe:*)"
+      "Bash(C:\\xampp\\mysql\\bin\\mysql.exe:*)",
+      "Bash(php artisan serve:*)",
+      "Bash(mkdir:*)",
+      "Bash(findstr:*)",
+      "Bash(curl:*)",
+      "Bash(rg:*)"
     ],
     "deny": [],
     "ask": []

@@ -33,6 +33,8 @@ php artisan migrate                     # Run migrations
 php artisan migrate:fresh               # Fresh migration (drops all tables)
 php artisan migrate:rollback            # Rollback migrations
 php artisan db:seed                     # Run database seeders
+# Database connection: portfolio_db (MySQL/MariaDB via XAMPP)
+# Custom command: "C:\xampp\mysql\bin\mysql.exe" -u root portfolio_db
 ```
 
 ### Cache Management
@@ -61,9 +63,10 @@ php artisan optimize:clear              # Clear all cached files at once
 - **Homepage Sections**: Database-driven section management
 
 ### Key Models
-- **Project** (`app/Models/Project.php`): Primary key `id_project`, handles multiple images, auto-slug generation, automatic image cleanup
+- **Project** (`app/Models/Project.php`): Primary key `id_project`, handles multiple images, auto-slug generation, automatic image cleanup, LONGTEXT fields for images and descriptions
 - **Setting** (`app/Models/Setting.php`): Primary key `id_setting`, global site configuration including social media links
 - **Layanan** (`app/Models/Layanan.php`): Primary key `id_layanan`, services management with sequence ordering
+- **LookupData** (`app/Models/LookupData.php`): Flexible configuration system for categories and dropdown values
 - **User, Award, Testimonial, Berita, Contact, Galeri**: All following custom primary key pattern
 
 ## Environment Setup
@@ -106,7 +109,7 @@ All models use custom primary keys (e.g., `id_project`, `id_setting`) instead of
 - **Performance Optimization**: Homepage data cached for 30 minutes, site config cached for 5 minutes
 
 ### Multi-Agent System
-The `.claude/` directory contains a sophisticated multi-agent orchestration system with 8 specialized meta-orchestration agents and organized domain-specific teams for complex development tasks. Access via `@meta-orchestration [task]` command.
+The `.claude/` directory contains a sophisticated multi-agent orchestration system with specialized agents for code review, security auditing, architecture assessment, performance analysis, accessibility testing, and UI design. Includes execution phases and comprehensive reporting system. Available slash commands: `/code-review`, `/design-review`, `/security-review`, `/orchestrate`.
 
 ## Key Controllers
 - **HomeWebController**: Homepage sections management with emergency fallbacks
@@ -126,5 +129,11 @@ The `.claude/` directory contains a sophisticated multi-agent orchestration syst
 ## Development Tools
 - **Laravel Debugbar**: Available in development for debugging
 - **Laravel Telescope**: Advanced debugging and monitoring
-- **Playwright**: End-to-end testing framework
-- **Vite**: Modern frontend build tool with HMR
+- **Vite**: Modern frontend build tool with HMR and production minification
+- **XAMPP**: Local development environment (MySQL via C:\xampp\mysql\bin\mysql.exe)
+
+## Development Environment
+- **Windows-based**: XAMPP stack with MariaDB/MySQL
+- **Database**: portfolio_db accessible via XAMPP MySQL
+- **Frontend Build**: Vite with Tailwind CSS, minification enabled
+- **Test Database**: Uses same MySQL connection (not in-memory SQLite)

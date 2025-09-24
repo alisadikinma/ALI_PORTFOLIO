@@ -2,13 +2,7 @@
 <section id="portfolio" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-12">
     <div class="flex flex-col gap-3 text-center">
         <h2 class="text-yellow-400 text-3xl sm:text-5xl font-extrabold leading-tight sm:leading-[56px]">
-            @php
-            $portfolioSection = DB::table('lookup_data')
-                ->where('lookup_type', 'homepage_section')
-                ->where('lookup_code', 'portfolio')
-                ->first();
-            @endphp
-            {{ $portfolioSection->lookup_description ?? 'Portfolio' }}
+            Portfolio
         </h2>
         <p class="text-neutral-400 text-lg sm:text-2xl font-normal leading-6 sm:leading-7 tracking-tight">
             Discover my latest projects and achievements in AI, web development, and digital innovation
@@ -35,8 +29,8 @@
         <div class="overflow-hidden mx-16">
             <div id="portfolioSlider" class="flex transition-transform duration-500 ease-in-out">
                 @foreach($projects as $project)
-                <div class="portfolio-card project-card flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-2 scroll-animate stagger-child">
-                    <div class="card-modern bg-slate-800 rounded-xl p-6 h-full flex flex-col transition-transform duration-300">
+                <div class="portfolio-card flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-2">
+                    <div class="bg-slate-800 rounded-xl p-6 h-full flex flex-col transition-transform duration-300 hover:scale-105 hover:shadow-xl">
                         <div class="mb-4">
                             @if($project->featured_image)
                             <img src="{{ asset('images/projects/' . $project->featured_image) }}" 
@@ -72,8 +66,8 @@
                                 {!! Str::limit(strip_tags($project->summary_description ?? ''), 120) !!}
                             </p>
                             
-                            <a href="{{ route('portfolio.detail', $project->slug_project) }}"
-                               class="btn-modern inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-semibold transition-colors mt-auto">
+                            <a href="{{ route('portfolio.detail', $project->slug_project) }}" 
+                               class="inline-flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-lg font-semibold transition-colors mt-auto">
                                 View Project
                                 <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -104,8 +98,8 @@
 
     <!-- View All Projects Button -->
     <div class="text-center">
-        <a href="{{ url('portfolio/all') }}"
-           class="btn-modern inline-flex items-center bg-transparent border-2 border-yellow-400 hover:bg-yellow-400 hover:text-black text-yellow-400 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
+        <a href="{{ url('portfolio/all') }}" 
+           class="inline-flex items-center bg-transparent border-2 border-yellow-400 hover:bg-yellow-400 hover:text-black text-yellow-400 px-8 py-3 rounded-lg font-semibold transition-all duration-300">
            &nbsp;&nbsp;VIEW ALL PROJECTS&nbsp;&nbsp;
         </a>
     </div>

@@ -15,358 +15,6 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
-
-    /* Gen Z Enhanced Portfolio Detail Styles */
-    .portfolio-detail-container {
-        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-        min-height: 100vh;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .portfolio-detail-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background:
-            radial-gradient(circle at 25% 25%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 75% 75%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
-        pointer-events: none;
-    }
-
-    .project-header {
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1.5rem;
-        padding: 2.5rem;
-        margin: 2rem 0;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .project-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-        transition: left 0.8s ease;
-    }
-
-    .project-header:hover::before {
-        left: 100%;
-    }
-
-    .project-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-        background: linear-gradient(135deg, #ffffff 0%, #8b5cf6 50%, #ec4899 100%);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradient-shift 4s ease infinite;
-        letter-spacing: -0.02em;
-        line-height: 1.2;
-        margin-bottom: 1rem;
-    }
-
-    .project-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .project-badge {
-        background: rgba(139, 92, 246, 0.1);
-        border: 1px solid rgba(139, 92, 246, 0.3);
-        color: #a78bfa;
-        padding: 0.5rem 1rem;
-        border-radius: 2rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
-    }
-
-    .project-badge:hover {
-        background: rgba(139, 92, 246, 0.2);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-    }
-
-    .project-description {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        padding: 2rem;
-        margin: 2rem 0;
-        backdrop-filter: blur(10px);
-        font-family: 'Space Grotesk', sans-serif;
-        line-height: 1.7;
-        color: #e2e8f0;
-    }
-
-    .btn-cyber-modern {
-        background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-        background-size: 200% 200%;
-        border: none;
-        border-radius: 1rem;
-        color: white;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 1rem 2rem;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        animation: gradient-shift 4s ease infinite;
-    }
-
-    .btn-cyber-modern::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s ease;
-    }
-
-    .btn-cyber-modern:hover::before {
-        left: 100%;
-    }
-
-    .btn-cyber-modern:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 0 20px rgba(236, 72, 153, 0.4), 0 0 40px rgba(139, 92, 246, 0.2);
-        text-decoration: none;
-        color: white;
-    }
-
-    .other-projects-section {
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1.5rem;
-        padding: 2.5rem;
-        margin: 3rem 0;
-        backdrop-filter: blur(20px);
-    }
-
-    .other-projects-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        font-size: 2rem;
-        background: linear-gradient(135deg, #ffffff 0%, #06b6d4 100%);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradient-shift 3s ease infinite;
-        margin-bottom: 2rem;
-        text-align: center;
-    }
-
-    .project-card-modern {
-        background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(15, 15, 35, 0.8) 100%);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1.25rem;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        position: relative;
-        group: hover;
-    }
-
-    .project-card-modern:hover {
-        transform: translateY(-8px) scale(1.02);
-        border-color: rgba(139, 92, 246, 0.3);
-        box-shadow:
-            0 25px 50px rgba(0, 0, 0, 0.5),
-            0 0 20px rgba(139, 92, 246, 0.2);
-    }
-
-    .project-card-image {
-        height: 200px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .project-card-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-
-    .project-card-modern:hover .project-card-image img {
-        transform: scale(1.1);
-    }
-
-    .project-card-overlay {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(139, 92, 246, 0.8) 0%, rgba(236, 72, 153, 0.8) 100%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .project-card-modern:hover .project-card-overlay {
-        opacity: 1;
-    }
-
-    .overlay-content {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 0.75rem;
-        padding: 0.75rem 1.5rem;
-        color: white;
-        font-weight: 600;
-        font-size: 0.875rem;
-        transform: translateY(10px);
-        transition: transform 0.3s ease;
-    }
-
-    .project-card-modern:hover .overlay-content {
-        transform: translateY(0);
-    }
-
-    .project-card-content {
-        padding: 1.5rem;
-    }
-
-    .project-card-title {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 600;
-        font-size: 1.25rem;
-        color: white;
-        margin-bottom: 0.5rem;
-        transition: color 0.3s ease;
-    }
-
-    .project-card-modern:hover .project-card-title {
-        color: #a78bfa;
-    }
-
-    .project-card-client {
-        color: #94a3b8;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-    }
-
-    .project-card-category {
-        background: rgba(6, 182, 212, 0.1);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        color: #67e8f9;
-        padding: 0.25rem 0.75rem;
-        border-radius: 1rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-        display: inline-block;
-    }
-
-    .view-all-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 2px solid rgba(139, 92, 246, 0.3);
-        color: #8b5cf6;
-        padding: 0.875rem 2rem;
-        border-radius: 1rem;
-        font-weight: 600;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-    }
-
-    .view-all-btn:hover {
-        background: rgba(139, 92, 246, 0.1);
-        border-color: rgba(139, 92, 246, 0.6);
-        color: #a78bfa;
-        transform: translateY(-2px);
-        text-decoration: none;
-        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-    }
-
-    @keyframes gradient-shift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .project-header {
-            padding: 1.5rem;
-            margin: 1rem 0;
-        }
-
-        .project-title {
-            font-size: 2rem;
-        }
-
-        .project-meta {
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .other-projects-section {
-            padding: 1.5rem;
-        }
-
-        .other-projects-title {
-            font-size: 1.5rem;
-        }
-    }
-
-    /* Enhanced breadcrumb */
-    .breadcrumb-modern {
-        background: rgba(255, 255, 255, 0.02);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        padding: 1rem 1.5rem;
-        margin: 1rem 0;
-    }
-
-    .breadcrumb-modern a {
-        color: #8b5cf6;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    .breadcrumb-modern a:hover {
-        color: #a78bfa;
-    }
-
-    .breadcrumb-separator {
-        color: #64748b;
-        margin: 0 0.75rem;
-    }
-
-    .breadcrumb-current {
-        color: #e2e8f0;
-        font-weight: 600;
-    }
     
     /* FORCE Portfolio menu highlighting on portfolio detail pages */
     /* Target the specific Portfolio menu item in header */
@@ -448,21 +96,16 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Enhanced Breadcrumb -->
-<div class="portfolio-detail-container">
-    <nav class="w-full pt-8">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8" style="max-width: 1200px;">
-            <div class="breadcrumb-modern">
-                <a href="{{ url('/') }}#portfolio" class="hover:text-yellow-400 transition-colors">
-                    <i class="fas fa-folder-open mr-2"></i>Portfolio
-                </a>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current">
-                    {{ isset($portfolio) ? $portfolio->project_name : 'Portfolio Detail' }}
-                </span>
-            </div>
-        </div>
-    </nav>
+<!-- Breadcrumb -->
+<nav class="w-full bg-white pt-2">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-left items-left gap-2" style="max-width: 1200px;">
+        <a href="{{ url('/') }}#portfolio" class="text-gray-600 text-base font-normal leading-normal tracking-tight hover:text-yellow-600">Portfolio</a>
+        <span class="text-gray-600 text-base font-medium leading-normal tracking-tight">/</span>
+        <span class="text-black text-base font-medium leading-normal tracking-tight">
+            {{ isset($portfolio) ? $portfolio->project_name : 'Portfolio Detail' }}
+        </span>
+    </div>
+</nav>
 
 <!-- Debug Section (Simple) -->
 @if(!isset($portfolio))
@@ -477,52 +120,44 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 @endif
 
-    <!-- Project Detail Section -->
-    @if(isset($portfolio))
-    <section id="project" class="w-full">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8" style="max-width: 1200px;">
-            <div class="w-full max-w-5xl mx-auto">
-                <!-- Project Header -->
-                <div class="project-header">
-                    <h1 class="project-title text-3xl sm:text-5xl">{{ $portfolio->project_name ?? 'Portfolio Project' }}</h1>
-
-                    <div class="project-meta">
+<!-- Project Detail Section -->
+@if(isset($portfolio))
+<section id="project" class="w-full bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col items-center gap-8 sm:gap-12" style="max-width: 1200px;">       
+        <div class="w-full max-w-4xl flex flex-col gap-4">
+            <div class="flex flex-col gap-3">
+                <h1 class="text-black text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[48px]">{{ $portfolio->project_name ?? 'Portfolio Project' }}</h1>
+                <div class="flex gap-2">
+                    @if (!empty($portfolio->project_category))
+                        <span class="text-yellow-600 text-base font-normal leading-none">{{ $portfolio->project_category }}</span>
+                    @endif
+                    @if (!empty($portfolio->client_name))
                         @if (!empty($portfolio->project_category))
-                            <span class="project-badge">
-                                <i class="fas fa-tag mr-2"></i>{{ $portfolio->project_category }}
-                            </span>
+                            <span class="text-yellow-600 text-xs font-normal leading-none">-</span>
                         @endif
-                        @if (!empty($portfolio->client_name))
-                            <span class="project-badge">
-                                <i class="fas fa-user-tie mr-2"></i>{{ $portfolio->client_name }}
-                            </span>
-                        @endif
-                        @if (!empty($portfolio->location))
-                            <span class="project-badge">
-                                <i class="fas fa-map-marker-alt mr-2"></i>{{ $portfolio->location }}
-                            </span>
-                        @endif
-                    </div>
+                        <span class="text-yellow-600 text-base font-normal leading-none">Client: {{ $portfolio->client_name }}</span>
+                    @endif
                 </div>
-            
-                @if (!empty($portfolio->description))
-                    <div class="project-description">
-                        <h3 class="text-xl font-semibold mb-4 text-white">
-                            <i class="fas fa-info-circle mr-2 text-cyan-400"></i>Project Overview
-                        </h3>
-                        <div class="prose prose-invert max-w-none">{!! $portfolio->description !!}</div>
-                    </div>
+                @if (!empty($portfolio->location))
+                    <div class="text-gray-600 text-xs font-normal leading-normal">{{ $portfolio->location }}</div>
                 @endif
+            </div>
+            <div class="w-full h-px bg-gray-300"></div>
             
-                @if (!empty($portfolio->url_project))
-                    <div class="text-center mt-8">
-                        <a href="{{ $portfolio->url_project }}" target="_blank" class="btn-cyber-modern">
-                            <i class="fas fa-rocket"></i>
-                            <span>Launch Live Project</span>
-                            <i class="fas fa-external-link-alt"></i>
-                        </a>
-                    </div>
-                @endif
+            @if (!empty($portfolio->description))
+                <div class="text-gray-800 text-base sm:text-lg font-normal leading-relaxed">{!! $portfolio->description !!}</div>
+            @endif
+            
+            @if (!empty($portfolio->url_project))
+                <a href="{{ $portfolio->url_project }}" target="_blank"
+                   class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-xl flex items-center gap-2.5 text-neutral-900 hover:bg-yellow-500 transition-colors w-fit">
+                    <span class="text-base font-semibold capitalize leading-tight tracking-tight">View Live Project</span>
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+            @endif
             
             <!-- Other Projects Section with JSON handling -->
             @php
@@ -565,192 +200,98 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             @endphp
             
-                @if ($otherProjects->count() > 0)
-                <div class="other-projects-section">
-                    <h3 class="other-projects-title">Explore More Projects</h3>
+            @if ($otherProjects->count() > 0)
+                <div class="w-full h-px bg-gray-300 mt-8"></div>
+                <div class="mt-6">
+                    <h3 class="text-black text-xl sm:text-2xl font-semibold leading-tight mb-6">Other Projects</h3>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($otherProjects as $project)
                             @php
                                 $publicPath = env('PUBLIC_PATH', '/');
                                 $projectUrl = $publicPath . 'portfolio/' . $project->slug_project;
                             @endphp
-                            <div class="project-card-modern" onclick="window.location.href='{{ $projectUrl }}'">
-                                <!-- Project Image -->
-                                <div class="project-card-image">
-                                    @php
-                                        $images = $project->images ? json_decode($project->images, true) : [];
-                                        $featuredImage = $project->featured_image ?? ($images[0] ?? null);
-                                    @endphp
-
-                                    @if ($featuredImage)
-                                        <img src="{{ asset('images/projects/' . $featuredImage) }}"
-                                             alt="{{ $project->project_name }}">
-                                    @else
-                                        <div class="w-full h-full bg-gradient-to-br from-purple-900 to-pink-900 flex items-center justify-center">
-                                            <i class="fas fa-project-diagram text-4xl text-purple-300"></i>
-                                        </div>
-                                    @endif
-
-                                    <!-- Modern Overlay -->
-                                    <div class="project-card-overlay">
-                                        <div class="overlay-content">
-                                            <i class="fas fa-eye mr-2"></i>
-                                            View Project
+                            <div class="group cursor-pointer" onclick="window.location.href='{{ $projectUrl }}'">
+                                <div class="bg-white border border-gray-300 rounded-xl overflow-hidden hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl">                                    
+                                    
+                                    <!-- Project Image -->
+                                    <div class="relative overflow-hidden h-48">
+                                        @php
+                                            $images = $project->images ? json_decode($project->images, true) : [];
+                                            $featuredImage = $project->featured_image ?? ($images[0] ?? null);
+                                        @endphp
+                                        
+                                        @if ($featuredImage)
+                                            <img src="{{ asset('images/projects/' . $featuredImage) }}" 
+                                                 alt="{{ $project->project_name }}"
+                                                 class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+                                        @else
+                                            <div class="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                                                <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                        
+                                        <!-- Overlay -->
+                                        <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                            <span class="text-white font-semibold text-sm px-4 py-2 bg-yellow-400 text-neutral-900 rounded-lg">View Details</span>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Project Content -->
-                                <div class="project-card-content">
-                                    <h4 class="project-card-title">
-                                        {{ $project->project_name }}
-                                    </h4>
-
-                                    @if (!empty($project->client_name))
-                                        <p class="project-card-client">
-                                            <i class="fas fa-user-tie mr-2"></i>{{ $project->client_name }}
-                                        </p>
-                                    @endif
-
-                                    @if (!empty($project->project_category))
-                                        <div class="flex items-center justify-between">
-                                            <span class="project-card-category">
-                                                {{ $project->project_category }}
-                                            </span>
-                                            <i class="fas fa-arrow-right text-purple-400 transition-transform duration-300 transform group-hover:translate-x-2"></i>
-                                        </div>
-                                    @endif
+                                    
+                                    <!-- Project Info -->
+                                    <div class="p-4">
+                                        <h4 class="text-black text-lg font-semibold mb-2 line-clamp-2 group-hover:text-yellow-600 transition-colors">
+                                            {{ $project->project_name }}
+                                        </h4>
+                                        
+                                        @if (!empty($project->client_name))
+                                            <p class="text-gray-600 text-sm mb-3">{{ $project->client_name }}</p>
+                                        @endif
+                                        
+                                        <!-- Project Category -->
+                                        @if (!empty($project->project_category))
+                                            <div class="flex items-center justify-between">
+                                                <span class="inline-block bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full border border-yellow-200">
+                                                    {{ $project->project_category }}
+                                                </span>
+                                                
+                                                <!-- View Arrow -->
+                                                <svg class="w-5 h-5 text-gray-500 group-hover:text-yellow-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                     
                     <!-- View All Projects Button -->
-                    <div class="text-center mt-12">
-                        <a href="{{ url('/') }}#portfolio" class="view-all-btn">
-                            <i class="fas fa-th-large"></i>
-                            <span>Explore All Projects</span>
-                            <i class="fas fa-arrow-right transition-transform duration-300 group-hover:translate-x-2"></i>
+                    <div class="text-center mt-8">
+                        <a href="{{ url('/') }}#portfolio" 
+                           class="inline-flex items-center gap-2 px-6 py-3 bg-gray-200 hover:bg-yellow-400 text-gray-800 hover:text-neutral-900 rounded-xl transition-all duration-300 border border-gray-300 hover:border-yellow-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            <span class="font-medium">View All Projects</span>
                         </a>
                     </div>
                 </div>
-                @endif
-            </div>
+            @endif
+        </div>
+    </div>
+</section>
+@else
+    <section class="w-full bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center" style="max-width: 1200px;">
+            <h2 class="text-red-600 text-2xl font-bold">Portfolio Not Found</h2>
+            <p class="text-red-500 mt-4">The requested portfolio could not be found. Please check the URL and try again.</p>
+            <a href="{{ url('/') }}#portfolio" class="inline-block mt-6 px-6 py-3 bg-yellow-400 text-neutral-900 rounded-lg hover:bg-yellow-500 transition-colors">
+                Back to Portfolio
+            </a>
         </div>
     </section>
-    @else
-        <section class="w-full py-20">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center" style="max-width: 1200px;">
-                <div class="project-header max-w-2xl mx-auto">
-                    <div class="text-6xl mb-6">
-                        <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                    </div>
-                    <h2 class="text-3xl font-bold text-white mb-4">Portfolio Not Found</h2>
-                    <p class="text-gray-300 mb-8 text-lg">The requested portfolio could not be found. Please check the URL and try again.</p>
-                    <a href="{{ url('/') }}#portfolio" class="btn-cyber-modern">
-                        <i class="fas fa-arrow-left"></i>
-                        <span>Back to Portfolio</span>
-                    </a>
-                </div>
-            </div>
-        </section>
-    @endif
-</div>
+@endif
 @endsection
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add smooth scroll animation for project cards
-    const projectCards = document.querySelectorAll('.project-card-modern');
-
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }, index * 100);
-            }
-        });
-    }, observerOptions);
-
-    projectCards.forEach(card => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        observer.observe(card);
-    });
-
-    // Enhanced click handling with animation
-    projectCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            // Add ripple effect
-            const ripple = document.createElement('div');
-            const rect = this.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            ripple.style.cssText = `
-                position: absolute;
-                border-radius: 50%;
-                background: rgba(139, 92, 246, 0.3);
-                transform: scale(0);
-                animation: ripple 0.6s linear;
-                left: ${x - 25}px;
-                top: ${y - 25}px;
-                width: 50px;
-                height: 50px;
-                pointer-events: none;
-            `;
-
-            this.style.position = 'relative';
-            this.appendChild(ripple);
-
-            setTimeout(() => {
-                ripple.remove();
-            }, 600);
-        });
-    });
-});
-</script>
-
-<style>
-@keyframes ripple {
-    to {
-        transform: scale(4);
-        opacity: 0;
-    }
-}
-
-.prose-invert {
-    color: #e2e8f0;
-}
-
-.prose-invert h1, .prose-invert h2, .prose-invert h3, .prose-invert h4 {
-    color: #f8fafc;
-}
-
-.prose-invert a {
-    color: #8b5cf6;
-    text-decoration: none;
-}
-
-.prose-invert a:hover {
-    color: #a78bfa;
-    text-decoration: underline;
-}
-
-.prose-invert strong {
-    color: #f8fafc;
-}
-
-.prose-invert ul, .prose-invert ol {
-    color: #e2e8f0;
-}
-</style>

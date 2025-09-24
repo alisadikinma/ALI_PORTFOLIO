@@ -775,10 +775,9 @@ class ProjectController extends Controller
                 ->select('id_project', 'project_name', 'client_name', 'slug_project', 'project_category')
                 ->where('status', 'Active')
                 ->where(function($q) use ($query) {
-                    $sanitizedQuery = '%' . addslashes(str_replace(['%', '_'], ['\%', '\_'], $query)) . '%';
-                    $q->where('project_name', 'LIKE', $sanitizedQuery)
-                      ->orWhere('client_name', 'LIKE', $sanitizedQuery)
-                      ->orWhere('project_category', 'LIKE', $sanitizedQuery);
+                    $q->where('project_name', 'LIKE', '%' . $query . '%')
+                      ->orWhere('client_name', 'LIKE', '%' . $query . '%')
+                      ->orWhere('project_category', 'LIKE', '%' . $query . '%');
                 });
 
             // Exclude current project if editing

@@ -6,7 +6,6 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 class SettingController extends Controller
 {
@@ -122,6 +121,9 @@ class SettingController extends Controller
         'pimpinan_setting'       => $request->pimpinan_setting,
         'logo_setting'           => $logo,
         'favicon_setting'        => $favicon,
+        'tentang_setting'        => $request->tentang_setting,
+        'misi_setting'           => $request->misi_setting,
+        'visi_setting'           => $request->visi_setting,
         'keyword_setting'        => $request->keyword_setting,
         'alamat_setting'         => $request->alamat_setting,
         'instagram_setting'      => $request->instagram_setting,
@@ -143,6 +145,7 @@ class SettingController extends Controller
         'project_delivered'      => $request->project_delivered,
         'cost_savings'           => $request->cost_savings,
         'success_rate'           => $request->success_rate,
+        'view_cv_url'            => $request->view_cv_url,
     ];
 
     // Add optional columns only if they exist in the table
@@ -174,249 +177,96 @@ class SettingController extends Controller
     // Clear cache untuk memastikan perubahan langsung terlihat
     Cache::forget('site_config');
     Cache::forget('homepage_data');
-    Cache::forget('homepage_sections');
     
     return redirect()->back()->with('Sukses', 'Berhasil Edit Konfigurasi Website');
 }
 
-    /**
-     * Show sections management page
-     */
+
     public function sections()
     {
-        // Get title from settings or use default
-        $setting = Setting::first();
-        $title = ($setting && $setting->instansi_setting) 
-                ? 'Manage Sections - ' . $setting->instansi_setting 
-                : 'Section Visibility Management';
+        $title = 'Section Visibility Management';
         
         try {
-            // Get homepage sections from lookup_data
-            $sections = DB::table('lookup_data')
-                ->where('lookup_type', 'homepage_section')
-                ->orderBy('sort_order', 'asc')
-                ->get();
+            $konf = Setting::first();
             
-            if ($sections->isEmpty()) {
-                // Create default sections if they don't exist
-                $this->createDefaultSections();
-                $sections = DB::table('lookup_data')
-                    ->where('lookup_type', 'homepage_section')
-                    ->orderBy('sort_order', 'asc')
-                    ->get();
+            if (!$konf) {
+                // Create default setting if doesn't exist
+                $konf = Setting::create([
+                    'instansi_setting' => 'Portfolio Website',
+                    'pimpinan_setting' => 'Admin',
+                    'about_section_active' => 1,
+                    'services_section_active' => 1,
+                    'portfolio_section_active' => 1,
+                    'testimonials_section_active' => 1,
+                    'gallery_section_active' => 1,
+                    'articles_section_active' => 1,
+                    'awards_section_active' => 1,
+                    'contact_section_active' => 1,
+                ]);
             }
             
-            return view('setting.sections', compact('sections', 'title', 'setting'));
+            return view('setting.sections', compact('konf', 'title'));
             
         } catch (\Exception $e) {
             \Log::error('Error loading sections page: ' . $e->getMessage());
             
-            // Create empty sections for fallback
-            $sections = collect([
-                (object)[
-                    'id' => 0,
-                    'lookup_code' => 'about',
-                    'lookup_name' => 'About Section',
-                    'lookup_description' => 'About me, mission, vision content',
-                    'lookup_icon' => 'fas fa-user',
-                    'lookup_color' => '#059669',
-                    'sort_order' => 1,
-                    'is_active' => 1
-                ]
-            ]);
+            // Create a default object to prevent errors
+            $konf = (object) [
+                'about_section_active' => 1,
+                'services_section_active' => 1,
+                'portfolio_section_active' => 1,
+                'testimonials_section_active' => 1,
+                'gallery_section_active' => 1,
+                'articles_section_active' => 1,
+                'awards_section_active' => 1,
+                'contact_section_active' => 1,
+            ];
             
-            return view('setting.sections', compact('sections', 'title', 'setting'))
-                ->with('error', 'There was an issue loading sections. Using default values.');
+            return view('setting.sections', compact('konf', 'title'))
+                ->with('error', 'There was an issue loading settings. Using default values.');
         }
     }
 
-    /**
-     * Update sections visibility and order
-     */
     public function updateSections(Request $request)
     {
         try {
-            \Log::info('Section update request:', $request->all());
+            $setting = Setting::first();
             
-            // Get all sections to update
-            $sections = DB::table('lookup_data')
-                ->where('lookup_type', 'homepage_section')
-                ->orderBy('sort_order', 'asc')
-                ->get();
-            
-            if ($sections->isEmpty()) {
-                return redirect()->back()->with('error', 'No sections found. Please contact administrator.');
+            if (!$setting) {
+                return redirect()->back()->with('error', 'Settings not found. Please contact administrator.');
             }
             
-            $updated = 0;
-            
-            // Update each section
-            foreach ($sections as $section) {
-                $sectionCode = $section->lookup_code;
-                
-                // Check if section is active
-                $isActive = $request->has($sectionCode . '_section_active') ? 1 : 0;
-                
-                // Get order from request (fallback to current order)
-                $order = $request->get($sectionCode . '_section_order', $section->sort_order);
-                
-                \Log::info("Updating section {$sectionCode}: active={$isActive}, order={$order}");
-                
-                // Update section
-                $affected = DB::table('lookup_data')
-                    ->where('id', $section->id)
-                    ->update([
-                        'is_active' => $isActive,
-                        'sort_order' => intval($order),
-                        'updated_at' => now()
-                    ]);
-                    
-                $updated += $affected;
-            }
-            
-            \Log::info("Total sections updated: {$updated}");
+            // Update section visibility
+            $updated = $setting->update([
+                'about_section_active' => $request->has('about_section_active') ? 1 : 0,
+                'services_section_active' => $request->has('services_section_active') ? 1 : 0,
+                'portfolio_section_active' => $request->has('portfolio_section_active') ? 1 : 0,
+                'testimonials_section_active' => $request->has('testimonials_section_active') ? 1 : 0,
+                'gallery_section_active' => $request->has('gallery_section_active') ? 1 : 0,
+                'articles_section_active' => $request->has('articles_section_active') ? 1 : 0,
+                'awards_section_active' => $request->has('awards_section_active') ? 1 : 0,
+                'contact_section_active' => $request->has('contact_section_active') ? 1 : 0,
+            ]);
 
-            // Clear relevant caches
+            if (!$updated) {
+                return redirect()->back()->with('error', 'Failed to update section settings. Please try again.');
+            }
+
+            // Clear cache untuk memastikan perubahan langsung terlihat
             Cache::forget('site_config');
             Cache::forget('homepage_data');
-            Cache::forget('homepage_sections');
-            Cache::forget('active_sections');
             
-            // Clear view cache
+            // Clear view cache juga
             if (function_exists('artisan')) {
                 \Artisan::call('view:clear');
             }
             
-            return redirect()->back()->with('success', "Section settings updated successfully! {$updated} sections were modified. Changes are now live on your homepage.");
+            return redirect()->back()->with('success', 'Section visibility settings updated successfully! Changes are now live on your homepage.');
             
         } catch (\Exception $e) {
             \Log::error('Failed to update section settings: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while updating settings. Please try again or contact support.');
         }
-    }
-
-    /**
-     * Create default sections in lookup_data
-     */
-    private function createDefaultSections()
-    {
-        $defaultSections = [
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'about',
-                'lookup_name' => 'About Section',
-                'lookup_description' => 'About me, mission, vision content',
-                'lookup_icon' => 'fas fa-user',
-                'lookup_color' => '#059669',
-                'sort_order' => 1,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'services',
-                'lookup_name' => 'Services Section',
-                'lookup_description' => 'Services and offerings',
-                'lookup_icon' => 'fas fa-cogs',
-                'lookup_color' => '#3b82f6',
-                'sort_order' => 2,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'portfolio',
-                'lookup_name' => 'Portfolio Section',
-                'lookup_description' => 'Project showcase and work samples',
-                'lookup_icon' => 'fas fa-briefcase',
-                'lookup_color' => '#8b5cf6',
-                'sort_order' => 3,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'awards',
-                'lookup_name' => 'Awards Section',
-                'lookup_description' => 'Achievements and recognitions',
-                'lookup_icon' => 'fas fa-trophy',
-                'lookup_color' => '#f59e0b',
-                'sort_order' => 4,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'testimonials',
-                'lookup_name' => 'Testimonials Section',
-                'lookup_description' => 'Client reviews and feedback',
-                'lookup_icon' => 'fas fa-quote-left',
-                'lookup_color' => '#10b981',
-                'sort_order' => 5,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'gallery',
-                'lookup_name' => 'Gallery Section',
-                'lookup_description' => 'Image gallery and visual content',
-                'lookup_icon' => 'fas fa-images',
-                'lookup_color' => '#ef4444',
-                'sort_order' => 6,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'articles',
-                'lookup_name' => 'Articles Section',
-                'lookup_description' => 'Blog posts and written content',
-                'lookup_icon' => 'fas fa-newspaper',
-                'lookup_color' => '#6366f1',
-                'sort_order' => 7,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ],
-            [
-                'lookup_type' => 'homepage_section',
-                'lookup_code' => 'contact',
-                'lookup_name' => 'Contact Section',
-                'lookup_description' => 'Contact form and information',
-                'lookup_icon' => 'fas fa-envelope',
-                'lookup_color' => '#06b6d4',
-                'sort_order' => 8,
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]
-        ];
-
-        foreach ($defaultSections as $section) {
-            DB::table('lookup_data')->insert($section);
-        }
-    }
-
-    /**
-     * Get active homepage sections for frontend
-     */
-    public function getActiveSections()
-    {
-        return Cache::remember('active_sections', 1800, function() {
-            return DB::table('lookup_data')
-                ->where('lookup_type', 'homepage_section')
-                ->where('is_active', 1)
-                ->orderBy('sort_order', 'asc')
-                ->pluck('lookup_code')
-                ->toArray();
-        });
     }
 
     public function storeImage(Request $request)

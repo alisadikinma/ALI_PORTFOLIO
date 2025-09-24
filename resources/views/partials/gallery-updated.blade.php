@@ -1,15 +1,10 @@
 <!-- Gallery Section - ENHANCED VERSION with Global System Integration (Updated 9/14/2025) -->
+@if($konf->gallery_section_active ?? true)
 <section id="gallery" class="w-full max-w-screen-xl mx-auto px-3 sm:px-4 py-6 flex flex-col items-center gap-6 sm:gap-10">
     <!-- Header -->
     <div class="flex flex-col gap-2 text-center">
         <h2 class="text-yellow-400 text-3xl sm:text-5xl font-bold leading-tight tracking-tight">
-            @php
-            $gallerySection = DB::table('lookup_data')
-                ->where('lookup_type', 'homepage_section')
-                ->where('lookup_code', 'gallery')
-                ->first();
-            @endphp
-            {{ $gallerySection->lookup_description ?? 'Gallery' }}
+            Gallery
         </h2>
         <p class="text-neutral-400 text-base sm:text-lg font-normal leading-6 tracking-tight">
             Explore the visual journey of my work, from concept to impactful solutions
@@ -28,11 +23,11 @@
     <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl">
         @foreach ($displayGallery as $index => $row)
         <div class="relative group rounded-lg bg-slate-900 outline outline-1 outline-slate-500 overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-md cursor-pointer" 
-             onclick="openGalleryModal({{ $row->id_galeri }}, '{{ addslashes($row->judul_galeri) }}')">
+             onclick="openGalleryModal({{ $row->id_galeri }}, '{{ addslashes($row->nama_galeri) }}')">
             
-            @if($row->gambar_galeri)
-                <img src="{{ asset('file/galeri/' . $row->gambar_galeri) }}" 
-                     alt="{{ $row->judul_galeri ?? 'Gallery image' }}" 
+            @if($row->thumbnail)
+                <img src="{{ asset('file/galeri/' . $row->thumbnail) }}" 
+                     alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
                      class="w-full h-auto rounded-lg aspect-square object-cover" />
             @elseif($row->galleryItems->where('status', 'Active')->first())
                 @php
@@ -40,7 +35,7 @@
                 @endphp
                 @if($firstItem->type === 'image')
                     <img src="{{ asset('file/galeri/' . $firstItem->file_name) }}" 
-                         alt="{{ $row->judul_galeri ?? 'Gallery image' }}" 
+                         alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
                          class="w-full h-auto rounded-lg aspect-square object-cover" />
                 @elseif($firstItem->type === 'youtube')
                     @php
@@ -49,7 +44,7 @@
                     @endphp
                     @if($videoId)
                         <img src="https://img.youtube.com/vi/{{ $videoId }}/maxresdefault.jpg" 
-                             alt="{{ $row->judul_galeri ?? 'Gallery image' }}" 
+                             alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
                              class="w-full h-auto rounded-lg aspect-square object-cover" />
                     @endif
                 @endif
@@ -61,7 +56,7 @@
             
             <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-opacity duration-300 flex items-center justify-center">
                 <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center">
-                    <p class="text-white text-sm font-semibold mb-2">{{ $row->judul_galeri ?? 'Gallery' }}</p>
+                    <p class="text-white text-sm font-semibold mb-2">{{ $row->nama_galeri ?? 'Gallery' }}</p>
                     <div class="inline-flex items-center px-3 py-2 bg-yellow-400 text-black rounded-lg text-sm font-medium">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -226,3 +221,5 @@ console.log('📍 Current location:', window.location.href);
 console.log('🔧 GlobalGalleryLoader available:', typeof window.GlobalGalleryLoader !== 'undefined');
 console.log('🖼️ GlobalImageModal available:', typeof window.GlobalImageModal !== 'undefined');
 </script>
+
+@endif

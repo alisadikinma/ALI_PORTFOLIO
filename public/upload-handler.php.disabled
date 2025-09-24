@@ -1,8 +1,0 @@
-<?php
-// SECURITY: This file has been disabled due to critical security vulnerabilities
-// Original file moved to upload-handler.php.disabled
-// Use Laravel's secure upload functionality instead via ProjectController@uploadEditorImage
-
-http_response_code(404);
-exit('File not found');
-?>

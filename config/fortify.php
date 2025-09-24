@@ -144,7 +144,7 @@ return [
     */
 
     'features' => [
-        // Features::registration(), // Disabled - admin users managed manually
+        Features::registration(),
         Features::resetPasswords(),
         // Features::emailVerification(),
         Features::updateProfileInformation(),
@@ -154,7 +154,6 @@ return [
             'confirmPassword' => true,
             // 'window' => 0,
         ]),
-        // Note: Default Fortify login routes disabled - using custom admin login
     ],
 
 ];

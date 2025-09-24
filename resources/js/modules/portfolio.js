@@ -1,165 +1,80 @@
-/**
- * Professional Portfolio Manager
- * Manufacturing Project Showcase Enhancement
- */
-
 export class PortfolioManager {
     constructor() {
-        this.isInitialized = false;
-        this.projects = [];
-        this.currentFilter = 'all';
-
+        this.filterBtns = document.querySelectorAll('.filter-btn');
+        this.portfolioItems = document.querySelectorAll('.portfolio-item');
         this.init();
     }
-
+    
     init() {
-        console.log('💼 Portfolio Manager initializing...');
-
-        try {
-            this.setupPortfolioElements();
-            this.setupFilterSystem();
-            this.setupProjectInteractions();
-            this.setupProjectAnalytics();
-
-            this.isInitialized = true;
-            console.log('✅ Portfolio Manager initialized');
-        } catch (error) {
-            console.warn('Portfolio Manager initialization failed:', error);
-        }
+        if (!this.filterBtns.length) return;
+        
+        this.initFilters();
     }
-
-    setupPortfolioElements() {
-        // Get all portfolio items
-        this.projects = document.querySelectorAll('.portfolio-item, .project-card');
-
-        // Setup hover effects for professional presentation
-        this.projects.forEach(project => {
-            this.setupProjectHoverEffects(project);
-        });
-    }
-
-    setupFilterSystem() {
-        const filterButtons = document.querySelectorAll('.portfolio-filter-btn');
-
-        filterButtons.forEach(button => {
-            button.addEventListener('click', (e) => {
+    
+    initFilters() {
+        this.filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const filter = button.getAttribute('data-filter');
-                this.filterProjects(filter);
-                this.updateFilterButtons(button);
+                const filter = btn.getAttribute('data-filter');
+                
+                // Update active button
+                this.updateActiveButton(btn);
+                
+                // Filter items with animation
+                this.filterItems(filter);
             });
         });
     }
-
-    setupProjectInteractions() {
-        this.projects.forEach(project => {
-            project.addEventListener('click', (e) => {
-                this.handleProjectClick(e, project);
-            });
-        });
-    }
-
-    setupProjectHoverEffects(project) {
-        project.addEventListener('mouseenter', () => {
-            project.style.transform = 'translateY(-8px) scale(1.02)';
-            project.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.3)';
-        });
-
-        project.addEventListener('mouseleave', () => {
-            project.style.transform = 'translateY(0) scale(1)';
-            project.style.boxShadow = '';
-        });
-    }
-
-    filterProjects(filter) {
-        this.currentFilter = filter;
-
-        this.projects.forEach(project => {
-            const projectCategory = project.getAttribute('data-category');
-
-            if (filter === 'all' || projectCategory === filter) {
-                project.style.display = 'block';
-                project.style.animation = 'scale-in-professional 0.4s ease forwards';
-            } else {
-                project.style.display = 'none';
+    
+    updateActiveButton(activeBtn) {
+        // Reset all buttons
+        this.filterBtns.forEach(btn => {
+            btn.classList.remove('bg-yellow-400', 'outline-yellow-400');
+            btn.classList.add('bg-slate-800/60', 'outline-slate-500');
+            
+            const span = btn.querySelector('span');
+            if (span) {
+                span.classList.remove('text-neutral-900');
+                span.classList.add('text-white');
             }
         });
-
-        this.trackFilter(filter);
-    }
-
-    updateFilterButtons(activeButton) {
-        const allButtons = document.querySelectorAll('.portfolio-filter-btn');
-
-        allButtons.forEach(button => {
-            button.classList.remove('active', 'bg-yellow-400', 'text-black');
-            button.classList.add('bg-gray-700', 'text-white');
-        });
-
-        activeButton.classList.add('active', 'bg-yellow-400', 'text-black');
-        activeButton.classList.remove('bg-gray-700', 'text-white');
-    }
-
-    handleProjectClick(event, project) {
-        const projectId = project.getAttribute('data-project-id');
-        const projectTitle = project.querySelector('.project-title')?.textContent || 'Unknown Project';
-
-        // Track project interaction
-        this.trackProjectInteraction(projectId, projectTitle);
-
-        // Add professional click feedback
-        project.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-            project.style.transform = '';
-        }, 150);
-    }
-
-    setupProjectAnalytics() {
-        // Setup intersection observer for project views
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const project = entry.target;
-                    const projectId = project.getAttribute('data-project-id');
-                    this.trackProjectView(projectId);
-                }
-            });
-        }, {
-            threshold: 0.5
-        });
-
-        this.projects.forEach(project => {
-            observer.observe(project);
-        });
-    }
-
-    trackFilter(filter) {
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'portfolio_filter', {
-                filter: filter,
-                timestamp: new Date().toISOString()
-            });
+        
+        // Set active button
+        activeBtn.classList.remove('bg-slate-800/60', 'outline-slate-500');
+        activeBtn.classList.add('bg-yellow-400', 'outline-yellow-400');
+        
+        const activeSpan = activeBtn.querySelector('span');
+        if (activeSpan) {
+            activeSpan.classList.remove('text-white');
+            activeSpan.classList.add('text-neutral-900');
         }
     }
-
-    trackProjectView(projectId) {
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'project_view', {
-                project_id: projectId,
-                timestamp: new Date().toISOString()
-            });
-        }
-    }
-
-    trackProjectInteraction(projectId, projectTitle) {
-        if (typeof gtag !== 'undefined') {
-            gtag('event', 'project_interaction', {
-                project_id: projectId,
-                project_title: projectTitle,
-                timestamp: new Date().toISOString()
-            });
-        }
+    
+    filterItems(filter) {
+        this.portfolioItems.forEach(item => {
+            const itemType = item.getAttribute('data-jenis');
+            const shouldShow = filter === 'all' || itemType === filter;
+            
+            if (shouldShow) {
+                item.style.display = 'block';
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                
+                // Animate in
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 50);
+            } else {
+                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(-20px)';
+                
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
     }
 }
-
-export default PortfolioManager;

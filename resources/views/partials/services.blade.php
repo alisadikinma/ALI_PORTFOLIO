@@ -1,15 +1,10 @@
 <!-- Services Section -->
+@if(($konf->services_section_active ?? true) && isset($layanan) && $layanan->count() > 0)
 <section id="services" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
     <!-- Header -->
     <div class="text-center mb-12">
         <h2 class="text-yellow-400 text-4xl sm:text-6xl font-bold mb-4">
-            @php
-            $servicesSection = DB::table('lookup_data')
-                ->where('lookup_type', 'homepage_section')
-                ->where('lookup_code', 'services')
-                ->first();
-            @endphp
-            {{ $servicesSection->lookup_description ?? 'Services' }}
+            Services
         </h2>
         <p class="text-gray-400 text-lg sm:text-xl max-w-3xl mx-auto">
             Comprehensive AI and automation solutions for your business transformation
@@ -20,12 +15,12 @@
     <div class="flex flex-col lg:flex-row gap-4 lg:gap-4 items-start">
         <!-- Left Side - Service Cards (30%) -->
         <div class="lg:w-3/10 xl:w-3/10 service-left-panel flex flex-col pl-4">
-            @foreach ($layanan as $index => $row)
-            <div class="service-card {{ $index == 0 ? 'active' : '' }} scroll-animate stagger-child" 
+            @foreach ($layanan->where('status', 'Active')->sortBy('sequence') as $index => $row)
+            <div class="service-card {{ $index == 0 ? 'active' : '' }}" 
                  data-service-id="{{ $row->id_layanan ?? $index }}"
                  data-service-type="{{ Str::slug($row->nama_layanan) }}"
                  data-image="{{ asset('file/layanan/' . $row->gambar_layanan) }}"
-                 data-description="{!! htmlspecialchars($row->deskripsi_layanan ?? '', ENT_QUOTES) !!}">
+                 data-description="{!! htmlspecialchars($row->keterangan_layanan ?? '', ENT_QUOTES) !!}">
                 <div class="service-icon">
                     @if($row->icon_layanan)
                         <img src="{{ asset('file/layanan/icons/' . $row->icon_layanan) }}" alt="{{ $row->nama_layanan }} icon" style="width: 28px; height: 28px; object-fit: contain;">
@@ -61,8 +56,8 @@
                 </div>
                 <div class="service-content">
                     <h3 class="service-title">{{ $row->nama_layanan }}</h3>
-                    @if($row->deskripsi_layanan)
-                    <p class="service-subtitle-main">{{ Str::limit($row->deskripsi_layanan, 50) }}</p>
+                    @if($row->sub_nama_layanan)
+                    <p class="service-subtitle-main">{{ $row->sub_nama_layanan }}</p>
                     @endif
                 </div>
             </div>
@@ -88,7 +83,7 @@
                 </div-->
                 
                 <div class="service-action">
-                    <a href="{{ url('/#contact') }}" class="request-quote-btn-services btn-modern">
+                    <a href="{{ url('/#contact') }}" class="request-quote-btn-services">
                        REQUEST QUOTE →
                     </a>
                 </div>
@@ -478,3 +473,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+@endif

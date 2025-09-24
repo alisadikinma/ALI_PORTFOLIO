@@ -14,9 +14,11 @@ npm run build       # Build for production
 ### Testing
 ```bash
 php artisan test                        # Run all tests using Pest
-php artisan test --testsuite=Unit       # Run unit tests
-php artisan test --testsuite=Feature    # Run feature tests
-php artisan test --coverage             # Run with coverage
+php artisan test --testsuite=Unit       # Run unit tests only
+php artisan test --testsuite=Feature    # Run feature tests only
+php artisan test --coverage             # Run with coverage report
+vendor/bin/pest                         # Direct Pest execution
+vendor/bin/pest --parallel              # Run tests in parallel
 ```
 
 ### Code Quality
@@ -39,7 +41,7 @@ php artisan cache:clear                 # Clear application cache
 php artisan config:clear                # Clear configuration cache
 php artisan route:clear                 # Clear route cache
 php artisan view:clear                  # Clear compiled views
-php clear_cache_portfolio.php           # Custom cache clearing script
+php artisan optimize:clear              # Clear all cached files at once
 ```
 
 ## Architecture Overview
@@ -49,6 +51,8 @@ php clear_cache_portfolio.php           # Custom cache clearing script
 - **Frontend**: Tailwind CSS + Livewire 3.0 + Vite
 - **Database**: MySQL with custom primary keys
 - **Testing**: Pest PHP framework
+- **Code Quality**: Laravel Pint for formatting
+- **Additional Packages**: Excel import/export, PDF generation, QR codes, CAPTCHA, Smart Ads
 
 ### Key Patterns
 - **Custom Primary Keys**: Uses `id_project`, `id_setting` instead of standard Laravel `id`
@@ -57,9 +61,10 @@ php clear_cache_portfolio.php           # Custom cache clearing script
 - **Homepage Sections**: Database-driven section management
 
 ### Key Models
-- **Project** (`app/Models/Project.php`): Primary key `id_project`, handles multiple images, auto-slug generation
-- **Setting** (`app/Models/Setting.php`): Primary key `id_setting`, global site configuration
-- **LookupData** (`app/Models/LookupData.php`): Flexible lookup system with hierarchical support
+- **Project** (`app/Models/Project.php`): Primary key `id_project`, handles multiple images, auto-slug generation, automatic image cleanup
+- **Setting** (`app/Models/Setting.php`): Primary key `id_setting`, global site configuration including social media links
+- **Layanan** (`app/Models/Layanan.php`): Primary key `id_layanan`, services management with sequence ordering
+- **User, Award, Testimonial, Berita, Contact, Galeri**: All following custom primary key pattern
 
 ## Environment Setup
 
@@ -94,13 +99,20 @@ All models use custom primary keys (e.g., `id_project`, `id_setting`) instead of
 - Automatic cleanup on deletion
 - Support for multiple images plus featured image
 
+### Routing Architecture
+- **Emergency Fallback Pattern**: Routes include try-catch blocks with fallback views for resilience
+- **Controller-based routing**: Direct controller instantiation in route closures for critical routes
+- **Portfolio-specific URLs**: `/portfolio/all` for complete portfolio listing
+- **Performance Optimization**: Homepage data cached for 30 minutes, site config cached for 5 minutes
+
 ### Multi-Agent System
-The `.claude/` directory contains a sophisticated multi-agent orchestration system for complex development tasks.
+The `.claude/` directory contains a sophisticated multi-agent orchestration system with 8 specialized meta-orchestration agents and organized domain-specific teams for complex development tasks. Access via `@meta-orchestration [task]` command.
 
 ## Key Controllers
-- **HomeWebController**: Homepage sections management
+- **HomeWebController**: Homepage sections management with emergency fallbacks
 - **ProjectController**: Portfolio projects with image handling
 - **SettingController**: Site-wide configuration
+- **LayananController**: Services management
 - **GaleriController**, **AwardController**, **TestimonialController**, **BeritaController**, **ContactController**: Feature-specific controllers
 
 ## Additional Dependencies

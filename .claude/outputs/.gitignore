@@ -1,0 +1,45 @@
+# Claude Outputs - Git Ignore Rules
+
+# Temporary working files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# Large files that shouldn't be in git
+*.log
+*.csv
+*.xlsx
+*.json
+*.pdf
+*.zip
+*.tar.gz
+
+# Analysis working data (optional - comment out if you want to track)
+analysis/*.md
+analysis/*.json
+analysis/*.log
+
+# Reports can be tracked (uncomment to ignore)
+# reports/**/*.md
+# reports/**/*.json
+
+# Artifacts (usually generated, shouldn't be tracked)
+artifacts/**
+!artifacts/.gitkeep
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

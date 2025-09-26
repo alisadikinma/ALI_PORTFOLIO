@@ -26,17 +26,13 @@
              onclick="openGalleryModal({{ $row->id_galeri }}, '{{ addslashes($row->nama_galeri) }}')">
             
             @if($row->thumbnail)
-                <img src="{{ asset('file/galeri/' . $row->thumbnail) }}" 
-                     alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
-                     class="w-full h-auto rounded-lg aspect-square object-cover" />
+                {!! \App\Helpers\ImageHelper::generateResponsiveImage('file/galeri/' . $row->thumbnail, $row->nama_galeri ?? 'Gallery image', ['w-full', 'h-auto', 'rounded-lg', 'aspect-square', 'object-cover']) !!}
             @elseif($row->galleryItems->where('status', 'Active')->first())
                 @php
                 $firstItem = $row->galleryItems->where('status', 'Active')->first();
                 @endphp
                 @if($firstItem->type === 'image')
-                    <img src="{{ asset('file/galeri/' . $firstItem->file_name) }}" 
-                         alt="{{ $row->nama_galeri ?? 'Gallery image' }}" 
-                         class="w-full h-auto rounded-lg aspect-square object-cover" />
+                    {!! \App\Helpers\ImageHelper::generateResponsiveImage('file/galeri/' . $firstItem->file_name, $row->nama_galeri ?? 'Gallery image', ['w-full', 'h-auto', 'rounded-lg', 'aspect-square', 'object-cover']) !!}
                 @elseif($firstItem->type === 'youtube')
                     @php
                     preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/', $firstItem->youtube_url, $matches);

@@ -19,7 +19,7 @@
             <div class="service-card {{ $index == 0 ? 'active' : '' }}" 
                  data-service-id="{{ $row->id_layanan ?? $index }}"
                  data-service-type="{{ Str::slug($row->nama_layanan) }}"
-                 data-image="{{ asset('file/layanan/' . $row->gambar_layanan) }}"
+                 data-image="{{ \App\Helpers\ImageHelper::optimizedAsset('file/layanan/' . $row->gambar_layanan) }}"
                  data-description="{!! htmlspecialchars($row->keterangan_layanan ?? '', ENT_QUOTES) !!}">
                 <div class="service-icon">
                     @if($row->icon_layanan)
@@ -69,9 +69,9 @@
             <div class="service-display">
                 <!-- Service Image -->
                 <div class="service-image-container">
-                    <img id="currentServiceImage" 
-                         src="{{ asset('file/layanan/' . ($layanan->where('status', 'Active')->sortBy('sequence')->first()->gambar_layanan ?? 'default.jpg')) }}" 
-                         alt="Service Image" 
+                    <img id="currentServiceImage"
+                         src="{{ \App\Helpers\ImageHelper::optimizedAsset('file/layanan/' . ($layanan->where('status', 'Active')->sortBy('sequence')->first()->gambar_layanan ?? 'default.jpg')) }}"
+                         alt="Service Image"
                          class="service-main-image">
                 </div>
                 

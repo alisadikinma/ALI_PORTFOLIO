@@ -508,11 +508,11 @@ document.addEventListener('DOMContentLoaded', () => {
 </style>
 
 <section id="home" role="region" aria-labelledby="hero-heading"
-    class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16">
+    class="hero-gradient-bg w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16 relative overflow-hidden">
     <div class="w-full flex flex-col sm:flex-row items-center gap-8 sm:gap-32">
         <img src="{{ asset('favicon/' . $konf->favicon_setting) }}"
             alt="Professional portrait of {{ $konf->pimpinan_setting }}, AI Generalist and Technopreneur"
-            class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl"
+            class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl float-element tilt-card scroll-reveal"
             loading="eager" decoding="async" />
         <div class="flex flex-col gap-4 sm:gap-6">
             <div class="flex flex-col gap-4 sm:gap-6">
@@ -522,11 +522,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         {{ $konf->profile_title }}
                     </div>
                 </div>
-                <h1 id="hero-heading" class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.25rem;">
+                <h1 id="hero-heading" class="hero-title text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px] scroll-reveal-left" style="margin-bottom: 0.25rem;">
                     Hello, I'm<br />
-                    <span class="text-yellow-400 relative">
+                    <span class="text-gradient neon-text relative">
                     {{ $konf->pimpinan_setting }}
-                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full" aria-hidden="true"></div>
+                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full pulse-glow" aria-hidden="true"></div>
                     </span>
                 </h1>
             </div>
@@ -537,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="flex flex-col sm:flex-row gap-4">
                 <a href="{{ $konf->primary_button_link ?? '#contact' }}"
                    target="{{ !empty($konf->primary_button_link) && filter_var($konf->primary_button_link, FILTER_VALIDATE_URL) ? '_blank' : '_self' }}"
-                   class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3 focus-visible-enhanced"
+                   class="btn-modern btn-primary btn-magnetic hero-button bounce-cta shimmer focus-visible-enhanced"
                    style="min-width: 180px; text-align: center;"
                    aria-label="{{ !empty($konf->primary_button_link) && filter_var($konf->primary_button_link, FILTER_VALIDATE_URL) ? 'View CV (opens in new tab)' : 'Go to contact section' }}">
                     <span class="text-neutral-900 text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <a href="{{ $konf->secondary_button_link ?? url('portfolio') }}"
                    target="{{ !empty($konf->secondary_button_link) && filter_var($konf->secondary_button_link, FILTER_VALIDATE_URL) ? '_blank' : '_self' }}"
-                    class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3 focus-visible-enhanced"
+                    class="btn-modern btn-secondary hero-button shimmer focus-visible-enhanced"
                     style="min-width: 200px; text-align: center;"
                     aria-label="{{ !empty($konf->secondary_button_link) && filter_var($konf->secondary_button_link, FILTER_VALIDATE_URL) ? 'View portfolio (opens in new tab)' : 'View my complete portfolio' }}">
                     <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
@@ -565,13 +565,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- Stats Section -->
     <section aria-labelledby="stats-heading" role="region">
-    <div class="w-full bg-neutral-900/40 flex flex-col items-center gap-4 sm:gap-6 md:gap-8 lg:gap-11">
+    <div class="w-full glass-card flex flex-col items-center gap-4 sm:gap-6 md:gap-8 lg:gap-11 scroll-reveal">
         <h2 id="stats-heading" class="sr-only">Professional Statistics and Achievements</h2>
         <div class="w-full h-0.5 outline outline-1 outline-neutral-900 outline-offset--1"></div>
 
         <div class="w-full px-4">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8">
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
+                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl glass-card stagger-item tilt-card">
                     <!-- Trade-up Icon -->
                     <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M36.6667 23.8332V14.6665H27.5" stroke="#FFD300" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -585,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
+                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl glass-card stagger-item tilt-card">
                     <!-- People Icon -->
                     <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9.89999 14.8502C9.89999 13.5374 10.4215 12.2783 11.3498 11.35C12.2781 10.4217 13.5372 9.9002 14.85 9.9002C16.1628 9.9002 17.4219 10.4217 18.3502 11.35C19.2785 12.2783 19.8 13.5374 19.8 14.8502C19.8 16.163 19.2785 17.4221 18.3502 18.3504C17.4219 19.2787 16.1628 19.8002 14.85 19.8002C13.5372 19.8002 12.2781 19.2787 11.3498 18.3504C10.4215 17.4221 9.89999 16.163 9.89999 14.8502ZM14.85 7.7002C12.9537 7.7002 11.1351 8.4535 9.79417 9.79438C8.45329 11.1353 7.69999 12.9539 7.69999 14.8502C7.69999 16.7465 8.45329 18.5651 9.79417 19.906C11.1351 21.2469 12.9537 22.0002 14.85 22.0002C16.7463 22.0002 18.5649 21.2469 19.9058 19.906C21.2467 18.5651 22 16.7465 22 14.8502C22 12.9539 21.2467 11.1353 19.9058 9.79438C18.5649 8.4535 16.7463 7.7002 14.85 7.7002ZM27.3614 33.3192C28.545 33.8032 30.0344 34.1002 31.9 34.1002C36.0382 34.1002 38.3262 32.6306 39.5318 30.9454C40.1621 30.0618 40.5566 29.032 40.678 27.9534C40.6888 27.8532 40.6961 27.7527 40.7 27.652V27.5002C40.7 27.0668 40.6146 26.6377 40.4488 26.2373C40.2829 25.837 40.0399 25.4732 39.7334 25.1667C39.427 24.8603 39.0632 24.6172 38.6628 24.4514C38.2625 24.2856 37.8334 24.2002 37.4 24.2002H27.214C27.742 24.8382 28.138 25.584 28.369 26.4002H37.4C37.6917 26.4002 37.9715 26.5161 38.1778 26.7224C38.3841 26.9287 38.5 27.2085 38.5 27.5002V27.619L38.489 27.729C38.4064 28.4269 38.1491 29.0928 37.741 29.665C37.0216 30.6748 35.4596 31.9002 31.9 31.9002C30.2896 31.9002 29.0884 31.6494 28.1886 31.282C28.0082 31.898 27.7464 32.5932 27.3614 33.3192ZM3.29999 28.6002C3.29999 27.4332 3.76356 26.3141 4.58872 25.4889C5.41388 24.6638 6.53304 24.2002 7.69999 24.2002H22C23.1669 24.2002 24.2861 24.6638 25.1113 25.4889C25.9364 26.3141 26.4 27.4332 26.4 28.6002V28.785L26.3956 28.873L26.3736 29.17C26.2177 30.5957 25.7113 31.9607 24.8996 33.1432C23.3574 35.3762 20.3786 37.4002 14.85 37.4002C9.32139 37.4002 6.34259 35.3762 4.80039 33.1454C3.98836 31.9623 3.48196 30.5965 3.32639 29.17C3.31384 29.0419 3.30503 28.9136 3.29999 28.785V28.6002ZM5.49999 28.7322V28.7718L5.51539 28.9544C5.63477 30.009 6.01096 31.0182 6.61099 31.8936C7.68239 33.4424 9.92859 35.2002 14.85 35.2002C19.7714 35.2002 22.0176 33.4424 23.089 31.8936C23.689 31.0182 24.0652 30.009 24.1846 28.9544C24.1934 28.8708 24.1978 28.8099 24.1978 28.7718L24.2 28.7344V28.6002C24.2 28.0167 23.9682 27.4571 23.5556 27.0446C23.143 26.632 22.5835 26.4002 22 26.4002H7.69999C7.11651 26.4002 6.55693 26.632 6.14435 27.0446C5.73177 27.4571 5.49999 28.0167 5.49999 28.6002V28.7322ZM28.6 16.5002C28.6 15.625 28.9477 14.7856 29.5665 14.1667C30.1854 13.5479 31.0248 13.2002 31.9 13.2002C32.7752 13.2002 33.6146 13.5479 34.2334 14.1667C34.8523 14.7856 35.2 15.625 35.2 16.5002C35.2 17.3754 34.8523 18.2148 34.2334 18.8336C33.6146 19.4525 32.7752 19.8002 31.9 19.8002C31.0248 19.8002 30.1854 19.4525 29.5665 18.8336C28.9477 18.2148 28.6 17.3754 28.6 16.5002ZM31.9 11.0002C30.4413 11.0002 29.0424 11.5797 28.0109 12.6111C26.9795 13.6426 26.4 15.0415 26.4 16.5002C26.4 17.9589 26.9795 19.3578 28.0109 20.3893C29.0424 21.4207 30.4413 22.0002 31.9 22.0002C33.3587 22.0002 34.7576 21.4207 35.7891 20.3893C36.8205 19.3578 37.4 17.9589 37.4 16.5002C37.4 15.0415 36.8205 13.6426 35.7891 12.6111C34.7576 11.5797 33.3587 11.0002 31.9 11.0002Z" fill="#FFD300"/>
@@ -598,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
+                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl glass-card stagger-item tilt-card">
                     <!-- Briefcase Icon -->
                     <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M37.125 12.375H6.875C6.11561 12.375 5.5 12.9906 5.5 13.75V35.75C5.5 36.5094 6.11561 37.125 6.875 37.125H37.125C37.8844 37.125 38.5 36.5094 38.5 35.75V13.75C38.5 12.9906 37.8844 12.375 37.125 12.375Z" stroke="#FFD300" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -614,7 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
+                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl glass-card stagger-item tilt-card">
                     <!-- Dollar Icon -->
                     <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22 38.0418C21.6368 38.0371 21.2898 37.8907 21.033 37.6338C20.7761 37.377 20.6297 37.03 20.625 36.6668V7.3335C20.625 6.96882 20.7699 6.61909 21.0277 6.36122C21.2856 6.10336 21.6353 5.9585 22 5.9585C22.3647 5.9585 22.7144 6.10336 22.9723 6.36122C23.2301 6.61909 23.375 6.96882 23.375 7.3335V36.6668C23.3703 37.03 23.2239 37.377 22.967 37.6338C22.7102 37.8907 22.3632 38.0371 22 38.0418Z" fill="#FFD300"/>
@@ -628,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl">
+                <div class="flex flex-col items-center gap-2 sm:gap-3 md:gap-4 p-4 rounded-2xl glass-card stagger-item tilt-card">
                     <!-- Target Icon -->
                     <svg class="w-8 sm:w-10 md:w-12 h-8 sm:h-10 md:h-12" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22 40.3332C19.4639 40.3332 17.0805 39.8516 14.85 38.8885C12.6194 37.9254 10.6791 36.6194 9.02913 34.9707C7.37913 33.3219 6.07318 31.3816 5.1113 29.1498C4.14941 26.9181 3.66785 24.5347 3.66663 21.9998C3.66541 19.4649 4.14696 17.0816 5.1113 14.8498C6.07563 12.6181 7.38157 10.6778 9.02913 9.029C10.6767 7.38023 12.617 6.07428 14.85 5.11117C17.083 4.14806 19.4663 3.6665 22 3.6665C24.5336 3.6665 26.917 4.14806 29.15 5.11117C31.383 6.07428 33.3232 7.38023 34.9708 9.029C36.6184 10.6778 37.9249 12.6181 38.8905 14.8498C39.856 17.0816 40.337 19.4649 40.3333 21.9998C40.3296 24.5347 39.8481 26.9181 38.8886 29.1498C37.9292 31.3816 36.6232 33.3219 34.9708 34.9707C33.3184 36.6194 31.3781 37.926 29.15 38.8903C26.9219 39.8547 24.5385 40.3356 22 40.3332ZM22 36.6665C26.0944 36.6665 29.5625 35.2457 32.4041 32.404C35.2458 29.5623 36.6666 26.0943 36.6666 21.9998C36.6666 17.9054 35.2458 14.4373 32.4041 11.5957C29.5625 8.754 26.0944 7.33317 22 7.33317C17.9055 7.33317 14.4375 8.754 11.5958 11.5957C8.75413 14.4373 7.33329 17.9054 7.33329 21.9998C7.33329 26.0943 8.75413 29.5623 11.5958 32.404C14.4375 35.2457 17.9055 36.6665 22 36.6665ZM22 32.9998C18.9444 32.9998 16.3472 31.9304 14.2083 29.7915C12.0694 27.6526 11 25.0554 11 21.9998C11 18.9443 12.0694 16.3471 14.2083 14.2082C16.3472 12.0693 18.9444 10.9998 22 10.9998C25.0555 10.9998 27.6527 12.0693 29.7916 14.2082C31.9305 16.3471 33 18.9443 33 21.9998C33 25.0554 31.9305 27.6526 29.7916 29.7915C27.6527 31.9304 25.0555 32.9998 22 32.9998ZM22 29.3332C24.0166 29.3332 25.743 28.6151 27.1791 27.179C28.6152 25.7429 29.3333 24.0165 29.3333 21.9998C29.3333 19.9832 28.6152 18.2568 27.1791 16.8207C25.743 15.3846 24.0166 14.6665 22 14.6665C19.9833 14.6665 18.2569 15.3846 16.8208 16.8207C15.3847 18.2568 14.6666 19.9832 14.6666 21.9998C14.6666 24.0165 15.3847 25.7429 16.8208 27.179C18.2569 28.6151 19.9833 29.3332 22 29.3332ZM22 25.6665C20.9916 25.6665 20.1287 25.3078 19.4113 24.5903C18.6939 23.8729 18.3345 23.0094 18.3333 21.9998C18.3321 20.9903 18.6914 20.1274 19.4113 19.4112C20.1312 18.6949 20.9941 18.3356 22 18.3332C23.0058 18.3307 23.8694 18.6901 24.5905 19.4112C25.3116 20.1323 25.6703 20.9952 25.6666 21.9998C25.663 23.0045 25.3042 23.868 24.5905 24.5903C23.8767 25.3127 23.0132 25.6714 22 25.6665Z" fill="#FFD300"/>

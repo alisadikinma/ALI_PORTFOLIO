@@ -4,6 +4,7 @@ import { PortfolioManager } from './modules/portfolio';
 import { GalleryManager } from './modules/gallery';
 import { TestimonialManager } from './modules/testimonials';
 import { ThemeManager } from './modules/theme';
+import ModernInteractions from './modules/modern-interactions';
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         new GalleryManager();
         new TestimonialManager();
         new ThemeManager(); // Initialize dark mode
+        new ModernInteractions(); // Initialize Gen-Z interactions
 
         console.log('Portfolio App Initialized Successfully!');
     } catch (error) {

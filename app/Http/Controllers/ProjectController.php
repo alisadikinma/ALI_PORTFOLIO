@@ -69,54 +69,48 @@ class ProjectController extends Controller
         try {
             $title = 'Data Portfolio';
             
-            // First, try a simple query without join to test
+            // Test database connection first
+            try {
+                $connectionTest = DB::connection()->getPdo();
+                Log::info('Database connection successful');
+            } catch (Exception $dbError) {
+                Log::error('Database connection failed: ' . $dbError->getMessage());
+                throw new Exception('Database connection failed. Please check your database settings.');
+            }
+            
+            // Check if project table exists
+            if (!DB::getSchemaBuilder()->hasTable('project')) {
+                throw new Exception('Project table does not exist in database');
+            }
+            
+            // Simple query without join first
             $project = DB::table('project')
                         ->orderBy('sequence', 'asc')
                         ->orderBy('id_project', 'desc')
                         ->get();
             
-            // Log for debugging
             Log::info('Project Index - Projects found: ' . $project->count());
             
-            // If simple query works, try with join
-            if ($project->count() > 0) {
-                $project = DB::table('project as p')
-                            ->leftJoin('lookup_data as ld', function($join) {
-                                $join->on('p.category_lookup_id', '=', 'ld.id')
-                                     ->where('ld.lookup_type', '=', 'project_category')
-                                     ->where('ld.is_active', '=', 1);
-                            })
-                            ->select('p.*', 'ld.lookup_name as category_name', 'ld.lookup_icon as category_icon', 'ld.lookup_color as category_color')
-                            ->orderBy('p.sequence', 'asc')
-                            ->orderBy('p.id_project', 'desc')
-                            ->get();
-                
-                Log::info('Project Index - Projects with join: ' . $project->count());
-            }
+            // Add category_name field manually for compatibility
+            $project = $project->map(function($item) {
+                $item->category_name = $item->project_category ?? 'N/A';
+                return $item;
+            });
             
             return view('project.index', compact('project', 'title'));
             
         } catch (Exception $e) {
-            Log::error('Project Index Error: ' . $e->getMessage());
+            Log::error('Project Index Error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
             
-            // Fallback: try even simpler query
-            try {
-                $project = DB::table('project')->get();
-                Log::info('Project Index Fallback - Projects found: ' . $project->count());
-                
-                return view('project.index', [
-                    'project' => $project, 
-                    'title' => 'Data Portfolio'
-                ])->with('error', 'Warning: Using fallback query. Some features may not work properly.');
-                
-            } catch (Exception $fallbackError) {
-                Log::error('Project Index Fallback Error: ' . $fallbackError->getMessage());
-                
-                return view('project.index', [
-                    'project' => collect([]), 
-                    'title' => 'Data Portfolio'
-                ])->with('error', 'Error loading projects: ' . $e->getMessage());
-            }
+            // Ultra-safe fallback
+            $project = collect([]);
+            $title = 'Data Portfolio';
+            
+            return view('project.index', compact('project', 'title'))
+                   ->with('error', 'Error loading projects: ' . $e->getMessage() . '. Please check your database connection and ensure XAMPP MySQL is running.');
         }
     }
 
@@ -675,16 +669,6 @@ class ProjectController extends Controller
     public function uploadEditorImage(Request $request)
     {
         try {
-            // Debug logging
-            Log::info('Editor Image Upload Started', [
-                'has_file' => $request->hasFile('file'),
-                'method' => $request->method(),
-                'content_type' => $request->header('Content-Type'),
-                'all_files' => $request->allFiles(),
-                'csrf_token' => $request->header('X-CSRF-TOKEN')
-            ]);
-
-            // Enhanced file validation
             $request->validate([
                 'file' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:min_width=50,min_height=50,max_width=4000,max_height=4000'
             ], [
@@ -695,17 +679,14 @@ class ProjectController extends Controller
                 'file.dimensions' => 'Image dimensions must be between 50x50 and 4000x4000 pixels'
             ]);
 
-            // Create editor directory if it doesn't exist
             $editorDir = public_path('images/editor');
             if (!File::exists($editorDir)) {
                 File::makeDirectory($editorDir, 0755, true);
-                Log::info('Created editor directory: ' . $editorDir);
             }
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
 
-                // Additional MIME type validation
                 $mimeType = $file->getMimeType();
                 $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -713,24 +694,11 @@ class ProjectController extends Controller
                     throw new Exception('Invalid file MIME type: ' . $mimeType);
                 }
 
-                Log::info('Secure file upload details', [
-                    'mime_type' => $mimeType,
-                    'extension' => $file->getClientOriginalExtension(),
-                    'size' => $file->getSize(),
-                    'is_valid' => $file->isValid()
-                ]);
-
                 $extension = strtolower($file->getClientOriginalExtension());
                 $filename = 'editor_' . hash('sha256', uniqid() . time() . rand(1000, 9999)) . '.' . $extension;
                 
-                // Move file to editor directory
                 if ($file->move($editorDir, $filename)) {
                     $imageUrl = asset('images/editor/' . $filename);
-                    
-                    Log::info('Image uploaded successfully', [
-                        'filename' => $filename,
-                        'url' => $imageUrl
-                    ]);
                     
                     return response()->json([
                         'success' => true,
@@ -739,17 +707,13 @@ class ProjectController extends Controller
                         'filename' => $filename
                     ]);
                 } else {
-                    throw new Exception('Failed to move uploaded file to: ' . $editorDir . '/' . $filename);
+                    throw new Exception('Failed to move uploaded file');
                 }
             }
 
             throw new Exception('No file was uploaded');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Editor Image Upload Validation Error', [
-                'errors' => $e->errors()
-            ]);
-            
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed: ' . implode(', ', $e->errors()['file'] ?? ['Invalid file']),
@@ -757,19 +721,9 @@ class ProjectController extends Controller
             ], 422);
 
         } catch (Exception $e) {
-            Log::error('Editor Image Upload Error: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
             return response()->json([
                 'success' => false,
-                'message' => 'Upload failed: ' . $e->getMessage(),
-                'debug_info' => [
-                    'error_file' => $e->getFile(),
-                    'error_line' => $e->getLine()
-                ]
+                'message' => 'Upload failed: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -783,7 +737,6 @@ class ProjectController extends Controller
             $query = trim($request->get('query', ''));
             $currentId = $request->get('current_id', null);
 
-            // Enhanced input validation
             if (strlen($query) < 3 || strlen($query) > 100) {
                 return response()->json([
                     'success' => true,
@@ -791,16 +744,13 @@ class ProjectController extends Controller
                 ]);
             }
 
-            // Sanitize search query to prevent XSS
             $query = htmlspecialchars($query, ENT_QUOTES, 'UTF-8');
 
-            // Validate current_id if provided
             if ($currentId !== null && (!is_numeric($currentId) || $currentId < 1)) {
                 $currentId = null;
             }
 
-            // Secure parameterized query to prevent SQL injection
-            $searchTerm = '%' . addslashes($query) . '%';
+            $searchTerm = '%' . str_replace(['%', '_'], ['\\%', '\\_'], $query) . '%';
             $projects = DB::table('project')
                 ->select('id_project', 'project_name', 'client_name', 'slug_project', 'project_category')
                 ->where('status', '=', 'Active')
@@ -810,7 +760,6 @@ class ProjectController extends Controller
                       ->orWhere('project_category', 'LIKE', $searchTerm);
                 });
 
-            // Exclude current project if editing
             if ($currentId) {
                 $projects->where('id_project', '!=', $currentId);
             }
@@ -844,110 +793,17 @@ class ProjectController extends Controller
     }
 
     /**
-     * Debug method to test database connection and lookup_data query
-     */
-    public function debugCategories()
-    {
-        try {
-            echo "<h1>Debug Project Categories</h1>";
-            echo "<hr>";
-
-            echo "<h3>1. Database Connection Test</h3>";
-            $pdo = DB::connection()->getPdo();
-            echo "✅ Database connection: SUCCESS<br>";
-            echo "Database name: " . $pdo->query('SELECT DATABASE()')->fetchColumn() . "<br>";
-            echo "<br>";
-
-            echo "<h3>2. Check lookup_data Table</h3>";
-            $tableExists = DB::getSchemaBuilder()->hasTable('lookup_data');
-            echo "Table exists: " . ($tableExists ? "✅ YES" : "❌ NO") . "<br>";
-            
-            if ($tableExists) {
-                $columns = DB::getSchemaBuilder()->getColumnListing('lookup_data');
-                echo "Columns: " . implode(', ', $columns) . "<br>";
-                
-                $count = DB::table('lookup_data')->count();
-                echo "Total records: " . $count . "<br>";
-                echo "<br>";
-
-                echo "<h3>3. All Records Sample</h3>";
-                $allRecords = DB::table('lookup_data')->limit(10)->get();
-                echo "<table border='1' cellpadding='5'>";
-                echo "<tr><th>ID</th><th>Type</th><th>Name</th><th>Code</th><th>Active</th><th>Sort Order</th></tr>";
-                foreach ($allRecords as $record) {
-                    echo "<tr>";
-                    echo "<td>" . $record->id . "</td>";
-                    echo "<td>" . $record->lookup_type . "</td>";
-                    echo "<td>" . $record->lookup_name . "</td>";
-                    echo "<td>" . $record->lookup_code . "</td>";
-                    echo "<td>" . $record->is_active . "</td>";
-                    echo "<td>" . ($record->sort_order ?? 'NULL') . "</td>";
-                    echo "</tr>";
-                }
-                echo "</table><br>";
-
-                echo "<h3>4. Project Categories Query</h3>";
-                $categories = DB::table('lookup_data')
-                                ->where('lookup_type', 'project_category')
-                                ->where('is_active', 1)
-                                ->orderBy('sort_order')
-                                ->orderBy('lookup_name')
-                                ->get();
-                
-                echo "Categories found: " . $categories->count() . "<br>";
-                
-                if ($categories->count() > 0) {
-                    echo "<h4>Category List:</h4>";
-                    echo "<table border='1' cellpadding='5'>";
-                    echo "<tr><th>ID</th><th>Name</th><th>Code</th><th>Sort Order</th><th>Active</th></tr>";
-                    foreach ($categories as $cat) {
-                        echo "<tr>";
-                        echo "<td>" . $cat->id . "</td>";
-                        echo "<td>" . $cat->lookup_name . "</td>";
-                        echo "<td>" . $cat->lookup_code . "</td>";
-                        echo "<td>" . ($cat->sort_order ?? 'NULL') . "</td>";
-                        echo "<td>" . $cat->is_active . "</td>";
-                        echo "</tr>";
-                    }
-                    echo "</table>";
-                } else {
-                    echo "❌ No categories found with lookup_type='project_category' and is_active=1<br>";
-                }
-
-                echo "<br><h3>5. Test getProjectCategories Method</h3>";
-                $result = $this->getProjectCategories();
-                echo "Controller method result: " . $result->count() . " categories<br>";
-                if ($result->count() > 0) {
-                    echo "First category: " . json_encode($result->first()) . "<br>";
-                }
-            }
-
-        } catch (Exception $e) {
-            echo "❌ ERROR: " . $e->getMessage() . "<br>";
-            echo "File: " . $e->getFile() . "<br>";
-            echo "Line: " . $e->getLine() . "<br>";
-            echo "<pre>" . $e->getTraceAsString() . "</pre>";
-        }
-
-        echo "<br><hr>";
-        echo "<p><a href='" . route('project.create') . "'>Test Create Project Form</a></p>";
-        echo "<p><a href='" . route('project.index') . "'>Back to Project List</a></p>";
-    }
-
-    /**
      * API: Get projects for frontend (AJAX)
      */
     public function getProjects(Request $request)
     {
         try {
-            // Use simple query without join since category_lookup_id doesn't exist
             $projects = DB::table('project')
                        ->where('status', 'Active')
                        ->orderBy('sequence', 'asc')
                        ->orderBy('created_at', 'desc')
                        ->get();
 
-            // Add category information manually
             $projects = $projects->map(function($project) {
                 $project->category_name = $project->project_category ?? 'N/A';
                 $project->category_icon = null;

@@ -132,8 +132,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('award', AwardController::class);
     Route::resource('contacts', ContactController::class);
 
-    // Project Management - Now properly protected
-    Route::resource('project', ProjectController::class);
+    // Project Management - Custom routes
+    Route::get('/project', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('/create_project', [ProjectController::class, 'create'])->name('project.create');
+    Route::post('/project', [ProjectController::class, 'store'])->name('project.store');
+    Route::get('/project/{id}', [ProjectController::class, 'show'])->name('project.show');
+    Route::get('/project/{id}/show', [ProjectController::class, 'showAdmin'])->name('project.showAdmin');
+    Route::get('/project/{id}/edit', [ProjectController::class, 'edit'])->name('project.edit');
+    Route::put('/project/{id}', [ProjectController::class, 'update'])->name('project.update');
+    Route::delete('/project/{id}', [ProjectController::class, 'destroy'])->name('project.destroy');
     Route::delete('/project/{id}/image', [ProjectController::class, 'deleteImage'])->name('project.deleteImage');
 
     // Secure file upload for editor

@@ -530,32 +530,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     </span>
                 </h1>
             </div>
-            <p class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: 0.25rem;">
-                {!! $konf->tentang_setting !!}
-            </p>
+            <div class="text-gray-500 text-lg sm:text-2xl font-normal leading-7 sm:leading-9 max-w-full sm:max-w-[648px]" style="margin-top: 0.25rem;">
+                {!! $konf->profile_content !!}
+            </div>
 
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{ !empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact' }}"
-                   target="{{ !empty($konf->view_cv_url) ? '_blank' : '_self' }}"
+                <a href="{{ $konf->primary_button_link ?? '#contact' }}"
+                   target="{{ !empty($konf->primary_button_link) && filter_var($konf->primary_button_link, FILTER_VALIDATE_URL) ? '_blank' : '_self' }}"
                    class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3 focus-visible-enhanced"
                    style="min-width: 180px; text-align: center;"
-                   aria-label="{{ !empty($konf->view_cv_url) ? 'Download or view my CV (opens in new tab)' : 'Go to contact section' }}">
+                   aria-label="{{ !empty($konf->primary_button_link) && filter_var($konf->primary_button_link, FILTER_VALIDATE_URL) ? 'View CV (opens in new tab)' : 'Go to contact section' }}">
                     <span class="text-neutral-900 text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        View CV
+                        {{ $konf->primary_button_title ?? 'View CV' }}
                     </span>
-                    @if(!empty($konf->view_cv_url))
+                    @if(!empty($konf->primary_button_link) && filter_var($konf->primary_button_link, FILTER_VALIDATE_URL))
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     @endif
                 </a>
 
-                <a href="{{ url('portfolio') }}" target="_blank"
+                <a href="{{ $konf->secondary_button_link ?? url('portfolio') }}"
+                   target="{{ !empty($konf->secondary_button_link) && filter_var($konf->secondary_button_link, FILTER_VALIDATE_URL) ? '_blank' : '_self' }}"
                     class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3 focus-visible-enhanced"
                     style="min-width: 200px; text-align: center;"
-                    aria-label="View my complete portfolio (opens in new tab)">
+                    aria-label="{{ !empty($konf->secondary_button_link) && filter_var($konf->secondary_button_link, FILTER_VALIDATE_URL) ? 'View portfolio (opens in new tab)' : 'View my complete portfolio' }}">
                     <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
-                        View Portfolio
+                        {{ $konf->secondary_button_title ?? 'View Portfolio' }}
                     </span>
                 </a>
             </div>

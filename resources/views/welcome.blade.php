@@ -677,7 +677,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="{{ asset('images/about/' . $konf->about_section_image) }}"
                          alt="{{ $konf->about_section_subtitle ?? 'Professional experience and expertise' }}"
                          class="w-full h-full object-cover rounded-xl"
-                         loading="lazy" decoding="async" />
+                         loading="lazy"
+                         decoding="async" />
                 @elseif(isset($award) && $award->count() > 0)
                     <!-- Company Logos Grid from Awards -->
                     <div class="grid grid-cols-2 gap-6 w-full h-full place-content-center">

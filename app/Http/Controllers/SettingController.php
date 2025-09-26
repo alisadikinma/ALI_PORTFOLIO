@@ -121,7 +121,7 @@ class SettingController extends Controller
         'pimpinan_setting'       => $request->pimpinan_setting,
         'logo_setting'           => $logo,
         'favicon_setting'        => $favicon,
-        'tentang_setting'        => $request->tentang_setting,
+        'tentang_setting'        => $request->tentang_setting ?? 'Default about content',
         'misi_setting'           => $request->misi_setting,
         'visi_setting'           => $request->visi_setting,
         'keyword_setting'        => $request->keyword_setting,

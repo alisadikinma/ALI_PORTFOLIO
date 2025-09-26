@@ -125,7 +125,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="content">
-                                    {!! $project->description !!}
+                                    {{ $project->description }}
                                 </div>
                             </div>
                         </div>

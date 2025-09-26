@@ -10,7 +10,10 @@ class ContactController extends Controller
 
     public function index()
     {
-        $contacts = Contact::all();
+        // Use pagination for better performance with large datasets
+        $contacts = Contact::orderBy('created_at', 'desc')
+                          ->paginate(20);
+
         return view('contacts.index', [
             'title' => 'Data Contact',
             'contacts' => $contacts

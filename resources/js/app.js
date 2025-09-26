@@ -3,17 +3,19 @@ import { NavigationManager } from './modules/navigation';
 import { PortfolioManager } from './modules/portfolio';
 import { GalleryManager } from './modules/gallery';
 import { TestimonialManager } from './modules/testimonials';
+import { ThemeManager } from './modules/theme';
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Portfolio App Initializing...');
-    
+
     try {
         new NavigationManager();
         new PortfolioManager();
         new GalleryManager();
         new TestimonialManager();
-        
+        new ThemeManager(); // Initialize dark mode
+
         console.log('Portfolio App Initialized Successfully!');
     } catch (error) {
         console.error('Error initializing Portfolio App:', error);

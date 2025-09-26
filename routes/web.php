@@ -82,7 +82,7 @@ Route::get('/login', function () {
 Route::post('/login', function (\Illuminate\Http\Request $request) {
     $request->validate([
         'email' => ['required', 'email', 'max:255'],
-        'password' => ['required', 'string', 'min:6', 'max:255'],
+        'password' => ['required', 'string', 'min:8', 'max:255'], // Increased min length
     ]);
 
     $credentials = $request->only(['email', 'password']);
@@ -95,7 +95,7 @@ Route::post('/login', function (\Illuminate\Http\Request $request) {
     return back()->withErrors([
         'email' => 'The provided credentials do not match our records.',
     ])->onlyInput('email');
-});
+})->middleware('throttle:5,1'); // Rate limiting: 5 attempts per minute
 
 Route::post('/logout', function (\Illuminate\Http\Request $request) {
     Auth::logout();

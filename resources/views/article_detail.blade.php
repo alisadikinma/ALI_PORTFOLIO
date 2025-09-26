@@ -249,7 +249,7 @@
 
             <!-- Article Content dengan Clear Structure -->
             <div class="article-content text-zinc-400 text-base sm:text-lg font-normal leading-relaxed prose prose-invert max-w-none">
-                {!! $article->isi_berita !!}
+                {{ $article->isi_berita }}
             </div>
 
             <!-- Quick Answer Box (GEO) -->

@@ -19,12 +19,15 @@
 @endif
 
 <!-- Scroll to Top Button -->
-<button id="scrollToTopBtn" 
-        class="fixed bottom-8 right-8 z-50 p-4 bg-yellow-400 hover:bg-yellow-500 text-black rounded-full shadow-xl transition-all duration-300 opacity-0 invisible transform translate-y-4 hover:scale-110"
-        style="position: fixed !important; bottom: 2rem !important; right: 2rem !important; z-index: 9999 !important;">
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<button id="scrollToTopBtn"
+        class="fixed bottom-8 right-8 z-50 p-4 bg-yellow-400 hover:bg-yellow-500 text-black rounded-full shadow-xl transition-all duration-300 opacity-0 invisible transform translate-y-4 hover:scale-110 focus-visible-enhanced"
+        style="position: fixed !important; bottom: 2rem !important; right: 2rem !important; z-index: 9999 !important;"
+        aria-label="Scroll to top of page"
+        title="Scroll to top">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
     </svg>
+    <span class="sr-only">Scroll to top</span>
 </button>
 
 <script>
@@ -504,11 +507,13 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
-<section id="home"
+<section id="home" role="region" aria-labelledby="hero-heading"
     class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 sm:py-14 flex flex-col items-center gap-8 sm:gap-16">
     <div class="w-full flex flex-col sm:flex-row items-center gap-8 sm:gap-32">
-        <img src="{{ asset('favicon/' . $konf->favicon_setting) }}" alt="Profile image"
-            class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl" />
+        <img src="{{ asset('favicon/' . $konf->favicon_setting) }}"
+            alt="Professional portrait of {{ $konf->pimpinan_setting }}, AI Generalist and Technopreneur"
+            class="w-full max-w-[300px] sm:max-w-[536px] h-auto rounded-2xl"
+            loading="eager" decoding="async" />
         <div class="flex flex-col gap-4 sm:gap-6">
             <div class="flex flex-col gap-4 sm:gap-6">
                 <div class="flex items-center gap-4 sm:gap-6">
@@ -517,11 +522,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         {{ $konf->profile_title }}
                     </div>
                 </div>
-                <h1 class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.25rem;">
-                    Hello bro, I'm<br />
+                <h1 id="hero-heading" class="text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px]" style="margin-bottom: 0.25rem;">
+                    Hello, I'm<br />
                     <span class="text-yellow-400 relative">
                     {{ $konf->pimpinan_setting }}
-                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full"></div>
+                    <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full" aria-hidden="true"></div>
                     </span>
                 </h1>
             </div>
@@ -530,22 +535,25 @@ document.addEventListener('DOMContentLoaded', () => {
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{ !empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact' }}" 
-                   target="{{ !empty($konf->view_cv_url) ? '_blank' : '_self' }}" 
-                   class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3" 
-                   style="min-width: 180px; text-align: center;">
+                <a href="{{ !empty($konf->view_cv_url) ? $konf->view_cv_url : '#contact' }}"
+                   target="{{ !empty($konf->view_cv_url) ? '_blank' : '_self' }}"
+                   class="px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 rounded-lg flex items-center justify-center gap-3 focus-visible-enhanced"
+                   style="min-width: 180px; text-align: center;"
+                   aria-label="{{ !empty($konf->view_cv_url) ? 'Download or view my CV (opens in new tab)' : 'Go to contact section' }}">
                     <span class="text-neutral-900 text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
                         View CV
                     </span>
                     @if(!empty($konf->view_cv_url))
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     @endif
                 </a>
 
                 <a href="{{ url('portfolio') }}" target="_blank"
-                    class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3" style="min-width: 200px; text-align: center;">
+                    class="px-8 sm:px-10 py-3 sm:py-4 bg-slate-800/60 rounded-lg outline outline-1 outline-slate-500 flex items-center justify-center gap-3 focus-visible-enhanced"
+                    style="min-width: 200px; text-align: center;"
+                    aria-label="View my complete portfolio (opens in new tab)">
                     <span class="text-white text-base sm:text-lg font-semibold capitalize leading-[40px] sm:leading-[64px]">
                         View Portfolio
                     </span>
@@ -555,7 +563,9 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <!-- Stats Section -->
+    <section aria-labelledby="stats-heading" role="region">
     <div class="w-full bg-neutral-900/40 flex flex-col items-center gap-4 sm:gap-6 md:gap-8 lg:gap-11">
+        <h2 id="stats-heading" class="sr-only">Professional Statistics and Achievements</h2>
         <div class="w-full h-0.5 outline outline-1 outline-neutral-900 outline-offset--1"></div>
 
         <div class="w-full px-4">
@@ -634,17 +644,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div class="w-full h-0.5 outline outline-1 outline-neutral-900 outline-offset--1"></div>
     </div>
+    </section>
 </section>
 
 <!-- About Section - FIXED -->
 @if($konf->about_section_active ?? true)
-<section id="about" class="w-full max-w-screen-2xl mx-auto px-6 py-12">
+<section id="about" class="w-full max-w-screen-2xl mx-auto px-6 py-12" role="region" aria-labelledby="about-heading">
     <div class="flex flex-col lg:flex-row justify-between items-center gap-12">
         
         <!-- Left Content -->
         <div class="flex flex-col gap-8 max-w-2xl flex-1 order-2 lg:order-1">
             <div class="flex flex-col gap-6">
-                <h2 class="text-3xl lg:text-4xl font-bold text-white leading-snug">
+                <h2 id="about-heading" class="text-3xl lg:text-4xl font-bold text-white leading-snug">
                     {{ $konf->about_section_title ?? 'With over 16+ years of experience in manufacturing and technology' }}
                 </h2>
                 @if(isset($konf->about_section_subtitle) && $konf->about_section_subtitle)
@@ -662,17 +673,19 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="flex-1 flex items-stretch justify-center order-1 lg:order-2">
             <div class="w-full max-w-lg lg:max-w-xl xl:max-w-2xl p-6 bg-slate-800 rounded-2xl outline outline-2 outline-orange-400">
                 @if(isset($konf->about_section_image) && $konf->about_section_image && file_exists(public_path('images/about/' . $konf->about_section_image)))
-                    <img src="{{ asset('images/about/' . $konf->about_section_image) }}" 
-                         alt="About Section Image" 
-                         class="w-full h-full object-cover rounded-xl" />
+                    <img src="{{ asset('images/about/' . $konf->about_section_image) }}"
+                         alt="{{ $konf->about_section_subtitle ?? 'Professional experience and expertise' }}"
+                         class="w-full h-full object-cover rounded-xl"
+                         loading="lazy" decoding="async" />
                 @elseif(isset($award) && $award->count() > 0)
                     <!-- Company Logos Grid from Awards -->
                     <div class="grid grid-cols-2 gap-6 w-full h-full place-content-center">
                         @foreach($award->take(6) as $award_item)
                         <div class="p-6 bg-slate-700/60 rounded-xl outline outline-1 outline-slate-600 flex items-center justify-center aspect-square min-h-[120px]">
-                            <img src="{{ asset('file/award/' . $award_item->gambar_award) }}" 
-                                 alt="{{ $award_item->nama_award }}" 
-                                 class="max-w-full max-h-full object-contain opacity-80" />
+                            <img src="{{ asset('file/award/' . $award_item->gambar_award) }}"
+                                 alt="{{ $award_item->nama_award }} certification logo"
+                                 class="max-w-full max-h-full object-contain opacity-80"
+                                 loading="lazy" decoding="async" />
                         </div>
                         @endforeach
                     </div>
@@ -757,9 +770,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Testimonials Section -->
 @if($konf->testimonials_section_active ?? true)
-<section class="testimonials-section" id="testimonials">
+<section class="testimonials-section" id="testimonials" role="region" aria-labelledby="testimonials-heading">
     <div class="content-wrapper">
-        <h2 class="testimonials-title">Testimonials</h2>
+        <h2 id="testimonials-heading" class="testimonials-title">Testimonials</h2>
         <p class="about-content">
             Real stories from clients who transformed their business with AI and automation.
         </p>
@@ -768,14 +781,19 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="testimonials-wrapper relative overflow-hidden">
             <div class="testimonials-grid flex transition-transform duration-500 ease-in-out" id="testimonialSlider">
                 @foreach ($testimonial as $row)
-                <div class="testimonial-item flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4 text-center">
-                    <img src="{{ asset('file/testimonial/' . $row->gambar_testimonial) }}" alt="{{ $row->judul_testimonial }}" class="testimonial-image mx-auto rounded-full w-20 h-20 object-cover border-4 border-yellow-400">
-                    <div class="testimonial-text mt-4 text-white">"{!! $row->deskripsi_testimonial !!}"</div>
-                    <div class="testimonial-author mt-2 font-semibold text-yellow-400">
+                <article class="testimonial-item flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 px-4 text-center" role="article">
+                    <img src="{{ asset('file/testimonial/' . $row->gambar_testimonial) }}"
+                         alt="Portrait of {{ $row->judul_testimonial }}"
+                         class="testimonial-image mx-auto rounded-full w-20 h-20 object-cover border-4 border-yellow-400"
+                         loading="lazy" decoding="async" />
+                    <blockquote class="testimonial-text mt-4 text-white">
+                        "{!! $row->deskripsi_testimonial !!}"
+                    </blockquote>
+                    <cite class="testimonial-author mt-2 font-semibold text-yellow-400 not-italic">
                         {{ $row->judul_testimonial ?? 'Testimonial' }}
-                    </div>
+                    </cite>
                     <p class="text-gray-400 text-sm">{{ $row->jabatan }}</p>
-                </div>
+                </article>
                 @endforeach
             </div>
             <div class="flex justify-center mt-6 gap-2" id="testimonialDots"></div>
@@ -976,9 +994,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- Articles Section -->
 @if($konf->articles_section_active ?? true)
-<section id="articles" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-14">
+<section id="articles" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 py-8 flex flex-col items-center gap-8 sm:gap-14" role="region" aria-labelledby="articles-heading">
     <div class="flex flex-col gap-3 text-center">
-        <h2 class="text-yellow-400 text-3xl sm:text-5xl font-extrabold leading-tight sm:leading-[56px]">
+        <h2 id="articles-heading" class="text-yellow-400 text-3xl sm:text-5xl font-extrabold leading-tight sm:leading-[56px]">
             Latest Article
         </h2>
         <p class="text-neutral-400 text-lg sm:text-2xl font-normal leading-6 sm:leading-7 tracking-tight">
@@ -990,8 +1008,11 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="flex flex-col sm:flex-row gap-6 sm:gap-8">
         <div class="flex flex-col gap-6 sm:gap-8">
             @foreach ($article->take(3) as $row)
-            <div class="p-6 sm:p-9 bg-slate-800 rounded-xl outline outline-1 outline-blue-950 outline-offset--1 flex flex-col sm:flex-row gap-4 sm:gap-8">
-                <img src="{{ !empty($row->gambar_berita) ? asset('file/berita/' . $row->gambar_berita) : asset('file/berita/placeholder.png') }}" alt="{{ $row->judul_berita }} thumbnail" class="w-full sm:w-48 h-auto sm:h-32 object-cover rounded-xl" />
+            <article class="p-6 sm:p-9 bg-slate-800 rounded-xl outline outline-1 outline-blue-950 outline-offset--1 flex flex-col sm:flex-row gap-4 sm:gap-8" role="article">
+                <img src="{{ !empty($row->gambar_berita) ? asset('file/berita/' . $row->gambar_berita) : asset('file/berita/placeholder.png') }}"
+                     alt="{{ $row->judul_berita }} article thumbnail"
+                     class="w-full sm:w-48 h-auto sm:h-32 object-cover rounded-xl"
+                     loading="lazy" decoding="async" />
                 <div class="flex flex-col gap-4">
                     <div class="flex flex-col gap-2">
                         <div class="flex items-center gap-3">
@@ -1010,7 +1031,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <p class="text-slate-500 text-sm sm:text-base font-medium leading-normal max-w-full sm:max-w-96">
                         {!! \Illuminate\Support\Str::limit(strip_tags($row->isi_berita), 150, '...') !!}
-                        <a href="{{ route('article.detail', $row->slug_berita) }}" class="text-yellow-400 hover:text-yellow-500 font-medium">Read More</a>
+                        <a href="{{ route('article.detail', $row->slug_berita) }}" class="text-yellow-400 hover:text-yellow-500 font-medium focus-visible-enhanced" aria-label="Read full article: {{ $row->judul_berita }}">Read More</a>
                     </p>
                 </div>
             </div>
@@ -1079,10 +1100,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- Contact Section dengan gap yang diperlebar -->
 @if($konf->contact_section_active ?? true)
-<section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12">
+<section id="contact" class="w-full max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 bg-slate-800 rounded-3xl border border-slate-700 -m-1 flex flex-col lg:flex-row gap-8 lg:gap-12" role="region" aria-labelledby="contact-heading">
     <div class="flex flex-col gap-6 sm:gap-8 max-w-full lg:max-w-md">
         <div class="flex flex-col gap-4">
-            <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">
+            <h2 id="contact-heading" class="text-white text-xl sm:text-2xl font-semibold leading-loose">
                 Have a project or question in mind? Just send me a message.
             </h2>
             <p class="text-gray-400 text-sm sm:text-base font-light leading-normal">
@@ -1091,14 +1112,14 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="flex flex-col gap-5">
             <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
-                <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24">
+                <div class="flex-shrink-0 w-12 h-12 p-3 bg-yellow-400 rounded-lg flex items-center justify-center" aria-hidden="true">
+                    <svg class="w-6 h-6" fill="none" stroke="black" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                 </div>
                 <div class="flex flex-col gap-1 min-w-0 flex-1">
                     <span class="text-gray-400 text-sm font-light leading-tight">Call me now</span>
-                    <a href="tel:{{ $konf->no_hp_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->no_hp_setting }}</a>
+                    <a href="tel:{{ $konf->no_hp_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate focus-visible-enhanced" aria-label="Call {{ $konf->no_hp_setting }}">{{ $konf->no_hp_setting }}</a>
                 </div>
             </div>
             <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
@@ -1109,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="flex flex-col gap-1 min-w-0 flex-1">
                     <span class="text-gray-400 text-sm font-light leading-tight">Chat with me</span>
-                    <a href="mailto:{{ $konf->email_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate">{{ $konf->email_setting }}</a>
+                    <a href="mailto:{{ $konf->email_setting }}" class="text-white text-base font-normal leading-normal hover:text-yellow-400 transition-colors truncate focus-visible-enhanced" aria-label="Send email to {{ $konf->email_setting }}">{{ $konf->email_setting }}</a>
                 </div>
             </div>
             <div class="flex items-center gap-4 p-4 bg-slate-900 rounded-xl hover:bg-slate-700 transition-all duration-300">
@@ -1161,30 +1182,46 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         </div>
     </div>
-    <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col gap-6 sm:gap-8 flex-1">
+    <form action="{{ route('contact.store') }}" method="POST" class="flex flex-col gap-6 sm:gap-8 flex-1" role="form" aria-labelledby="contact-form-heading">
         @csrf
-        <h2 class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
+        <h2 id="contact-form-heading" class="text-white text-xl sm:text-2xl font-semibold leading-loose">Just say 👋 Hi</h2>
         <div class="flex flex-col gap-4">
             <div class="flex flex-col sm:flex-row gap-4">
-                <input type="text" name="full_name" placeholder="Full Name" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-                <input type="email" name="email" placeholder="Email Address" required class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+                <input type="text" name="full_name" placeholder="Full Name" required
+                       class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus-visible-enhanced"
+                       aria-label="Full name (required)"
+                       autocomplete="name" />
+                <input type="email" name="email" placeholder="Email Address" required
+                       class="w-full sm:w-1/2 h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus-visible-enhanced"
+                       aria-label="Email address (required)"
+                       autocomplete="email" />
             </div>
-            <input type="text" name="subject" placeholder="Subject" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+            <input type="text" name="subject" placeholder="Subject"
+                   class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus-visible-enhanced"
+                   aria-label="Message subject"
+                   autocomplete="off" />
             <div class="flex flex-col sm:flex-row gap-4">
-                <select name="service" class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                <select name="service"
+                        class="w-full h-12 bg-slate-800 rounded-md border border-slate-600 px-4 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 focus-visible-enhanced"
+                        aria-label="Select a service">
                     <option value="">Select Service</option>
-                    <option value="ai">Digital Transformation 4.0 Consultant</option>
-                    <option value="automation">AI AGENT AUTOMATION Solution</option>
-                    <option value="automation">CUSTOM GPT/GEM Solution</option>
-                    <option value="automation">Content Creator Endorsement</option>
+                    <option value="digital-transformation">Digital Transformation 4.0 Consultant</option>
+                    <option value="ai-automation">AI AGENT AUTOMATION Solution</option>
+                    <option value="custom-gpt">CUSTOM GPT/GEM Solution</option>
+                    <option value="content-creator">Content Creator Endorsement</option>
                 </select>
             </div>
-            <textarea name="message" placeholder="Message" class="w-full h-32 bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"></textarea>
-            <button type="submit" class="send-message-btn w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center group">
+            <textarea name="message" placeholder="Message"
+                      class="w-full h-32 bg-slate-800 rounded-md border border-slate-600 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none focus-visible-enhanced"
+                      aria-label="Your message"
+                      rows="4"></textarea>
+            <button type="submit"
+                    class="send-message-btn w-full sm:w-auto px-6 py-3 bg-yellow-400 rounded-xl flex items-center gap-3 hover:bg-yellow-500 transition-all duration-300 shadow-lg hover:shadow-xl justify-center group focus-visible-enhanced"
+                    aria-label="Send message">
                 <span class="text-black text-base font-semibold capitalize leading-[40px] sm:leading-[72px] group-hover:text-black">
                     Send Message
                 </span>
-                <svg class="w-5 sm:w-6 h-5 sm:h-6 text-black group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 sm:w-6 h-5 sm:h-6 text-black group-hover:text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7" />
                 </svg>
             </button>

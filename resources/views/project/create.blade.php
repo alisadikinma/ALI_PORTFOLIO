@@ -4,13 +4,13 @@
     <div class="col">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{ $title }}</h3>
+                <h3 class="card-title" id="form-title">{{ $title }}</h3>
             </div>
             <div class="card-body">
                 @if ($errors->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger" role="alert" aria-live="polite" aria-atomic="true">
                     <strong>Error!</strong>
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close error alert">&times;</button>
                     <ul>
                         @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -19,14 +19,19 @@
                 </div>
                 @endif
 
-                <form action="{{ route('project.store') }}" method="POST" enctype="multipart/form-data" id="projectForm">
+                <form action="{{ route('project.store') }}" method="POST" enctype="multipart/form-data" id="projectForm"
+                      role="form" aria-labelledby="form-title" aria-describedby="form-description">
+                    <div id="form-description" class="sr-only">Form untuk membuat project portfolio baru dengan upload gambar dan detail project</div>
                     @csrf
 
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group mb-3">
-                                <label for="client_name">Nama Client <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="client_name" placeholder="Masukkan nama client disini...." name="client_name" value="{{ old('client_name') }}">
+                                <label for="client_name">Nama Client <span class="text-danger" aria-label="required">*</span></label>
+                                <input type="text" class="form-control" id="client_name" placeholder="Masukkan nama client disini...."
+                                       name="client_name" value="{{ old('client_name') }}"
+                                       aria-required="true" aria-describedby="client_name_help">
+                                <small id="client_name_help" class="form-text text-muted sr-only">Field wajib diisi. Masukkan nama lengkap client atau perusahaan.</small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -370,11 +375,148 @@
 .selected-project-badge .remove-selected:hover {
     color: #ffcccc;
 }
+
+/* ACCESSIBILITY IMPROVEMENTS */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Enhanced focus indicators with better contrast */
+.form-control:focus,
+.btn:focus,
+input[type="radio"]:focus + label,
+input[type="file"]:focus,
+select:focus {
+    outline: 3px solid #ffdd00 !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 3px rgba(255, 221, 0, 0.4) !important;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .text-muted {
+        color: #000000 !important;
+    }
+
+    .form-control {
+        border: 2px solid #000000 !important;
+    }
+
+    .btn {
+        border: 2px solid #000000 !important;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Color contrast improvements */
+.text-danger {
+    color: #dc3545 !important; /* Ensures 4.5:1 contrast ratio */
+}
+
+.alert-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important; /* High contrast text */
+    border-color: #f5c6cb !important;
+}
+
+/* Focus trap helper for modals */
+.focus-trap-active {
+    overflow: hidden;
+}
+
+/* Keyboard navigation helper */
+.keyboard-nav .form-group:focus-within {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 8px;
+}
+
+/* Better button accessibility */
+.btn[aria-pressed="true"] {
+    background-color: #0056b3 !important;
+    border-color: #004085 !important;
+}
+
+/* Enhanced error styling for accessibility */
+.form-control.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+.invalid-feedback {
+    color: #721c24 !important;
+    font-weight: bold;
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let imageIndex = 1;
+
+    // ACCESSIBILITY: Add keyboard navigation support
+    document.body.classList.add('keyboard-nav');
+
+    // ACCESSIBILITY: Add status announcements for screen readers
+    const statusDiv = document.createElement('div');
+    statusDiv.id = 'accessibility-status';
+    statusDiv.setAttribute('aria-live', 'polite');
+    statusDiv.setAttribute('aria-atomic', 'true');
+    statusDiv.className = 'sr-only';
+    document.body.appendChild(statusDiv);
+
+    function announceToScreenReader(message) {
+        const statusDiv = document.getElementById('accessibility-status');
+        statusDiv.textContent = message;
+        setTimeout(() => {
+            statusDiv.textContent = '';
+        }, 1000);
+    }
+
+    // ACCESSIBILITY: Keyboard event handlers
+    document.addEventListener('keydown', function(e) {
+        // ESC key closes dropdowns
+        if (e.key === 'Escape') {
+            const openDropdowns = document.querySelectorAll('.other-projects-dropdown[style*="display: block"]');
+            openDropdowns.forEach(dropdown => {
+                hideOtherProjectDropdown(dropdown);
+            });
+        }
+
+        // Tab navigation improvements
+        if (e.key === 'Tab') {
+            const focusableElements = document.querySelectorAll(
+                'input, textarea, select, button, [tabindex]:not([tabindex="-1"])'
+            );
+            const currentIndex = Array.from(focusableElements).indexOf(document.activeElement);
+
+            if (e.shiftKey && currentIndex === 0) {
+                // Focus last element when shift-tab from first
+                e.preventDefault();
+                focusableElements[focusableElements.length - 1].focus();
+            } else if (!e.shiftKey && currentIndex === focusableElements.length - 1) {
+                // Focus first element when tab from last
+                e.preventDefault();
+                focusableElements[0].focus();
+            }
+        }
+    });
 
     // Initialize CKEditor 5 with advanced features
     ClassicEditor
@@ -765,11 +907,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Enhanced form validation
+    // Enhanced form validation with accessibility
     document.getElementById('projectForm').addEventListener('submit', function(e) {
         const images = document.querySelectorAll('input[name="images[]"]');
         let hasImage = false;
-        
+        let errors = [];
+
+        // Clear previous errors
+        document.querySelectorAll('.form-control.is-invalid').forEach(el => {
+            el.classList.remove('is-invalid');
+        });
+        document.querySelectorAll('.invalid-feedback').forEach(el => {
+            el.remove();
+        });
+
+        // Validate required fields
+        const requiredFields = [
+            { element: document.getElementById('client_name'), name: 'Nama Client' },
+            { element: document.getElementById('location'), name: 'Lokasi Client' },
+            { element: document.getElementById('project_name'), name: 'Nama Project' },
+            { element: document.getElementById('project_category'), name: 'Kategori Project' },
+            { element: document.getElementById('slug_project'), name: 'Slug Project' },
+            { element: document.getElementById('summary_description'), name: 'Summary Description' },
+            { element: document.querySelector('#editor'), name: 'Detail Project' }
+        ];
+
+        requiredFields.forEach(field => {
+            if (!field.element.value || field.element.value.trim() === '') {
+                field.element.classList.add('is-invalid');
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'invalid-feedback';
+                errorDiv.textContent = `${field.name} wajib diisi.`;
+                errorDiv.setAttribute('role', 'alert');
+                field.element.parentNode.appendChild(errorDiv);
+                errors.push(`${field.name} wajib diisi`);
+            }
+        });
+
+        // Validate images
         images.forEach(input => {
             if (input.files && input.files.length > 0) {
                 hasImage = true;
@@ -777,8 +952,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (!hasImage) {
+            const imageContainer = document.getElementById('imageContainer').parentElement;
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'invalid-feedback';
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'Minimal harus mengunggah satu gambar project!';
+            errorDiv.setAttribute('role', 'alert');
+            imageContainer.appendChild(errorDiv);
+            errors.push('Minimal harus mengunggah satu gambar project');
+        }
+
+        if (errors.length > 0) {
             e.preventDefault();
-            alert('Minimal harus mengunggah satu gambar project!');
+
+            // Focus on first error field
+            const firstErrorField = document.querySelector('.form-control.is-invalid, input[name="images[]"]');
+            if (firstErrorField) {
+                firstErrorField.focus();
+                firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            // Announce errors to screen reader
+            announceToScreenReader(`Form memiliki ${errors.length} error: ${errors.join(', ')}`);
+
             return;
         }
         

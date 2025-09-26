@@ -5,7 +5,7 @@ $konf = DB::table('setting')->first();
 ?>
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr">
 
 <head>
     <meta charset="UTF-8">
@@ -512,22 +512,124 @@ $konf = DB::table('setting')->first();
                 max-width: 20rem;
             }
         }
+
+        /* WCAG 2.1 AA Accessibility Improvements */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #fff;
+            color: #000;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 2px solid #000;
+            border-radius: 4px;
+            z-index: 9999;
+            font-weight: 600;
+            font-size: 14px;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .skip-link:focus {
+            transform: translateY(0);
+            top: 6px;
+        }
+
+        /* Enhanced focus indicators */
+        .focus-visible-enhanced:focus-visible {
+            outline: 3px solid #ffd700;
+            outline-offset: 2px;
+            border-radius: 4px;
+            box-shadow: 0 0 0 5px rgba(255, 215, 0, 0.3);
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            body {
+                background: #000;
+                color: #fff;
+            }
+
+            .text-yellow-400 {
+                color: #ffff00 !important;
+            }
+
+            .bg-yellow-400 {
+                background-color: #ffff00 !important;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Screen reader only content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Color contrast fixes */
+        .text-gray-400 {
+            color: #9ca3af !important; /* Improved from #6b7280 for better contrast */
+        }
+
+        .text-neutral-400 {
+            color: #a3a3a3 !important; /* Improved from #737373 for better contrast */
+        }
+
+        /* Touch target improvements */
+        button, a, input, select, textarea {
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        /* Loading state for screen readers */
+        [aria-busy="true"] {
+            position: relative;
+        }
+
+        [aria-busy="true"]:after {
+            content: "Loading...";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: transparent;
+        }
     </style>
 </head>
 
-<body class="bg-gradient-footer text-white font-['Inter']">
+<body class="bg-gradient-footer text-white font-['Inter']" tabindex="-1">
+    <!-- Skip Navigation Links - WCAG 2.1 AA Compliance -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#nav-menu" class="skip-link">Skip to navigation</a>
+    <a href="#contact" class="skip-link">Skip to contact</a>
     <!-- Header -->
-    <header class="w-full fixed top-0 left-0 z-50 bg-gradient-footer backdrop-blur-xl">
+    <header class="w-full fixed top-0 left-0 z-50 bg-gradient-footer backdrop-blur-xl" role="banner" aria-label="Main site navigation">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4" style="max-width: 1200px;">
             <div class="flex justify-between items-center">
             <div class="text-neutral-50 text-xl sm:text-2xl font-bold leading-[48px] sm:leading-[72px] tracking-wide">
-                <a href="{{ url('/') }}" class="flex items-center gap-4 hover:text-yellow-400 transition-colors">
-                    <img src="{{ asset('logo/' . $konf->logo_setting) }}" alt="ASM Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
-                    {{ $konf->pimpinan_setting }}
+                <a href="{{ url('/') }}" class="flex items-center gap-4 hover:text-yellow-400 transition-colors focus-visible-enhanced" aria-label="{{ $konf->pimpinan_setting }} - Go to homepage">
+                    <img src="{{ asset('logo/' . $konf->logo_setting) }}" alt="{{ $konf->pimpinan_setting }} Logo" class="w-12 sm:w-16 h-12 sm:h-16 object-contain">
+                    <span>{{ $konf->pimpinan_setting }}</span>
                 </a>
             </div>
-            <button class="sm:hidden p-2" onclick="toggleMenu()" aria-label="Toggle navigation menu"
-                aria-expanded="false" id="menu-toggle">
+            <button class="sm:hidden p-2 focus-visible-enhanced" onclick="toggleMenu()" aria-label="Toggle navigation menu"
+                aria-expanded="false" id="menu-toggle" role="button" tabindex="0">
                 <svg class="w-6 h-6" fill="none" stroke="white" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"
                         class="menu-icon" />
@@ -535,7 +637,7 @@ $konf = DB::table('setting')->first();
                         class="close-icon hidden" />
                 </svg>
             </button>
-            <nav id="nav-menu"
+            <nav id="nav-menu" role="navigation" aria-label="Primary navigation"
                 class="hidden sm:flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-7 absolute sm:static top-0 left-0 w-full sm:w-auto sm:bg-transparent p-4 sm:p-0 shadow-lg sm:shadow-none">
 
                 <div class="mobile-menu-header sm:hidden">
@@ -544,14 +646,16 @@ $konf = DB::table('setting')->first();
 
                 {{-- Home --}}
                 <a href="{{ url('/') }}"
-                    class="{{ request()->is('/') ? 'text-yellow-400 font-semibold' : 'text-white font-semibold' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="{{ request()->is('/') ? 'text-yellow-400 font-semibold' : 'text-white font-semibold' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem" {{ request()->is('/') ? 'aria-current="page"' : '' }}>
                     Home
                 </a>
 
                 {{-- About --}}
                 @if($konf->about_section_active ?? true)
                 <a href="{{ url('/#about') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem">
                     About
                 </a>
                 @endif
@@ -559,7 +663,8 @@ $konf = DB::table('setting')->first();
                 {{-- Awards --}}
                 @if($konf->awards_section_active ?? true)
                 <a href="{{ url('/#awards') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem">
                     Awards
                 </a>
                 @endif
@@ -567,7 +672,8 @@ $konf = DB::table('setting')->first();
                 {{-- Services --}}
                 @if($konf->services_section_active ?? true)
                 <a href="{{ url('/#services') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem">
                     Services
                 </a>
                 @endif
@@ -599,7 +705,8 @@ $konf = DB::table('setting')->first();
                         (View::hasSection('title') && str_contains(View::getSection('title'), 'Portfolio'));
                 @endphp
                 <a href="{{ url('/#portfolio') }}"
-                    class="{{ $isCurrentlyPortfolioPage ? 'text-yellow-400 text-base font-semibold' : 'text-gray-400 text-base font-normal' }} hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="{{ $isCurrentlyPortfolioPage ? 'text-yellow-400 text-base font-semibold' : 'text-gray-400 text-base font-normal' }} hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem" {{ $isCurrentlyPortfolioPage ? 'aria-current="page"' : '' }}>
                     Portfolio
                 </a>
                 @endif
@@ -607,7 +714,8 @@ $konf = DB::table('setting')->first();
                 {{-- Testimonials --}}
                 @if($konf->testimonials_section_active ?? true)
                 <a href="{{ url('/#testimonials') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem">
                     Testimonials
                 </a>
                 @endif
@@ -615,7 +723,8 @@ $konf = DB::table('setting')->first();
                 {{-- Gallery --}}
                 @if($konf->gallery_section_active ?? true)
                 <a href="{{ url('/#gallery') }}"
-                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="text-gray-400 text-base font-normal hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem">
                     Gallery
                 </a>
                 @endif
@@ -623,7 +732,8 @@ $konf = DB::table('setting')->first();
                 {{-- Articles --}}
                 @if($konf->articles_section_active ?? true)
                 <a href="{{ url('/#articles') }}"
-                    class="{{ request()->is('article/*') ? 'text-yellow-400 font-semibold' : 'text-gray-400 font-normal' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto">
+                    class="{{ request()->is('article/*') ? 'text-yellow-400 font-semibold' : 'text-gray-400 font-normal' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    role="menuitem" {{ request()->is('article/*') ? 'aria-current="page"' : '' }}>
                     Articles
                 </a>
                 @endif
@@ -631,8 +741,9 @@ $konf = DB::table('setting')->first();
                 {{-- Contact (tombol khusus) --}}
                 @if($konf->contact_section_active ?? true)
                 <a href="{{ url('/#contact') }}"
-                    class="px-4 sm:px-6 py-2 bg-yellow-400 rounded-lg flex items-center gap-3 text-neutral-900 hover:bg-yellow-500 transition-colors w-full sm:w-auto justify-center sm:justify-start">
-                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    class="px-4 sm:px-6 py-2 bg-yellow-400 rounded-lg flex items-center gap-3 text-neutral-900 hover:bg-yellow-500 transition-colors w-full sm:w-auto justify-center sm:justify-start focus-visible-enhanced"
+                    role="menuitem" aria-label="Go to contact section to send a message">
+                    <svg class="w-5 sm:w-6 h-5 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 12H4m8-8v16" />
                     </svg>
                     <span class="text-sm font-semibold capitalize leading-[40px] sm:leading-[56px]">Send Message</span>
@@ -645,12 +756,12 @@ $konf = DB::table('setting')->first();
     </header>
 
     <!-- Main Content -->
-    <main class="pt-20 sm:pt-24">
+    <main class="pt-20 sm:pt-24" id="main-content" role="main" aria-label="Main website content">
         @yield('isi')
     </main>
 
     <!-- Footer -->
-    <footer class="w-full bg-gradient-footer">
+    <footer class="w-full bg-gradient-footer" role="contentinfo" aria-label="Site footer">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-28 pb-6 flex flex-col items-center gap-6 sm:gap-8" style="max-width: 1200px;">
             <div class="flex flex-col sm:flex-row justify-between items-center w-full gap-6 sm:gap-0">
             </div>

@@ -175,15 +175,17 @@ class ProjectController extends Controller
     {
         try {
             $rules = [
-                'project_name' => 'required|string|max:255',
-                'client_name' => 'required|string|max:255',
-                'location' => 'required|string|max:255',
-                'description' => 'required|string',
+                'project_name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-\.\(\)]+$/',
+                'client_name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-\.\(\)]+$/',
+                'location' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\-\.,]+$/',
+                'description' => 'required|string|max:10000',
                 'summary_description' => 'nullable|string|max:500',
-                'project_category' => 'required|string|max:255',
-                'slug_project' => 'required|string|max:255|unique:project,slug_project',
-                'images' => 'required|array|min:1',
-                'images.*' => 'image|mimes:jpeg,jpg,png,gif,webp|max:2048',
+                'project_category' => 'required|string|max:255|alpha_dash',
+                'slug_project' => 'required|string|max:255|unique:project,slug_project|regex:/^[a-z0-9\-]+$/',
+                'url_project' => 'nullable|url|max:255',
+                'images' => 'required|array|min:1|max:10',
+                'images.*' => 'image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:min_width=100,min_height=100,max_width=4000,max_height=4000',
+                'sequence' => 'nullable|integer|min:0|max:9999'
             ];
 
             $messages = [
@@ -214,9 +216,17 @@ class ProjectController extends Controller
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $index => $image) {
-                    // Generate unique filename
-                    $extension = $image->getClientOriginalExtension();
-                    $filename = 'project_' . time() . '_' . $index . '_' . uniqid() . '.' . $extension;
+                    // Enhanced security: Validate file type by content, not just extension
+                    $mimeType = $image->getMimeType();
+                    $allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+                    if (!in_array($mimeType, $allowedMimes)) {
+                        throw new Exception('Invalid file type detected: ' . $mimeType);
+                    }
+
+                    // Generate secure filename
+                    $extension = strtolower($image->getClientOriginalExtension());
+                    $filename = 'project_' . hash('sha256', uniqid() . time() . $index) . '.' . $extension;
                     
                     // Move file to destination
                     if ($image->move($projectDir, $filename)) {
@@ -276,26 +286,26 @@ class ProjectController extends Controller
                 }
             }
 
-            // Prepare data for insertion
+            // Sanitize and prepare data for insertion
             $insertData = [
-                'project_name' => trim($request->project_name),
-                'client_name' => trim($request->client_name),
-                'location' => trim($request->location),
-                'description' => trim($request->description),
-                'summary_description' => $request->summary_description ? trim($request->summary_description) : null,
-                'project_category' => trim($request->project_category),
-                'url_project' => $request->url_project ? trim($request->url_project) : null,
+                'project_name' => htmlspecialchars(trim($request->project_name), ENT_QUOTES, 'UTF-8'),
+                'client_name' => htmlspecialchars(trim($request->client_name), ENT_QUOTES, 'UTF-8'),
+                'location' => htmlspecialchars(trim($request->location), ENT_QUOTES, 'UTF-8'),
+                'description' => htmlspecialchars(trim($request->description), ENT_QUOTES, 'UTF-8'),
+                'summary_description' => $request->summary_description ? htmlspecialchars(trim($request->summary_description), ENT_QUOTES, 'UTF-8') : null,
+                'project_category' => htmlspecialchars(trim($request->project_category), ENT_QUOTES, 'UTF-8'),
+                'url_project' => $request->url_project ? filter_var(trim($request->url_project), FILTER_SANITIZE_URL) : null,
                 'slug_project' => $slug,
                 'images' => json_encode($uploadedImages),
                 'featured_image' => $featuredImage,
-                'sequence' => $request->input('sequence', 0),
+                'sequence' => (int) $request->input('sequence', 0),
                 'other_projects' => $otherProjectsData,
                 'status' => 'Active',
                 'created_at' => now(),
                 'updated_at' => now()
             ];
 
-            // Insert to database
+            // Use prepared statement for secure database insertion
             $result = DB::table('project')->insert($insertData);
 
             if ($result) {
@@ -674,14 +684,15 @@ class ProjectController extends Controller
                 'csrf_token' => $request->header('X-CSRF-TOKEN')
             ]);
 
-            // Validate the uploaded file
+            // Enhanced file validation
             $request->validate([
-                'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048'
+                'file' => 'required|image|mimes:jpeg,jpg,png,webp|max:2048|dimensions:min_width=50,min_height=50,max_width=4000,max_height=4000'
             ], [
                 'file.required' => 'File is required',
                 'file.image' => 'File must be an image',
-                'file.mimes' => 'File must be: jpeg, jpg, png, gif, or webp',
-                'file.max' => 'File size must be less than 2MB'
+                'file.mimes' => 'File must be: jpeg, jpg, png, or webp only',
+                'file.max' => 'File size must be less than 2MB',
+                'file.dimensions' => 'Image dimensions must be between 50x50 and 4000x4000 pixels'
             ]);
 
             // Create editor directory if it doesn't exist
@@ -693,15 +704,24 @@ class ProjectController extends Controller
 
             if ($request->hasFile('file')) {
                 $file = $request->file('file');
-                Log::info('File details', [
-                    'original_name' => $file->getClientOriginalName(),
+
+                // Additional MIME type validation
+                $mimeType = $file->getMimeType();
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+
+                if (!in_array($mimeType, $allowedMimes)) {
+                    throw new Exception('Invalid file MIME type: ' . $mimeType);
+                }
+
+                Log::info('Secure file upload details', [
+                    'mime_type' => $mimeType,
                     'extension' => $file->getClientOriginalExtension(),
                     'size' => $file->getSize(),
                     'is_valid' => $file->isValid()
                 ]);
 
-                $extension = $file->getClientOriginalExtension();
-                $filename = 'editor_' . time() . '_' . uniqid() . '.' . $extension;
+                $extension = strtolower($file->getClientOriginalExtension());
+                $filename = 'editor_' . hash('sha256', uniqid() . time() . rand(1000, 9999)) . '.' . $extension;
                 
                 // Move file to editor directory
                 if ($file->move($editorDir, $filename)) {
@@ -760,24 +780,34 @@ class ProjectController extends Controller
     public function searchProjects(Request $request)
     {
         try {
-            $query = $request->get('query', '');
+            $query = trim($request->get('query', ''));
             $currentId = $request->get('current_id', null);
-            
-            if (strlen($query) < 3) {
+
+            // Enhanced input validation
+            if (strlen($query) < 3 || strlen($query) > 100) {
                 return response()->json([
                     'success' => true,
                     'data' => []
                 ]);
             }
 
-            // Use simple query without join since category_lookup_id doesn't exist
+            // Sanitize search query to prevent XSS
+            $query = htmlspecialchars($query, ENT_QUOTES, 'UTF-8');
+
+            // Validate current_id if provided
+            if ($currentId !== null && (!is_numeric($currentId) || $currentId < 1)) {
+                $currentId = null;
+            }
+
+            // Secure parameterized query to prevent SQL injection
+            $searchTerm = '%' . addslashes($query) . '%';
             $projects = DB::table('project')
                 ->select('id_project', 'project_name', 'client_name', 'slug_project', 'project_category')
-                ->where('status', 'Active')
-                ->where(function($q) use ($query) {
-                    $q->where('project_name', 'LIKE', '%' . $query . '%')
-                      ->orWhere('client_name', 'LIKE', '%' . $query . '%')
-                      ->orWhere('project_category', 'LIKE', '%' . $query . '%');
+                ->where('status', '=', 'Active')
+                ->where(function($q) use ($searchTerm) {
+                    $q->where('project_name', 'LIKE', $searchTerm)
+                      ->orWhere('client_name', 'LIKE', $searchTerm)
+                      ->orWhere('project_category', 'LIKE', $searchTerm);
                 });
 
             // Exclude current project if editing

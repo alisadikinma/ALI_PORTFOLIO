@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('profile.show');
 
     Route::put('/user/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/user/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
+    Route::put('/user/password', [ProfileController::class, 'updatePassword'])->name('password.update');
 
     // Settings Management
     Route::post('image-upload', [SettingController::class, 'storeImage'])->name('image.upload');

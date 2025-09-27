@@ -646,7 +646,7 @@ $konf = DB::table('setting')->first();
 
                 {{-- Home --}}
                 <a href="{{ url('/') }}"
-                    class="{{ request()->is('/') ? 'text-yellow-400 font-semibold' : 'text-white font-semibold' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
+                    class="{{ request()->is('/') ? 'text-yellow-400 font-semibold' : 'text-gray-400 font-normal' }} text-base hover:text-yellow-400 transition-colors py-2 w-full sm:w-auto focus-visible-enhanced"
                     role="menuitem" {{ request()->is('/') ? 'aria-current="page"' : '' }}>
                     Home
                 </a>
@@ -878,39 +878,9 @@ $konf = DB::table('setting')->first();
     </script>
 
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const sections = document.querySelectorAll("section[id]");
-        const navLinks = document.querySelectorAll("#nav-menu a");
-
-        console.log('🔍 Available sections:', Array.from(sections).map(s => s.id));
-        console.log('🔗 Navigation links:', Array.from(navLinks).map(l => l.getAttribute('href')));
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        console.log('🎯 Section in view:', entry.target.id);
-                        
-                        navLinks.forEach((link) => {
-                            link.classList.remove("text-yellow-400", "font-semibold");
-                            link.classList.add("text-gray-400", "font-normal");
-
-                            // ✅ cocokkan dengan href yang mungkin berupa URL penuh
-                            if (link.getAttribute("href").endsWith("#" + entry.target.id)) {
-                                console.log('✨ Highlighting menu for section:', entry.target.id);
-                                link.classList.add("text-yellow-400", "font-semibold");
-                                link.classList.remove("text-gray-400", "font-normal");
-                            }
-                        });
-                    }
-                });
-            }, {
-                threshold: 0.5
-            }
-        );
-
-        sections.forEach((section) => observer.observe(section));
-    });
+    // Navigation highlighting is now handled by NavigationManager in navigation.js
+    // This prevents conflicts and ensures consistent behavior
+    console.log('📝 Navigation highlighting delegated to NavigationManager module');
 </script>
 
 

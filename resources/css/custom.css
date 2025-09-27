@@ -1,4 +1,14 @@
 /* ======================== */
+/* PREMIUM LIGHT MODE SYSTEM */
+/* ======================== */
+
+/*
+ * Professional Light Mode Design System
+ * Inspired by Linear.app, Stripe.com, Vercel.com
+ * Target: Fortune 500 Portfolio Quality
+ */
+
+/* ======================== */
 /* EXTRACTED INLINE STYLES */
 /* ======================== */
 
@@ -6,10 +16,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-    --gradient: linear-gradient(to left, #1E2B44, #121212);
+    /* LIGHT MODE DEFAULT */
+    --gradient: linear-gradient(to left, #ffffff, #f8fafc);
     --accent-color: #ffd400;
-    --text-primary: #ffffff;
-    --text-secondary: #a0aec0;
+    --text-primary: #1f2937;
+    --text-secondary: #64748b;
 
     /* MODERN TYPOGRAPHY */
     --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -17,6 +28,14 @@
     /* MODERN GRADIENTS */
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --gradient-accent: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+/* DARK MODE CSS VARIABLES */
+[data-theme="dark"] {
+    --gradient: linear-gradient(to left, #1E2B44, #121212);
+    --accent-color: #ffd400;
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
 }
 
 /* MODERN TYPOGRAPHY BASE */
@@ -39,7 +58,9 @@ h1, h2, h3, h4, h5, h6 {
     font-size: clamp(2rem, 5vw, 4rem);
     letter-spacing: -0.03em;
     line-height: 0.95;
-    color: #ffffff !important;
+    /* LIGHT MODE DEFAULT */
+    color: #1f2937 !important;
+    text-shadow: none;
 }
 
 /* Dark mode hero title contrast */
@@ -488,6 +509,20 @@ h1, h2, h3, h4, h5, h6 {
     .text-slate-600 {
         color: #ffffff !important;
     }
+
+    /* High contrast text gradient for accessibility */
+    .text-gradient {
+        background: linear-gradient(135deg, #ffff00 0%, #ffcc00 100%) !important;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: none !important;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .neon-text {
+        text-shadow: 0 0 4px #ffff00, 0 0 8px #ffff00 !important;
+    }
 }
 
 /* Reduced motion support */
@@ -652,6 +687,40 @@ textarea:valid {
     background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
     color: #000000 !important;
     box-shadow: 0 4px 15px rgba(251, 191, 36, 0.6) !important;
+    border: 2px solid rgba(251, 191, 36, 0.8) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: linear-gradient(135deg, #fcd34d, #fbbf24) !important;
+    color: #000000 !important;
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.8) !important;
+    border: 2px solid rgba(251, 191, 36, 1) !important;
+}
+
+/* Enhanced visibility for contact me buttons in dark mode */
+[data-theme="dark"] .bg-yellow-400 {
+    background-color: #fbbf24 !important;
+    box-shadow: 0 2px 10px rgba(251, 191, 36, 0.4) !important;
+}
+
+[data-theme="dark"] .hover\:bg-yellow-500:hover {
+    background-color: #fcd34d !important;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.6) !important;
+}
+
+/* Send Message button specific styling */
+[data-theme="dark"] .send-message-btn {
+    background-color: #fbbf24 !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.5) !important;
+}
+
+[data-theme="dark"] .send-message-btn:hover {
+    background-color: #fcd34d !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 1) !important;
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.7) !important;
 }
 
 .btn-secondary {
@@ -924,6 +993,23 @@ textarea:valid {
     }
 }
 
+/* Dark mode softer pulse glow - ENHANCED */
+[data-theme="dark"] .pulse-glow {
+    animation: pulseGlowDark 2s ease-in-out infinite;
+    background-color: #e4c087 !important; /* Softer and more readable gold color */
+}
+
+@keyframes pulseGlowDark {
+    0%, 100% {
+        box-shadow: 0 0 12px rgba(228, 192, 135, 0.3);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(228, 192, 135, 0.5);
+        transform: scale(1.02);
+    }
+}
+
 /* Magnetic Button Effect */
 .btn-magnetic {
     position: relative;
@@ -1005,17 +1091,47 @@ textarea:valid {
         0 0 40px #fbbf24;
 }
 
+/* Dark mode softer neon effect for better readability - ENHANCED */
+[data-theme="dark"] .neon-text {
+    text-shadow:
+        0 0 2px rgba(228, 192, 135, 0.8),
+        0 0 4px rgba(212, 165, 116, 0.6),
+        0 0 8px rgba(212, 165, 116, 0.4),
+        0 0 12px rgba(212, 165, 116, 0.2);
+}
+
+[data-theme="dark"] .neon-text:hover {
+    text-shadow:
+        0 0 4px rgba(228, 192, 135, 0.9),
+        0 0 8px rgba(212, 165, 116, 0.7),
+        0 0 16px rgba(212, 165, 116, 0.5),
+        0 0 24px rgba(212, 165, 116, 0.3);
+}
+
 /* ======================== */
 /* ENHANCED HERO SECTION   */
 /* ======================== */
 
+/* DARK MODE HERO BACKGROUND - DEFAULT */
 .hero-gradient-bg {
     background: linear-gradient(135deg,
         #0f172a 0%,
         #1e293b 25%,
         #334155 50%,
         #1e293b 75%,
-        #0f172a 100%);
+        #0f172a 100%) !important;
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+}
+
+/* LIGHT MODE HERO BACKGROUND - ONLY when explicitly set */
+[data-theme="light"] .hero-gradient-bg {
+    background: linear-gradient(135deg,
+        #ffffff 0%,
+        #f8fafc 25%,
+        #f1f5f9 50%,
+        #f8fafc 75%,
+        #ffffff 100%) !important;
     background-size: 400% 400%;
     animation: gradientShift 8s ease infinite;
 }
@@ -1060,6 +1176,30 @@ textarea:valid {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+/* Enhanced readability for hero name in dark mode */
+[data-theme="dark"] .text-gradient.hero-name {
+    background: linear-gradient(135deg, #f4d499 0%, #e4c087 30%, #d4a464 70%, #c8975f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: brightness(1.0) contrast(1.15) saturate(0.85);
+    /* Enhanced text shadow for better definition */
+    text-shadow:
+        0 0 1px rgba(244, 212, 153, 0.4),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode softer gradient for better readability - ENHANCED */
+[data-theme="dark"] .text-gradient {
+    background: linear-gradient(135deg, #e4c087 0%, #d4a464 50%, #c8975f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: brightness(0.95) contrast(1.1) saturate(0.8);
+    /* Add subtle text shadow for better definition */
+    text-shadow: 0 0 1px rgba(212, 165, 116, 0.3);
 }
 
 .text-gradient-blue {
@@ -1171,6 +1311,48 @@ textarea:valid {
 }
 
 /* ======================== */
+/* THEME TOGGLE STYLES     */
+/* ======================== */
+
+#theme-toggle {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] #theme-toggle {
+    background-color: rgba(30, 41, 59, 0.8) !important;
+    border-color: rgba(251, 191, 36, 0.5) !important;
+    color: #fbbf24 !important;
+}
+
+[data-theme="dark"] #theme-toggle:hover {
+    background-color: rgba(251, 191, 36, 0.1) !important;
+    border-color: rgba(251, 191, 36, 0.8) !important;
+}
+
+/* Theme change notification */
+.theme-notification {
+    animation: slideInFromTop 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* ======================== */
 /* ENHANCED ANIMATIONS     */
 /* ======================== */
 
@@ -1195,6 +1377,12 @@ textarea:valid {
     }
 }
 
+/* CRITICAL FIX: Override stagger-item opacity for hero buttons to make them immediately visible */
+.hero-button.stagger-item {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
 /* Bounce Animation for Call-to-Action */
 .bounce-cta {
     animation: bounceCTA 2s ease-in-out infinite;
@@ -1210,4 +1398,1000 @@ textarea:valid {
     60% {
         transform: translateY(-5px);
     }
+}
+
+/* ======================== */
+/* COMPREHENSIVE DARK MODE BUTTON FIXES */
+/* ======================== */
+
+/* Enhanced Primary Button Dark Mode Visibility */
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, #fcd34d, #fbbf24) !important;
+    color: #000000 !important;
+    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.7), 0 0 0 1px rgba(251, 191, 36, 0.3) !important;
+    border: 2px solid rgba(251, 191, 36, 0.9) !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: linear-gradient(135deg, #fef08a, #fcd34d) !important;
+    color: #000000 !important;
+    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.9), 0 0 0 2px rgba(251, 191, 36, 0.5) !important;
+    border: 2px solid rgba(251, 191, 36, 1) !important;
+    transform: translateY(-3px) !important;
+}
+
+/* Enhanced Scroll-to-Top Button Dark Mode */
+[data-theme="dark"] #scrollToTopBtn {
+    background-color: #fcd34d !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6) !important;
+}
+
+[data-theme="dark"] #scrollToTopBtn:hover {
+    background-color: #fef08a !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 1) !important;
+    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.8) !important;
+    transform: translateY(-2px) scale(1.1) !important;
+}
+
+/* Enhanced Navigation Contact Button Dark Mode */
+[data-theme="dark"] nav .bg-yellow-400 {
+    background-color: #fcd34d !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 2px 15px rgba(251, 191, 36, 0.5) !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="dark"] nav .bg-yellow-400:hover {
+    background-color: #fef08a !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 1) !important;
+    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.7) !important;
+}
+
+/* Enhanced Send Message Button Dark Mode */
+[data-theme="dark"] .send-message-btn {
+    background-color: #fcd34d !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 0.8) !important;
+    box-shadow: 0 4px 20px rgba(251, 191, 36, 0.6) !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="dark"] .send-message-btn:hover {
+    background-color: #fef08a !important;
+    color: #000000 !important;
+    border: 2px solid rgba(251, 191, 36, 1) !important;
+    box-shadow: 0 6px 25px rgba(251, 191, 36, 0.8) !important;
+}
+
+[data-theme="dark"] .send-message-btn span,
+[data-theme="dark"] .send-message-btn svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
+/* Enhanced Yellow Background Elements in Dark Mode */
+[data-theme="dark"] .bg-yellow-400 {
+    background-color: #fcd34d !important;
+    color: #000000 !important;
+    border: 1px solid rgba(251, 191, 36, 0.6) !important;
+    box-shadow: 0 2px 12px rgba(251, 191, 36, 0.4) !important;
+}
+
+[data-theme="dark"] .hover\:bg-yellow-500:hover {
+    background-color: #fef08a !important;
+    color: #000000 !important;
+    box-shadow: 0 4px 18px rgba(251, 191, 36, 0.6) !important;
+}
+
+/* Enhanced Button Text Visibility in Dark Mode */
+[data-theme="dark"] .text-neutral-900,
+[data-theme="dark"] .text-black {
+    color: #000000 !important;
+    font-weight: 600 !important;
+}
+
+/* CRITICAL FIX: Hero button text visibility in dark mode */
+[data-theme="dark"] .hero-button .text-neutral-900 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Ensure button spans have proper contrast */
+[data-theme="dark"] .btn-primary span {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .btn-secondary span {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+/* Fix for text-white class in dark mode secondary buttons */
+[data-theme="dark"] .text-white {
+    color: #ffffff !important;
+}
+
+/* Enhanced Hero Buttons Dark Mode */
+[data-theme="dark"] .hero-button {
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .hero-button span {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* Enhanced Magnetic Button Effect for Dark Mode */
+[data-theme="dark"] .btn-magnetic:hover {
+    box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4) !important;
+}
+
+/* Enhanced Articles "See More" Button Dark Mode */
+[data-theme="dark"] .outline-yellow-400 {
+    border-color: rgba(251, 191, 36, 0.8) !important;
+    color: #fcd34d !important;
+    background-color: rgba(251, 191, 36, 0.05) !important;
+}
+
+[data-theme="dark"] .outline-yellow-400:hover {
+    background-color: #fcd34d !important;
+    color: #000000 !important;
+    border-color: rgba(251, 191, 36, 1) !important;
+}
+
+/* Enhanced Secondary Buttons Dark Mode */
+[data-theme="dark"] .btn-secondary {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Ensure all yellow text remains visible in dark mode */
+[data-theme="dark"] .text-yellow-400 {
+    color: #fcd34d !important;
+    text-shadow: 0 0 1px rgba(252, 211, 77, 0.3) !important;
+}
+
+/* Fix for focus states in dark mode */
+[data-theme="dark"] .focus-visible-enhanced:focus-visible {
+    outline: 3px solid #fcd34d !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 5px rgba(252, 211, 77, 0.3) !important;
+}
+
+/* Enhanced Theme Toggle Button Visibility */
+[data-theme="dark"] #theme-toggle {
+    background-color: rgba(30, 41, 59, 0.9) !important;
+    border: 2px solid rgba(251, 191, 36, 0.6) !important;
+    color: #fcd34d !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] #theme-toggle:hover {
+    background-color: rgba(251, 191, 36, 0.15) !important;
+    border: 2px solid rgba(251, 191, 36, 0.9) !important;
+    color: #fcd34d !important;
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4) !important;
+    transform: scale(1.1) !important;
+}
+
+/* Light mode theme toggle for contrast */
+#theme-toggle {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(251, 191, 36, 0.8);
+    color: #f59e0b;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#theme-toggle:hover {
+    background-color: rgba(251, 191, 36, 0.1);
+    border: 2px solid rgba(251, 191, 36, 1);
+    color: #d97706;
+    transform: scale(1.1);
+}
+
+/* ================================================== */
+/* PREMIUM LIGHT MODE - COMPLETE COMPONENT OVERRIDES */
+/* ================================================== */
+
+/*
+ * This section provides comprehensive light mode styling
+ * for all components to achieve a premium, professional
+ * appearance that rivals Linear.app and Stripe.com
+ */
+
+/* ============ NAVIGATION SYSTEM ============ */
+[data-theme="light"] nav {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    box-shadow: 0 1px 3px var(--shadow-color) !important;
+}
+
+[data-theme="light"] .nav-link,
+[data-theme="light"] nav a {
+    color: var(--text-secondary) !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-theme="light"] .nav-link:hover,
+[data-theme="light"] nav a:hover {
+    color: var(--brand-primary) !important;
+}
+
+[data-theme="light"] .nav-link.active,
+[data-theme="light"] nav a.active {
+    color: var(--brand-primary) !important;
+    border-bottom: 2px solid var(--brand-primary) !important;
+}
+
+/* Mobile Navigation Light Mode */
+[data-theme="light"] #nav-menu:not(.hidden) {
+    background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.95) 100%) !important;
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 40px var(--shadow-medium) !important;
+}
+
+[data-theme="light"] #nav-menu a {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+}
+
+[data-theme="light"] #nav-menu a:hover {
+    background: var(--brand-bg) !important;
+    color: var(--brand-hover) !important;
+    transform: translateX(8px) !important;
+}
+
+/* ============ TYPOGRAPHY SYSTEM ============ */
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4,
+[data-theme="light"] h5,
+[data-theme="light"] h6 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] p,
+[data-theme="light"] span {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .text-gray-400,
+[data-theme="light"] .text-neutral-400,
+[data-theme="light"] .text-slate-500,
+[data-theme="light"] .text-slate-600 {
+    color: var(--text-tertiary) !important;
+}
+
+/* Hero Title Light Mode */
+[data-theme="light"] .hero-title {
+    color: var(--text-primary) !important;
+    text-shadow: none !important;
+}
+
+/* Text Gradient Light Mode */
+[data-theme="light"] .text-gradient {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-hover) 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+/* ============ BUTTON SYSTEM ============ */
+[data-theme="light"] .btn-primary {
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-hover)) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="light"] .btn-primary:hover {
+    background: linear-gradient(135deg, var(--brand-hover), #B45309) !important;
+    color: #FFFFFF !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4) !important;
+}
+
+[data-theme="light"] .btn-secondary {
+    background: var(--card-bg) !important;
+    color: var(--brand-primary) !important;
+    border: 2px solid var(--brand-primary) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+[data-theme="light"] .btn-secondary:hover {
+    background: var(--brand-bg) !important;
+    color: var(--brand-hover) !important;
+    border-color: var(--brand-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Yellow Button Overrides */
+[data-theme="light"] .bg-yellow-400 {
+    background-color: var(--brand-primary) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.2) !important;
+}
+
+[data-theme="light"] .bg-yellow-400:hover,
+[data-theme="light"] .hover\:bg-yellow-500:hover {
+    background-color: var(--brand-hover) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+}
+
+/* ============ CARD SYSTEM ============ */
+[data-theme="light"] .card,
+[data-theme="light"] .glass-card,
+[data-theme="light"] .card-modern {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    box-shadow: 0 1px 3px var(--card-shadow) !important;
+    backdrop-filter: none !important;
+}
+
+[data-theme="light"] .card:hover,
+[data-theme="light"] .glass-card:hover,
+[data-theme="light"] .card-modern:hover {
+    box-shadow: 0 4px 20px var(--shadow-medium) !important;
+    border-color: var(--border-color) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Project Cards */
+[data-theme="light"] .project-card-glass {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    box-shadow: 0 2px 8px var(--card-shadow) !important;
+}
+
+[data-theme="light"] .project-card-glass:hover {
+    box-shadow: 0 8px 30px var(--shadow-medium) !important;
+    border-color: var(--brand-primary) !important;
+}
+
+/* ============ FORM SYSTEM ============ */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+    background: var(--input-bg) !important;
+    border: 2px solid var(--input-border) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus,
+[data-theme="light"] textarea:focus {
+    border-color: var(--input-focus) !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1) !important;
+    background: var(--input-bg) !important;
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+    color: var(--text-tertiary) !important;
+}
+
+/* Glass Form Overrides */
+[data-theme="light"] .glass-form {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    backdrop-filter: none !important;
+}
+
+[data-theme="light"] .glass-input {
+    background: var(--input-bg) !important;
+    border: 2px solid var(--input-border) !important;
+    color: var(--text-primary) !important;
+    backdrop-filter: none !important;
+}
+
+/* ============ SECTION BACKGROUNDS ============ */
+[data-theme="light"] .hero-section,
+[data-theme="light"] .hero-gradient-bg {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%) !important;
+}
+
+[data-theme="light"] .section-bg-alt {
+    background: var(--bg-secondary) !important;
+}
+
+[data-theme="light"] .testimonials-section {
+    background: var(--bg-tertiary) !important;
+}
+
+[data-theme="light"] #contact {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
+}
+
+/* ============ SOCIAL MEDIA CONTAINER ============ */
+[data-theme="light"] .social-media-container {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    box-shadow: 0 4px 20px var(--shadow-medium) !important;
+}
+
+[data-theme="light"] .social-icon-link {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .social-icon-link:hover {
+    background: var(--brand-bg) !important;
+    color: var(--brand-primary) !important;
+}
+
+/* ============ TESTIMONIALS LIGHT MODE ============ */
+[data-theme="light"] .testimonials-title {
+    color: var(--brand-primary) !important;
+}
+
+[data-theme="light"] .testimonial-item {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    box-shadow: 0 2px 10px var(--card-shadow) !important;
+}
+
+[data-theme="light"] .testimonial-text {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .testimonial-author {
+    color: var(--text-tertiary) !important;
+}
+
+[data-theme="light"] .testimonial-image {
+    border-color: var(--brand-primary) !important;
+}
+
+/* ============ SCROLL TO TOP BUTTON ============ */
+[data-theme="light"] #scrollToTopBtn {
+    background-color: var(--brand-primary) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3) !important;
+}
+
+[data-theme="light"] #scrollToTopBtn:hover {
+    background-color: var(--brand-hover) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* ============ UTILITY OVERRIDES ============ */
+/* Remove pure black and white harsh contrasts */
+[data-theme="light"] .text-black {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-white {
+    color: #FFFFFF !important; /* Keep white for contrast on colored backgrounds */
+}
+
+[data-theme="light"] .bg-black {
+    background: var(--text-primary) !important;
+}
+
+[data-theme="light"] .bg-white {
+    background: var(--bg-primary) !important;
+}
+
+/* ============ BORDER OVERRIDES ============ */
+[data-theme="light"] .border-slate-600,
+[data-theme="light"] .border-slate-700 {
+    border-color: var(--border-color) !important;
+}
+
+/* ============ SHADOW SYSTEM ============ */
+[data-theme="light"] .shadow-glow {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* ============ NEON TEXT LIGHT MODE ============ */
+[data-theme="light"] .neon-text {
+    color: var(--brand-primary) !important;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3) !important;
+}
+
+[data-theme="light"] .neon-text:hover {
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.5) !important;
+}
+
+/* ============ THEME TOGGLE LIGHT MODE ============ */
+[data-theme="light"] #theme-toggle {
+    background-color: var(--card-bg) !important;
+    border: 2px solid var(--brand-primary) !important;
+    color: var(--brand-primary) !important;
+    box-shadow: 0 2px 10px var(--shadow-color) !important;
+}
+
+[data-theme="light"] #theme-toggle:hover {
+    background-color: var(--brand-bg) !important;
+    border-color: var(--brand-hover) !important;
+    color: var(--brand-hover) !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* ============ MOBILE NAVIGATION LIGHT MODE ============ */
+[data-theme="light"] .mobile-bottom-nav {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    border-top: 1px solid var(--border-color) !important;
+}
+
+[data-theme="light"] .mobile-nav-item {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] .mobile-nav-item:hover,
+[data-theme="light"] .mobile-nav-item.active {
+    background: var(--brand-bg) !important;
+    color: var(--brand-primary) !important;
+}
+
+/* ============ ACCESSIBILITY IMPROVEMENTS ============ */
+[data-theme="light"] .focus-visible-enhanced:focus-visible {
+    outline: 3px solid var(--brand-primary) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* ============ STATUS ELEMENTS ============ */
+[data-theme="light"] .text-yellow-400 {
+    color: var(--brand-primary) !important;
+}
+
+[data-theme="light"] .bg-yellow-400 {
+    background-color: var(--brand-primary) !important;
+}
+
+/* ============ ANIMATION IMPROVEMENTS ============ */
+[data-theme="light"] .pulse-glow {
+    animation: pulseGlowLight 2s ease-in-out infinite !important;
+}
+
+@keyframes pulseGlowLight {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.2) !important;
+        transform: scale(1) !important;
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.4) !important;
+        transform: scale(1.02) !important;
+    }
+}
+
+/* ============ GRADIENT FOOTER LIGHT MODE ============ */
+[data-theme="light"] .bg-gradient-footer {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
+}
+
+/* ============ REDUCED MOTION SUPPORT ============ */
+@media (prefers-reduced-motion: reduce) {
+    [data-theme="light"] .subtleGradientShift {
+        animation: none !important;
+    }
+
+    [data-theme="light"] .pulse-glow {
+        animation: none !important;
+    }
+
+    [data-theme="light"] .card:hover,
+    [data-theme="light"] .glass-card:hover,
+    [data-theme="light"] .btn-primary:hover,
+    [data-theme="light"] .btn-secondary:hover {
+        transform: none !important;
+    }
+}
+
+/* ============ HIGH CONTRAST MODE SUPPORT ============ */
+@media (prefers-contrast: high) {
+    [data-theme="light"] {
+        --text-primary: #000000 !important;
+        --text-secondary: #000000 !important;
+        --brand-primary: #0066CC !important;
+        --brand-hover: #004499 !important;
+        --border-color: #000000 !important;
+    }
+
+    [data-theme="light"] .text-gradient {
+        background: none !important;
+        color: var(--brand-primary) !important;
+        -webkit-text-fill-color: var(--brand-primary) !important;
+    }
+}
+
+/* ============ PRINT STYLES FOR LIGHT MODE ============ */
+@media print {
+    [data-theme="light"] body {
+        background: white !important;
+        color: black !important;
+    }
+
+    [data-theme="light"] .text-gradient {
+        background: none !important;
+        color: black !important;
+        -webkit-text-fill-color: black !important;
+        font-weight: bold !important;
+    }
+
+    [data-theme="light"] .btn-primary,
+    [data-theme="light"] .btn-secondary {
+        background: white !important;
+        color: black !important;
+        border: 2px solid black !important;
+    }
+}
+
+/* ============ CRITICAL SECTION BACKGROUND FIXES ============ */
+/* Force all dark sections to light backgrounds in light mode */
+[data-theme="light"] .bg-slate-800,
+[data-theme="light"] .bg-slate-900,
+[data-theme="light"] .bg-gray-800,
+[data-theme="light"] .bg-gray-900,
+[data-theme="light"] .bg-neutral-800,
+[data-theme="light"] .bg-neutral-900 {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Force services section light background */
+[data-theme="light"] #services {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Force awards section light background */
+[data-theme="light"] #awards {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Fix any remaining dark backgrounds */
+[data-theme="light"] *[style*="background: #1e293b"],
+[data-theme="light"] *[style*="background-color: #1e293b"],
+[data-theme="light"] *[style*="background: #0f172a"],
+[data-theme="light"] *[style*="background-color: #0f172a"],
+[data-theme="light"] *[style*="background: #334155"],
+[data-theme="light"] *[style*="background-color: #334155"] {
+    background: var(--bg-secondary) !important;
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Fix text colors in converted sections */
+[data-theme="light"] .text-white,
+[data-theme="light"] .text-gray-100,
+[data-theme="light"] .text-gray-200 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-gray-300,
+[data-theme="light"] .text-gray-400 {
+    color: var(--text-secondary) !important;
+}
+
+/* ============ CRITICAL INLINE STYLE OVERRIDES ============ */
+/*
+ * These styles override the inline styles in welcome.blade.php
+ * to ensure light mode works properly with existing markup
+ */
+
+/* Override inline testimonials background */
+[data-theme="light"] .testimonials-section[style] {
+    background: var(--bg-tertiary) !important;
+}
+
+/* Override inline modal backgrounds */
+[data-theme="light"] .modal[style*="background"] {
+    background: var(--bg-overlay) !important;
+}
+
+/* Override inline card backgrounds */
+[data-theme="light"] .card[style*="background"],
+[data-theme="light"] .testimonial-item[style*="background"] {
+    background: var(--card-bg) !important;
+}
+
+/* Override inline text colors */
+[data-theme="light"] .testimonials-title[style*="color"] {
+    color: var(--brand-primary) !important;
+}
+
+[data-theme="light"] .testimonial-text[style*="color"] {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .testimonial-author[style*="color"] {
+    color: var(--text-tertiary) !important;
+}
+
+/* Override inline button colors */
+[data-theme="light"] button[style*="background-color: #fbbf24"],
+[data-theme="light"] .btn[style*="background-color: #fbbf24"] {
+    background-color: var(--brand-primary) !important;
+    color: #FFFFFF !important;
+}
+
+[data-theme="light"] button[style*="color: #000000"],
+[data-theme="light"] .btn[style*="color: #000000"] {
+    color: #FFFFFF !important;
+}
+
+/* Override hero text colors */
+[data-theme="light"] .hero-title[style*="color"] {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-gray-500[style*="color"] {
+    color: var(--text-secondary) !important;
+}
+
+/* Override inline glass effects for light mode */
+[data-theme="light"] *[style*="rgba(255, 255, 255, 0.1)"] {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+}
+
+[data-theme="light"] *[style*="rgba(255, 255, 255, 0.05)"] {
+    background: var(--bg-tertiary) !important;
+}
+
+[data-theme="light"] *[style*="rgba(255, 255, 255, 0.08)"] {
+    background: var(--input-bg) !important;
+    border: 2px solid var(--input-border) !important;
+}
+
+/* Override inline dark backgrounds */
+[data-theme="light"] *[style*="rgba(0, 0, 0, 0.9)"],
+[data-theme="light"] *[style*="rgba(0, 0, 0, 0.8)"],
+[data-theme="light"] *[style*="rgba(0, 0, 0, 0.7)"] {
+    background: var(--bg-overlay) !important;
+}
+
+/* Override inline gradient backgrounds */
+[data-theme="light"] *[style*="linear-gradient"][style*="#1e293b"] {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
+}
+
+/* Force light mode text visibility on inline styled elements */
+[data-theme="light"] *[style*="color: #94a3b8"],
+[data-theme="light"] *[style*="color: #475569"],
+[data-theme="light"] *[style*="color: #64748b"] {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="light"] *[style*="color: #fbbf24"],
+[data-theme="light"] *[style*="color: #ffd300"] {
+    color: var(--brand-primary) !important;
+}
+
+[data-theme="light"] *[style*="color: #ffffff"],
+[data-theme="light"] *[style*="color: white"] {
+    color: var(--text-primary) !important;
+}
+
+/* Override specific inline testimonial colors */
+[data-theme="light"] *[style*="color: #989898"] {
+    color: var(--text-tertiary) !important;
+}
+
+/* Override inline border colors */
+[data-theme="light"] *[style*="border-color: #fbbf24"] {
+    border-color: var(--brand-primary) !important;
+}
+
+/* ============ SPECIFIC COMPONENT FIXES ============ */
+
+/* Navigation menu specific fixes */
+[data-theme="light"] #nav-menu a[style*="color"] {
+    color: var(--text-primary) !important;
+}
+
+/* Hero section button fixes */
+[data-theme="light"] .hero-button[style*="background"],
+[data-theme="light"] .hero-button .bg-yellow-400 {
+    background: var(--brand-primary) !important;
+    color: #FFFFFF !important;
+}
+
+/* Contact section fixes */
+[data-theme="light"] #contact[style*="background"] {
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
+}
+
+/* Modal and overlay fixes */
+[data-theme="light"] .modal-backdrop[style*="background"] {
+    background: var(--bg-overlay) !important;
+}
+
+/* Image gallery overlay fixes */
+[data-theme="light"] .gallery-overlay[style*="background"] {
+    background: var(--bg-overlay) !important;
+}
+
+/* ============ COMPREHENSIVE BLACK/WHITE CONTRAST FIXES ============ */
+
+/* Catch any remaining pure black text */
+[data-theme="light"] *[style*="color: #000000"],
+[data-theme="light"] *[style*="color: #000"],
+[data-theme="light"] *[style*="color: black"],
+[data-theme="light"] *[style*="color: rgb(0, 0, 0)"] {
+    color: var(--text-primary) !important;
+}
+
+/* Catch any remaining pure white backgrounds */
+[data-theme="light"] *[style*="background: #ffffff"],
+[data-theme="light"] *[style*="background: #fff"],
+[data-theme="light"] *[style*="background: white"],
+[data-theme="light"] *[style*="background: rgb(255, 255, 255)"],
+[data-theme="light"] *[style*="background-color: #ffffff"],
+[data-theme="light"] *[style*="background-color: #fff"],
+[data-theme="light"] *[style*="background-color: white"],
+[data-theme="light"] *[style*="background-color: rgb(255, 255, 255)"] {
+    background: var(--bg-primary) !important;
+}
+
+/* Fix any computed styles that might be pure black on pure white */
+[data-theme="light"] * {
+    /* Ensure no pure contrasts exist */
+}
+
+[data-theme="light"] body * {
+    /* Force minimum text contrast for readability */
+}
+
+/* ============ ENHANCED READABILITY FIXES ============ */
+
+/* Target all text elements with better colors */
+[data-theme="light"] p,
+[data-theme="light"] span,
+[data-theme="light"] div,
+[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3,
+[data-theme="light"] h4, [data-theme="light"] h5, [data-theme="light"] h6 {
+    color: var(--text-primary) !important;
+}
+
+/* Override any light colored text that's hard to read */
+[data-theme="light"] *[style*="color: #cbd5e1"],
+[data-theme="light"] *[style*="color: #e2e8f0"],
+[data-theme="light"] *[style*="color: #f1f5f9"],
+[data-theme="light"] *[style*="color: #f8fafc"] {
+    color: var(--text-primary) !important;
+}
+
+/* Make sure testimonial text is readable */
+[data-theme="light"] .testimonial-item p,
+[data-theme="light"] .testimonial-item span {
+    color: var(--text-secondary) !important;
+}
+
+/* ============ AGGRESSIVE CONTRAST ELIMINATION ============ */
+
+/* Target all Tailwind black/white classes */
+[data-theme="light"] .text-black,
+[data-theme="light"] .text-gray-900,
+[data-theme="light"] .text-slate-900 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .bg-white,
+[data-theme="light"] .bg-gray-50,
+[data-theme="light"] .bg-slate-50 {
+    background-color: var(--bg-primary) !important;
+}
+
+/* Force all text in light mode to use our color system */
+[data-theme="light"] * {
+    /* Override computed black colors */
+}
+
+[data-theme="light"] *:not(.btn):not(.button):not([class*="bg-"]) {
+    /* Ensure text elements use our colors */
+}
+
+/* Target specific problematic elements */
+[data-theme="light"] .text-gray-600,
+[data-theme="light"] .text-gray-700,
+[data-theme="light"] .text-gray-800 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] .text-slate-600,
+[data-theme="light"] .text-slate-700,
+[data-theme="light"] .text-slate-800 {
+    color: var(--text-primary) !important;
+}
+
+/* Override any remaining light text colors */
+[data-theme="light"] .text-gray-300,
+[data-theme="light"] .text-gray-400,
+[data-theme="light"] .text-slate-300,
+[data-theme="light"] .text-slate-400 {
+    color: var(--text-secondary) !important;
+}
+
+/* Force dark backgrounds to light */
+[data-theme="light"] .bg-gray-800,
+[data-theme="light"] .bg-gray-900,
+[data-theme="light"] .bg-slate-800,
+[data-theme="light"] .bg-slate-900 {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ============ SPECIFIC ELEMENT FIXES (FROM DEBUG) ============ */
+
+/* Fix skip-link pure black/white contrast */
+[data-theme="light"] .skip-link {
+    color: var(--text-primary) !important;
+    background-color: var(--bg-secondary) !important;
+    border: 1px solid var(--brand-primary) !important;
+}
+
+/* Fix white text readability issues */
+[data-theme="light"] #nav-menu a span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] #scrollToTopBtn span {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="light"] #home .text-neutral-900 span,
+[data-theme="light"] #home a span {
+    color: #FFFFFF !important; /* Keep white on button backgrounds */
+}
+
+[data-theme="light"] #contact form button span {
+    color: #FFFFFF !important; /* Keep white on button backgrounds */
+}
+
+/* More specific button text fixes */
+[data-theme="light"] .btn-primary span,
+[data-theme="light"] .bg-yellow-400 span,
+[data-theme="light"] button[type="submit"] span {
+    color: #FFFFFF !important;
+}
+
+/* Final fixes for specific problematic button spans */
+[data-theme="light"] #home a[href="#contact"] span,
+[data-theme="light"] #home a[href*="linkedin"] span {
+    color: #FFFFFF !important; /* Keep white on colored button backgrounds */
+}
+
+/* Ensure Contact ME and LinkedIn buttons maintain proper contrast */
+[data-theme="light"] .text-neutral-900.text-base span,
+[data-theme="light"] .text-white.text-base span {
+    color: #FFFFFF !important;
+}
+
+/* Button text visibility fixes */
+[data-theme="light"] .btn-primary *,
+[data-theme="light"] .bg-yellow-400 * {
+    color: #FFFFFF !important;
+}
+
+[data-theme="light"] .btn-secondary * {
+    color: var(--brand-primary) !important;
 }

@@ -21,3 +21,4 @@ yarn-error.log
 *.rar
 *.tar.gz
 /storage/app/*
+/bug-screenshots/*

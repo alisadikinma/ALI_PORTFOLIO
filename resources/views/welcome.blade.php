@@ -68,22 +68,179 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Scroll to top functionality
+    // Scroll to top functionality with navigation integration
     scrollToTopBtn.addEventListener('click', () => {
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
+        // Force Home menu highlighting after scroll-to-top
+        setTimeout(() => {
+            updateActiveNav('home');
+        }, 100);
     });
 
     // Listen for scroll events
     window.addEventListener('scroll', toggleScrollButton);
 
-    // DISABLED: Menu highlighting now handled by layouts/web.blade.php IntersectionObserver
-    // This prevents double processing and conflicts
-    console.log('📝 Menu highlighting handled by IntersectionObserver in layout');
-    
-    // Only handle scroll button
+    // ROBUST NAVIGATION HIGHLIGHTING - Direct implementation
+    const sections = document.querySelectorAll('#home, #about, #awards, #services, #portfolio, #gallery, #contact');
+    const navLinks = document.querySelectorAll('nav a, .nav-link');
+
+    // Create section-to-nav mapping
+    const sectionNavMap = {
+        'home': 'a[href="/"], a[href=""], a[href*="#home"], a[href*="#hero"]',
+        'about': 'a[href*="#about"]',
+        'awards': 'a[href*="#awards"]',
+        'services': 'a[href*="#services"]',
+        'portfolio': 'a[href*="#portfolio"]',
+        'gallery': 'a[href*="#gallery"]',
+        'contact': 'a[href*="#contact"]'
+    };
+
+    function updateActiveNav(activeSection) {
+        // Clear all active states
+        navLinks.forEach(link => {
+            link.classList.remove('text-yellow-400', 'font-semibold');
+            link.classList.add('text-gray-400', 'font-normal');
+        });
+
+        // Set active state for current section
+        if (sectionNavMap[activeSection]) {
+            const activeLink = document.querySelector(sectionNavMap[activeSection]);
+            if (activeLink) {
+                activeLink.classList.remove('text-gray-400', 'font-normal');
+                activeLink.classList.add('text-yellow-400', 'font-semibold');
+            }
+        }
+    }
+
+    // IntersectionObserver for scroll detection
+    const observerOptions = {
+        root: null,
+        rootMargin: '-10% 0px -10% 0px',
+        threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5]
+    };
+
+    let currentActiveSection = 'home';
+
+    const observer = new IntersectionObserver((entries) => {
+        let visibleSections = [];
+
+        entries.forEach(entry => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.1) {
+                visibleSections.push({
+                    id: entry.target.id,
+                    ratio: entry.intersectionRatio,
+                    boundingRect: entry.boundingClientRect
+                });
+            }
+        });
+
+        if (visibleSections.length > 0) {
+            // Sort by highest intersection ratio
+            visibleSections.sort((a, b) => b.ratio - a.ratio);
+            const newActiveSection = visibleSections[0].id;
+
+            // Only update if section changed to avoid flickering
+            if (newActiveSection !== currentActiveSection) {
+                currentActiveSection = newActiveSection;
+                updateActiveNav(newActiveSection);
+                console.log(`🎯 Active section: ${newActiveSection} (ratio: ${visibleSections[0].ratio.toFixed(2)})`);
+            }
+        }
+    }, observerOptions);
+
+    // Start observing sections
+    sections.forEach(section => {
+        observer.observe(section);
+        console.log(`👁️ Observing section: #${section.id}`);
+    });
+
+    // Add manual scroll detection as backup for portfolio
+    let portfolioCheckInterval;
+    function checkPortfolioVisibility() {
+        const portfolioSection = document.getElementById('portfolio');
+        if (portfolioSection) {
+            const rect = portfolioSection.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight * 0.6 && rect.bottom > window.innerHeight * 0.4;
+
+            if (isVisible && currentActiveSection !== 'portfolio') {
+                console.log('🎯 Manual portfolio detection triggered');
+                currentActiveSection = 'portfolio';
+                updateActiveNav('portfolio');
+            }
+        }
+    }
+
+    // ENHANCED: Manual scroll detection for ALL sections as backup
+    function manualSectionDetection() {
+        const sectionOrder = ['home', 'about', 'awards', 'services', 'portfolio', 'gallery', 'contact'];
+        let bestSection = 'home';
+        let bestScore = 0;
+
+        sectionOrder.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+
+                // Calculate visibility score
+                const visibleTop = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+                const visibilityRatio = visibleTop / viewportHeight;
+
+                // Prioritize sections that are more centered
+                const centerDistance = Math.abs((rect.top + rect.bottom) / 2 - viewportHeight / 2);
+                const centerScore = Math.max(0, 1 - centerDistance / viewportHeight);
+
+                const totalScore = visibilityRatio * 0.7 + centerScore * 0.3;
+
+                if (totalScore > bestScore && visibilityRatio > 0.1) {
+                    bestScore = totalScore;
+                    bestSection = sectionId;
+                }
+            }
+        });
+
+        if (bestSection !== currentActiveSection) {
+            console.log(`🎯 Manual detection: ${bestSection} (score: ${bestScore.toFixed(2)})`);
+            currentActiveSection = bestSection;
+            updateActiveNav(bestSection);
+        }
+    }
+
+    // Add scroll listener for comprehensive backup detection
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(manualSectionDetection, 150);
+    });
+
+    // Set initial state to Home
+    updateActiveNav('home');
+
+    // CRITICAL FIX: Force portfolio detection when it should be visible
+    function forcePortfolioCheck() {
+        const portfolioSection = document.getElementById('portfolio');
+        if (portfolioSection) {
+            const rect = portfolioSection.getBoundingClientRect();
+            // If portfolio is prominently visible, force highlight it
+            if (rect.top < window.innerHeight * 0.3 && rect.bottom > window.innerHeight * 0.7) {
+                console.log('🚨 FORCING PORTFOLIO HIGHLIGHT');
+                currentActiveSection = 'portfolio';
+                updateActiveNav('portfolio');
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Add additional scroll listener specifically for portfolio
+    window.addEventListener('scroll', () => {
+        setTimeout(forcePortfolioCheck, 200);
+    });
+
+    // Handle scroll button
     toggleScrollButton();
 });
 </script>
@@ -524,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <h1 id="hero-heading" class="hero-title text-4xl sm:text-7xl font-bold leading-tight sm:leading-[80px] max-w-full sm:max-w-[648px] scroll-reveal-left" style="margin-bottom: 0.25rem;">
                     Hello, I'm<br />
-                    <span class="text-gradient neon-text relative">
+                    <span class="text-gradient hero-name neon-text relative">
                     {{ $konf->pimpinan_setting }}
                     <div class="absolute -bottom-2 left-0 w-full h-1 bg-yellow-400 rounded-full pulse-glow" aria-hidden="true"></div>
                     </span>
